@@ -1,0 +1,15 @@
+name: issue-npm.yml
+on:
+  workflow_dispatch:
+
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: "Install task"
+        shell: "bash"
+        run: npm install -g @go-task/cli
+      - run: task -t issue-2440.yml test; echo $?
