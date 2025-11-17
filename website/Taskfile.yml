@@ -1,5 +1,10 @@
 version: '3'
 
+vars:
+  TMUX_SESSION: task-website
+  DEFAULT_PORT: '3002'
+  DEFAULT_HOST: '0.0.0.0'
+
 tasks:
   install:
     desc: Setup VitePress locally
@@ -10,14 +15,75 @@ tasks:
       - pnpm-lock.yaml
 
   default:
-    desc: Start website
+    desc: Start website in foreground
     deps: [install]
     aliases: [s, start]
     vars:
-      HOST: '{{default "0.0.0.0" .HOST}}'
-      PORT: '{{default "3001" .PORT}}'
+      HOST: '{{default .DEFAULT_HOST .HOST}}'
+      PORT: '{{default .DEFAULT_PORT .PORT}}'
     cmds:
       - pnpm dev --host={{.HOST}} --port={{.PORT}}
+
+  dev:
+    desc: Start website in tmux background session (watch mode)
+    deps: [install]
+    aliases: [watch, bg]
+    vars:
+      HOST: '{{default .DEFAULT_HOST .HOST}}'
+      PORT: '{{default .DEFAULT_PORT .PORT}}'
+    cmds:
+      - |
+        if tmux has-session -t {{.TMUX_SESSION}} 2>/dev/null; then
+          echo "⚠️  Session '{{.TMUX_SESSION}}' already exists. Use 'task website:stop' first or 'task website:restart'."
+          exit 1
+        fi
+        tmux new-session -d -s {{.TMUX_SESSION}} "cd {{.ROOT_DIR}}/website && pnpm dev --host={{.HOST}} --port={{.PORT}}"
+        echo "✅ Website started in tmux session '{{.TMUX_SESSION}}'"
+        echo "📝 View logs: task website:logs"
+        echo "🛑 Stop server: task website:stop"
+        echo "🌐 URL: http://{{.HOST}}:{{.PORT}}"
+
+  stop:
+    desc: Stop website tmux session
+    cmds:
+      - |
+        if tmux has-session -t {{.TMUX_SESSION}} 2>/dev/null; then
+          tmux kill-session -t {{.TMUX_SESSION}}
+          echo "✅ Website session stopped"
+        else
+          echo "ℹ️  No session '{{.TMUX_SESSION}}' found"
+        fi
+
+  restart:
+    desc: Restart website tmux session
+    aliases: [r]
+    cmds:
+      - task: stop
+      - task: dev
+
+  logs:
+    desc: View website tmux session logs
+    aliases: [l]
+    cmds:
+      - |
+        if tmux has-session -t {{.TMUX_SESSION}} 2>/dev/null; then
+          tmux attach-session -t {{.TMUX_SESSION}}
+        else
+          echo "❌ No session '{{.TMUX_SESSION}}' found. Start with 'task website:dev'"
+          exit 1
+        fi
+
+  status:
+    desc: Check website session status
+    cmds:
+      - |
+        if tmux has-session -t {{.TMUX_SESSION}} 2>/dev/null; then
+          echo "✅ Website is running in tmux session '{{.TMUX_SESSION}}'"
+          echo "📝 View logs: task website:logs"
+          lsof -i :{{.DEFAULT_PORT}} 2>/dev/null | grep LISTEN || echo "⚠️  Port {{.DEFAULT_PORT}} not listening yet"
+        else
+          echo "❌ Website is not running"
+        fi
 
   lint:
     desc: Lint website
@@ -37,7 +103,7 @@ tasks:
     aliases: [serve]
     vars:
       HOST: '{{default "localhost" .HOST}}'
-      PORT: '{{default "3001" .PORT}}'
+      PORT: '{{default .DEFAULT_PORT .PORT}}'
     cmds:
       - pnpm preview --host={{.HOST}} --port={{.PORT}}
 
