@@ -86,7 +86,7 @@ Markdown and is located in the `website/src` directory. All Markdown documents
 should have an 80 character line wrap limit (enforced by Prettier).
 
 When making a change, consider whether a change to the
-[Usage Guide](/docs/guide) is necessary. This document contains descriptions and
+[Usage Guide](/docs/learning/core-concepts) is necessary. This document contains descriptions and
 examples of how to use Task features. If you're adding a new feature, try to
 find an appropriate place to add a new section. If you're updating an existing
 feature, ensure that the documentation and any examples are up-to-date. Ensure

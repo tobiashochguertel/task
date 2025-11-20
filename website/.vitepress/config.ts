@@ -137,7 +137,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       {
         text: 'Docs',
-        link: '/docs/guide',
+        link: '/docs/learning/getting-started',
         activeMatch: '^/docs'
       },
       { text: 'Blog', link: '/blog', activeMatch: '^/blog' },
@@ -197,16 +197,31 @@ export default defineConfig({
       ],
       '/': [
         {
-          text: 'Installation',
-          link: '/docs/installation'
+          text: 'Learning',
+          items: [
+            {
+              text: 'Installation',
+              link: '/docs/learning/installation'
+            },
+            {
+              text: 'Getting Started',
+              link: '/docs/learning/getting-started'
+            },
+            {
+              text: 'Core Concepts',
+              link: '/docs/learning/core-concepts'
+            }
+          ]
         },
         {
-          text: 'Getting Started',
-          link: '/docs/getting-started'
-        },
-        {
-          text: 'Guide',
-          link: '/docs/guide'
+          text: 'Cookbook',
+          link: '/docs/cookbook/',
+          items: [
+            {
+              text: 'Browse Recipes',
+              link: '/docs/cookbook/'
+            }
+          ]
         },
         {
           text: 'Reference',
