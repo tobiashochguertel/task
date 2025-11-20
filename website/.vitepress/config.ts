@@ -232,6 +232,10 @@ export default defineConfig({
               link: '/docs/reference/schema'
             },
             {
+              text: 'Variables',
+              link: '/docs/reference/vars'
+            },
+            {
               text: 'Environment',
               link: '/docs/reference/environment'
             },

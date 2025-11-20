@@ -26,11 +26,11 @@
   - Description: Explore `website/src/docs` to understand current structure and content.
   - Follow-up: Create Refactoring Proposals
 
-- [ ] **Create Refactoring Proposals**
+- [x] **Create Refactoring Proposals**
   - Description: Create markdown documents in `./website/docs/` with proposals for restructuring (including "Proposal 3").
   - Follow-up: Implement Proposal 3
 
-- [ ] **Implement Proposal 3**
+- [x] **Implement Proposal 3**
   - Description: Refactor documentation based on the selected proposal in a separate branch.
   - Follow-up: None
 
