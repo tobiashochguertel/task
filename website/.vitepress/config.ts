@@ -197,6 +197,23 @@ export default defineConfig({
       ],
       '/': [
         {
+          text: 'Proposals',
+          items: [
+            {
+              text: '1. Property Reference',
+              link: '/docs/proposal-1-property-reference-guide'
+            },
+            {
+              text: '2. Context Cookbook',
+              link: '/docs/proposal-2-context-based-cookbook'
+            },
+            {
+              text: '3. Hybrid System',
+              link: '/docs/proposal-3-hybrid-three-tier-system'
+            }
+          ]
+        },
+        {
           text: 'Learning',
           items: [
             {
@@ -220,6 +237,15 @@ export default defineConfig({
             {
               text: 'Browse Recipes',
               link: '/docs/cookbook/'
+            },
+            {
+              text: 'Data Sharing',
+              items: [
+                {
+                  text: 'Between Tasks',
+                  link: '/docs/cookbook/data-sharing/between-tasks'
+                }
+              ]
             }
           ]
         },
@@ -233,7 +259,7 @@ export default defineConfig({
             },
             {
               text: 'Variables',
-              link: '/docs/reference/vars'
+              link: '/docs/reference/properties/vars'
             },
             {
               text: 'Environment',
