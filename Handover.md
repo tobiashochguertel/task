@@ -17,62 +17,53 @@
    - Created 3 proposals for restructuring:
      - Proposal 1: Reference-First Approach.
      - Proposal 2: Context-Based Cookbook.
-     - Proposal 3: Hybrid "Core Concepts + Usage Patterns" (Selected).
+     - Proposal 3: Hybrid "Three-Tier System" (Selected).
 
 3. **Implementation (Proposal 3):**
    - Created new directory structure in `website/src/docs/`:
-     - `core-concepts/`
-     - `usage/`
-     - `reference/`
-     - `guides/`
-   - Moved existing files to appropriate locations (e.g., `installation.md` -> `guides/installation.md`).
-   - Created `core-concepts.md` with initial content.
-   - Updated `website/.vitepress/config.mts` to reflect the new sidebar structure including "Proposals" section.
-
-## Current Issues
-- **Vue Compiler Error:**
-  - File: `website/src/docs/proposal-2-context-based-cookbook.md`
-  - Error: `[plugin:vite:vue] Error parsing JavaScript expression: Unexpected token (1:1)`
-  - Location: Around line 272/274 (`### Pattern: Build Pipeline with Artifacts`).
-  - Suspected cause: Inline code or content being misinterpreted as Vue interpolation.
+     - `learning/` (Tutorials, Core Concepts)
+     - `reference/` (Schema, CLI, Properties)
+     - `cookbook/` (Recipes)
+   - Created `learning/core-concepts.md`.
+   - Moved/Created `reference/` content (CLI, Schema, etc.).
+   - **Fixed Vue Compiler Error** in `proposal-2-context-based-cookbook.md` by escaping content.
+   - Updated `website/.vitepress/config.mts` to reflect the new sidebar structure.
 
 ## Todo
-1. **Fix Build Error:**
-   - Investigate and fix the Vue compiler error in `proposal-2-context-based-cookbook.md`.
-   - Verify that the website builds and renders correctly without errors.
+1. **Continue Proposal 3 Implementation:**
+   - **Populate Reference:** Fill `reference/properties/` with detailed property documentation (e.g., `vars`, `cmds`, `deps`).
+   - **Refactor Guide:** Move remaining content from `guide/` to `learning/` or `cookbook/`.
+   - **Cookbook:** Ensure `cookbook/` content is visible and correctly formatted.
+   - **Sidebar:** Verify all new pages are correctly linked in `website/.vitepress/config.mts`.
 
-2. **Continue Proposal 3 Implementation:**
-   - **Core Concepts:** Expand `core-concepts.md` to cover `vars`, `tasks`, `includes`, `deps` in depth.
-   - **Reference:** Create/Move reference documentation (Schema, CLI usage) to `reference/`.
-   - **Usage Patterns:** Create `usage/` documents for common patterns (e.g., Docker, Monorepo).
-   - **Migration:** Ensure all content from original `docs/` is preserved and correctly categorized.
-
-3. **Verification:**
-   - Check all internal links in the documentation.
-   - Verify sidebar navigation in `config.mts`.
+2. **Review & Cleanup:**
+   - Review `proposal-3-hybrid-three-tier-system.md` to ensure implementation matches the plan.
+   - Remove `proposal-*.md` files once implementation is complete and approved.
+   - Fix any remaining broken links or formatting issues.
 
 ## Operations
-- **Start Server:**
+- **Start/Restart Server:**
   ```bash
   cd task
-  task website:dev
+  task website:restart
   ```
-  (Runs in a tmux session named `task-website`)
+  (Runs in a tmux session named `task-website` on `0.0.0.0:3003`)
 
 - **Stop Server:**
   ```bash
   task website:stop
   ```
 
-- **Restart Server:**
-  ```bash
-  task website:restart
-  ```
-
 - **View Logs:**
   ```bash
   task website:logs
   ```
+  (Press `Ctrl+B` then `d` to detach from tmux).
+
+- **Check Status:**
+  ```bash
+  task website:status
+  ```
 
 - **Access:**
-  - URL: `http://localhost:3003` (or your local IP)
+  - URL: `http://0.0.0.0:3003` (Accessible from local network)
