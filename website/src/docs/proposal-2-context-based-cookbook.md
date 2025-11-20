@@ -266,9 +266,6 @@ tasks:
     cmds:
       - curl {{.API_URL}}/deploy
 ```
-
----
-
 ## Common Patterns
 
 ### Pattern: Build Pipeline with Artifacts
@@ -336,7 +333,7 @@ tasks:
 
 ### Problem: Variable Not Available
 
-**Symptom**: `{{.VAR}}` expands to empty string
+**Symptom**: `\{\{.VAR}}` expands to empty string
 
 **Causes**:
 1. Variable not defined in scope
