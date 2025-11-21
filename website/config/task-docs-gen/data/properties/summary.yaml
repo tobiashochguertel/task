@@ -1,0 +1,31 @@
+name: summary
+type: string
+short: Long description shown with task --summary.
+description: |
+  Detailed description of the task. Displayed when running `task --summary <task>`.
+contexts:
+  - Task level
+examples:
+  - title: Add summary
+    description: Provide detailed task documentation
+    code: |
+      tasks:
+        deploy:
+          desc: Deploy application
+          summary: |
+            Deploys the application to production environment.
+            
+            Prerequisites:
+            - Docker must be installed
+            - AWS credentials configured
+            
+            This task will:
+            1. Build the Docker image
+            2. Push to ECR
+            3. Update ECS service
+          cmds:
+            - task: build-image
+            - task: push-image
+            - task: update-service
+related:
+  - desc

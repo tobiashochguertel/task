@@ -1,0 +1,46 @@
+name: watch
+type: boolean
+short: Enable watch mode for continuous execution.
+description: |
+  When true, task watches for file changes and re-runs automatically.
+contexts:
+  - Task level
+examples:
+  - title: Watch mode
+    description: Auto-rebuild on changes
+    code: |
+      tasks:
+        dev:
+          watch: true
+          sources:
+            - src/**/*.ts
+          cmds:
+            - tsc
+            - node dist/index.js
+  - title: Development workflow
+    description: Combined watch tasks
+    code: |
+      tasks:
+        watch-all:
+          deps:
+            - task: watch-backend
+            - task: watch-frontend
+        
+        watch-backend:
+          watch: true
+          dir: backend
+          sources:
+            - "**/*.go"
+          cmds:
+            - go build
+            - ./app
+        
+        watch-frontend:
+          watch: true
+          dir: frontend
+          sources:
+            - "**/*.ts"
+          cmds:
+            - npm run build
+related:
+  - sources

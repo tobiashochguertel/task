@@ -1,0 +1,30 @@
+name: dir
+type: string
+short: Working directory for task execution.
+description: |
+  Specify the directory where commands should be executed. Relative to Taskfile location.
+contexts:
+  - Task level
+examples:
+  - title: Change directory
+    description: Run commands in specific directory
+    code: |
+      tasks:
+        frontend:
+          dir: ./web
+          cmds:
+            - npm install
+            - npm run build
+  - title: Using variables
+    description: Dynamic directory paths
+    code: |
+      vars:
+        PROJECT_DIR: ./projects/myapp
+      
+      tasks:
+        build:
+          dir: '{{.PROJECT_DIR}}'
+          cmds:
+            - make build
+related:
+  - cmds

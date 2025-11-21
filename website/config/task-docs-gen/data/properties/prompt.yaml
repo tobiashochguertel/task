@@ -1,0 +1,28 @@
+name: prompt
+type: string
+short: Show confirmation prompt before executing.
+description: |
+  Display a yes/no prompt before running the task. Useful for dangerous operations.
+contexts:
+  - Task level
+examples:
+  - title: Simple prompt
+    description: Ask for confirmation
+    code: |
+      tasks:
+        delete-db:
+          prompt: This will delete the database. Continue?
+          cmds:
+            - rm -rf data/db
+  - title: Destructive operation
+    description: Protect production deployment
+    code: |
+      tasks:
+        deploy-prod:
+          prompt: Deploy to PRODUCTION environment?
+          env:
+            ENV: production
+          cmds:
+            - task: build
+            - task: push
+            - task: update-service

@@ -1,0 +1,45 @@
+name: output
+type: string
+short: Control how task output is displayed.
+description: |
+  Configure output handling for task execution. Options: interleaved, group, prefixed.
+contexts:
+  - Taskfile (root level)
+  - Task level
+options:
+  - name: interleaved
+    type: string
+    description: Output appears immediately as it happens (default).
+    example: "output: interleaved"
+  - name: group
+    type: string
+    description: Output is grouped by task.
+    example: "output: group"
+  - name: prefixed
+    type: string
+    description: Each line is prefixed with task name.
+    example: "output: prefixed"
+examples:
+  - title: Grouped output
+    description: Show output per task
+    code: |
+      version: '3'
+      
+      output: group
+      
+      tasks:
+        build:
+          cmds:
+            - go build
+            - echo "Build complete"
+  - title: Prefixed output
+    description: Prefix lines with task name
+    code: |
+      tasks:
+        dev:
+          output: prefixed
+          deps:
+            - task: watch-backend
+            - task: watch-frontend
+related:
+  - silent

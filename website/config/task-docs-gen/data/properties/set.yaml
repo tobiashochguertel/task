@@ -1,0 +1,34 @@
+name: set
+type: "[]string"
+short: Enable POSIX shell options.
+description: |
+  Configure shell behavior by enabling specific POSIX options.
+contexts:
+  - Taskfile (root level)
+  - Task level
+options:
+  - name: errexit
+    type: string
+    description: Exit immediately if a command exits with a non-zero status.
+    example: "set: [errexit]"
+  - name: nounset
+    type: string
+    description: Treat unset variables as an error.
+    example: "set: [nounset]"
+  - name: pipefail
+    type: string
+    description: Return the exit status of the last command in a pipe that failed.
+    example: "set: [pipefail]"
+examples:
+  - title: Common usage
+    description: Enable multiple shell options
+    code: |
+      set: [errexit, nounset, pipefail]
+  - title: Task-level override
+    description: Set options for specific task
+    code: |
+      tasks:
+        strict-task:
+          set: [errexit, nounset]
+          cmds:
+            - echo "Running with strict mode"

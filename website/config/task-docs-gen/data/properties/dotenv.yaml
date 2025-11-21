@@ -1,0 +1,43 @@
+name: dotenv
+type: "[]string"
+short: Load environment variables from .env files.
+description: |
+  Specify .env files to load before task execution. Variables are loaded in order.
+contexts:
+  - Taskfile (root level)
+  - Task level
+examples:
+  - title: Load .env file
+    description: Load environment from .env
+    code: |
+      version: '3'
+      
+      dotenv: ['.env']
+      
+      tasks:
+        deploy:
+          cmds:
+            - echo "Deploying to $ENV"
+  - title: Multiple env files
+    description: Load from multiple files
+    code: |
+      tasks:
+        build:
+          dotenv:
+            - .env
+            - .env.local
+          cmds:
+            - npm run build
+  - title: Environment-specific
+    description: Load different files per environment
+    code: |
+      tasks:
+        start:
+          dotenv:
+            - .env
+            - .env.{{.ENV}}
+          cmds:
+            - npm start
+related:
+  - env
+  - vars

@@ -1,0 +1,36 @@
+name: sources
+type: "[]string"
+short: Source files to check for staleness.
+description: |
+  List of source files or glob patterns. Used with method to determine if task needs to run.
+contexts:
+  - Task level
+examples:
+  - title: Basic sources
+    description: Track source files
+    code: |
+      tasks:
+        build:
+          sources:
+            - src/**/*.go
+            - go.mod
+          generates:
+            - bin/app
+          cmds:
+            - go build -o bin/app
+  - title: With exclusions
+    description: Use glob patterns with exclusions
+    code: |
+      tasks:
+        compile:
+          sources:
+            - "src/**/*.ts"
+            - "!src/**/*.test.ts"
+          generates:
+            - dist/**/*.js
+          cmds:
+            - tsc
+related:
+  - generates
+  - method
+  - status

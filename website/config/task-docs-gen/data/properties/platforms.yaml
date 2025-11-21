@@ -1,0 +1,34 @@
+name: platforms
+type: "[]string"
+short: Operating systems where task can run.
+description: |
+  Restrict task execution to specific platforms. Task will skip if platform doesn't match.
+contexts:
+  - Task level
+examples:
+  - title: Linux only
+    description: Task runs only on Linux
+    code: |
+      tasks:
+        install-deps:
+          platforms: [linux]
+          cmds:
+            - apt-get install -y build-essential
+  - title: Multiple platforms
+    description: Task runs on Linux or macOS
+    code: |
+      tasks:
+        build:
+          platforms: [linux, darwin]
+          cmds:
+            - make build
+  - title: Windows specific
+    description: Task for Windows only
+    code: |
+      tasks:
+        setup:
+          platforms: [windows]
+          cmds:
+            - choco install golang
+related:
+  - preconditions

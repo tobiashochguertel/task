@@ -1,0 +1,72 @@
+# {{ property.name }}
+
+{{ property.short }}
+
+## Type
+
+`{{ property.jsonType || property.type }}`
+
+{{ if property.description }}
+## Description
+
+{{ property.description }}
+{{ /if }}
+
+{{ if property.contexts }}
+## Contexts
+
+This property can be used in:
+
+{{ for context of property.contexts }}
+- {{ context }}
+{{ /for }}
+{{ /if }}
+
+{{ if property.precedence }}
+## Precedence
+
+{{ property.precedence.join(' → ') }}
+{{ /if }}
+
+{{ if property.options }}
+## Options
+
+| Option | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+{{ for option of property.options }}| `{{ option.name }}` | `{{ option.type || '-' }}` | {{ option.description }} | `{{ option.example || '-' }}` |
+{{ /for }}
+{{ /if }}
+
+{{ if property.examples }}
+## Examples
+
+{{ for example of property.examples }}
+{{ if example.title }}### {{ example.title }}{{ /if }}
+
+{{ if example.description }}{{ example.description }}{{ /if }}
+
+```yaml
+{{ example.code }}
+```
+
+{{ if example.output }}
+**Output:**
+```
+{{ example.output }}
+```
+{{ /if }}
+{{ /for }}
+{{ /if }}
+
+{{ if property.related }}
+## Related
+
+{{ for item of property.related }}- [{{ item }}](./{{ item }}.md)
+{{ /for }}
+{{ /if }}
+
+{{ if property.deprecated }}
+## ⚠️ Deprecation Notice
+
+{{ property.deprecationNote || 'This property is deprecated.' }}
+{{ /if }}

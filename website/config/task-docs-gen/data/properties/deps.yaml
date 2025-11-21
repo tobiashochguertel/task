@@ -1,0 +1,29 @@
+name: deps
+type: "[]Dependency"
+short: Task dependencies that run before this task.
+description: |
+  Define tasks that must run before the current task. Dependencies run in parallel by default.
+contexts:
+  - Task level
+examples:
+  - title: Simple dependencies
+    description: Run tasks before current task
+    code: |
+      tasks:
+        build:
+          deps: [clean, install]
+          cmds:
+            - go build
+  - title: Dependencies with variables
+    description: Pass variables to dependencies
+    code: |
+      tasks:
+        deploy:
+          deps:
+            - task: build
+              vars:
+                ENV: production
+          cmds:
+            - ./deploy.sh
+related:
+  - cmds

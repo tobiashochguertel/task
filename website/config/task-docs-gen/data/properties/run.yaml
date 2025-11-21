@@ -1,0 +1,55 @@
+name: run
+type: string
+short: Control when task should run.
+description: |
+  Specify task execution behavior. Options: always, once, when_changed.
+contexts:
+  - Taskfile (root level)
+  - Task level
+options:
+  - name: always
+    type: string
+    description: Always run the task (default).
+    example: "run: always"
+  - name: once
+    type: string
+    description: Run only once per invocation.
+    example: "run: once"
+  - name: when_changed
+    type: string
+    description: Run when sources change.
+    example: "run: when_changed"
+examples:
+  - title: Run once
+    description: Task runs only once even if called multiple times
+    code: |
+      tasks:
+        setup:
+          run: once
+          cmds:
+            - npm install
+        
+        build:
+          deps: [setup]
+          cmds:
+            - npm run build
+        
+        test:
+          deps: [setup]
+          cmds:
+            - npm test
+  - title: Run when changed
+    description: Run only if sources changed
+    code: |
+      tasks:
+        compile:
+          run: when_changed
+          sources:
+            - src/**/*.ts
+          generates:
+            - dist/**/*.js
+          cmds:
+            - tsc
+related:
+  - method
+  - sources

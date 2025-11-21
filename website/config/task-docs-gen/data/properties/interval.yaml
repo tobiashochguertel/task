@@ -1,0 +1,25 @@
+name: interval
+type: string
+short: Interval for watch mode polling.
+description: |
+  Set the polling interval for watch mode. Default is 5 seconds.
+contexts:
+  - Taskfile (root level)
+  - Task level
+examples:
+  - title: Custom interval
+    description: Set watch polling interval
+    code: |
+      version: '3'
+      
+      interval: 2s
+      
+      tasks:
+        watch:
+          watch: true
+          sources:
+            - src/**/*.go
+          cmds:
+            - go build
+related:
+  - watch

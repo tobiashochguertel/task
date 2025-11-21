@@ -1,0 +1,92 @@
+name: includes
+type: map[string]Include
+short: Include external Taskfiles.
+description: |
+  Import tasks from other Taskfiles. Useful for splitting large Taskfiles or sharing tasks into smaller, more manageable files.
+contexts:
+  - Taskfile (root level)
+options:
+  - name: taskfile
+    type: string
+    description: Path to the Taskfile or directory to include. Required.
+    example: "taskfile: ./lib/tasks.yml"
+  - name: dir
+    type: string
+    description: The working directory for the included tasks.
+    example: "dir: ./lib"
+  - name: optional
+    type: bool
+    description: If true, no error is raised if the included file is missing.
+    example: "optional: true"
+  - name: flatten
+    type: bool
+    description: If true, tasks are included at the root level (no namespace).
+    example: "flatten: true"
+  - name: internal
+    type: bool
+    description: If true, included tasks are hidden from --list.
+    example: "internal: true"
+  - name: aliases
+    type: "[]string"
+    description: Alternative names for the namespace.
+    example: "aliases: [api, v1]"
+  - name: excludes
+    type: "[]string"
+    description: List of tasks to exclude from the included Taskfile.
+    example: "excludes: [setup]"
+  - name: vars
+    type: map[string]Variable
+    description: Variables to pass to the included Taskfile.
+    example: "vars: { ENV: prod }"
+  - name: checksum
+    type: string
+    description: Expected checksum of the included file (for remote includes).
+    example: 'checksum: "sha256:..."'
+examples:
+  - title: Simple string format
+    description: Include a Taskfile by path
+    code: |
+      includes:
+        docs: ./Taskfile.yml
+  - title: Full object format
+    description: Include with all available options
+    code: |
+      includes:
+        backend:
+          taskfile: ./backend
+          dir: ./backend
+          optional: false
+          flatten: false
+          internal: false
+          aliases: [api]
+          excludes: [internal-task]
+          vars:
+            SERVICE_NAME: backend
+  - title: Basic include
+    description: Include tasks from another file
+    code: |
+      version: '3'
+      
+      includes:
+        docker: ./docker/Taskfile.yml
+        ci: ./ci/Taskfile.yml
+      
+      tasks:
+        deploy:
+          cmds:
+            - task: docker:build
+            - task: docker:push
+  - title: Include with custom directory
+    description: Set working directory for included tasks
+    code: |
+      includes:
+        frontend:
+          taskfile: ./frontend/Taskfile.yml
+          dir: ./frontend
+  - title: Optional includes
+    description: Include file if it exists
+    code: |
+      includes:
+        local:
+          taskfile: ./Taskfile.local.yml
+          optional: true

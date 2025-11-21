@@ -1,0 +1,24 @@
+name: aliases
+type: "[]string"
+short: Alternative names for the task.
+description: |
+  Define multiple names for the same task. Useful for shortcuts or compatibility.
+contexts:
+  - Task level
+examples:
+  - title: Basic aliases
+    description: Add shortcuts for task names
+    code: |
+      tasks:
+        build-production:
+          aliases: [bp, prod]
+          cmds:
+            - npm run build -- --mode production
+  - title: Multiple aliases
+    description: Task with several alternative names
+    code: |
+      tasks:
+        run-tests:
+          aliases: [test, t, tests]
+          cmds:
+            - npm test

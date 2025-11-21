@@ -1,0 +1,31 @@
+name: desc
+type: string
+short: Short description shown in task list.
+description: |
+  A brief description of the task. Displayed when running `task --list`.
+contexts:
+  - Task level
+examples:
+  - title: Basic description
+    description: Add description to task
+    code: |
+      tasks:
+        build:
+          desc: Build the application
+          cmds:
+            - go build
+  - title: Hidden tasks
+    description: Tasks without desc are hidden from list
+    code: |
+      tasks:
+        public-task:
+          desc: This appears in task --list
+          cmds:
+            - echo "visible"
+        
+        private-task:
+          # No desc - hidden from list
+          cmds:
+            - echo "hidden"
+related:
+  - summary

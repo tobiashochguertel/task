@@ -14,6 +14,6 @@ markdown:
   format: md
   remarkLint: false
 data:
-  propertiesDir: task-docs-gen/data/properties
+  propertiesDir: website/config/task-docs-gen/data/properties
 templates:
-  dir: task-docs-gen/src/core/docs/formatter/templates
+  dir: website/config/task-docs-gen/templates

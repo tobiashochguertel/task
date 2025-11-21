@@ -1,0 +1,40 @@
+name: status
+type: "[]string"
+short: Shell commands to check if task is up-to-date.
+description: |
+  Execute commands to determine if task needs to run. Task skips if all commands succeed.
+contexts:
+  - Task level
+examples:
+  - title: Check file exists
+    description: Skip if output file exists
+    code: |
+      tasks:
+        build:
+          status:
+            - test -f bin/app
+          cmds:
+            - go build -o bin/app
+  - title: Compare timestamps
+    description: Check if sources are newer
+    code: |
+      tasks:
+        compile:
+          status:
+            - test dist/bundle.js -nt src/index.js
+          cmds:
+            - webpack build
+  - title: Multiple checks
+    description: All conditions must pass to skip
+    code: |
+      tasks:
+        setup:
+          status:
+            - test -d node_modules
+            - test -f package-lock.json
+          cmds:
+            - npm install
+related:
+  - sources
+  - generates
+  - method

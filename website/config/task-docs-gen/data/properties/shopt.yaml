@@ -1,0 +1,30 @@
+name: shopt
+type: "[]string"
+short: Enable bash shell options.
+description: |
+  Set bash-specific shell options using shopt. Alternative to set for bash users.
+contexts:
+  - Taskfile (root level)
+  - Task level
+examples:
+  - title: Enable globstar
+    description: Use ** for recursive globbing
+    code: |
+      tasks:
+        clean:
+          shopt: [globstar]
+          cmds:
+            - rm -rf **/*.pyc
+  - title: Multiple options
+    description: Enable several bash options
+    code: |
+      version: '3'
+      
+      shopt: [globstar, dotglob]
+      
+      tasks:
+        lint:
+          cmds:
+            - shellcheck **/*.sh
+related:
+  - set

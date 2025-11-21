@@ -1,0 +1,17 @@
+name: version
+type: string
+short: Taskfile schema version.
+description: |
+  Specify the Taskfile schema version. Required field. Current version is '3'.
+contexts:
+  - Taskfile (root level)
+examples:
+  - title: Version declaration
+    description: Declare schema version
+    code: |
+      version: '3'
+      
+      tasks:
+        hello:
+          cmds:
+            - echo "Hello, World!"

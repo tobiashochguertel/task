@@ -1,0 +1,50 @@
+name: method
+type: string
+short: Method for checking if task is up-to-date.
+description: |
+  Determines how Task checks if re-execution is needed. Options: checksum, timestamp, none.
+contexts:
+  - Taskfile (root level)
+  - Task level
+options:
+  - name: checksum
+    type: string
+    description: Check content hash of source files (default).
+    example: "method: checksum"
+  - name: timestamp
+    type: string
+    description: Check file modification times.
+    example: "method: timestamp"
+  - name: none
+    type: string
+    description: Always run the task.
+    example: "method: none"
+examples:
+  - title: Using checksums
+    description: Default method - check file content
+    code: |
+      tasks:
+        build:
+          method: checksum
+          sources:
+            - src/**/*.go
+          generates:
+            - bin/app
+          cmds:
+            - go build
+  - title: Using timestamps
+    description: Faster but less accurate
+    code: |
+      tasks:
+        compile:
+          method: timestamp
+          sources:
+            - src/**/*.ts
+          generates:
+            - dist/**/*.js
+          cmds:
+            - tsc
+related:
+  - sources
+  - generates
+  - status

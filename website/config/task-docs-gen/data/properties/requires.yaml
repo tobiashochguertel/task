@@ -1,0 +1,30 @@
+name: requires
+type: object
+short: Require specific Task variables to be set.
+description: |
+  Declare required variables for the task. Task fails if variables are not provided.
+contexts:
+  - Task level
+examples:
+  - title: Require variables
+    description: Task needs specific variables
+    code: |
+      tasks:
+        deploy:
+          requires:
+            vars: [ENV, VERSION]
+          cmds:
+            - echo "Deploying {{.VERSION}} to {{.ENV}}"
+  - title: With error message
+    description: Custom error for missing variable
+    code: |
+      tasks:
+        release:
+          requires:
+            vars:
+              - TAG
+          cmds:
+            - git tag {{.TAG}}
+related:
+  - vars
+  - preconditions

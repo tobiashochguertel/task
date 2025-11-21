@@ -1,35 +1,89 @@
 # output
 
-`output` controls how the output of tasks is displayed in the console.
+Control how task output is displayed.
 
 ## Type
 
-`string` or `object`
+`string`
+
+
+## Description
+
+Configure output handling for task execution. Options: interleaved, group, prefixed.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+
 
 ## Options
 
-| Option | Description | Example |
-| :--- | :--- | :--- |
-| `interleaved` | Output from all tasks is printed as it happens. (Default) | `output: interleaved` |
-| `group` | Output is buffered and printed only when the task finishes. | `output: group` |
-| `prefixed` | Adds a prefix with the task name to each line of output. | `output: prefixed` |
+| Option | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `interleaved` | `string` | Output appears immediately as it happens (default). | `output: interleaved` |
+| `group` | `string` | Output is grouped by task. | `output: group` |
+| `prefixed` | `string` | Each line is prefixed with task name. | `output: prefixed` |
 
-## Syntax
 
-### Simple String
+
+
+## Examples
+
+
+### Grouped output
+
+Show output per task
 
 ```yaml
+version: '3'
+
 output: group
+
+tasks:
+  build:
+    cmds:
+      - go build
+      - echo "Build complete"
+
 ```
 
-### Object
 
-Allows customizing the group output.
+
+### Prefixed output
+
+Prefix lines with task name
 
 ```yaml
-output:
-  group:
-    begin: "::group::{{\.TASK}}"
-    end: "::endgroup::"
-    error_only: false
+tasks:
+  dev:
+    output: prefixed
+    deps:
+      - task: watch-backend
+      - task: watch-frontend
+
 ```
+
+
+
+
+
+
+## Related
+
+- [silent](./silent.md)
+
+
+
+

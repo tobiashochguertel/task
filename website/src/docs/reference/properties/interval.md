@@ -1,17 +1,66 @@
 # interval
 
-`interval` specifies the duration to wait between checks when running in watch mode (`--watch`).
+Interval for watch mode polling.
 
 ## Type
 
-`string` (Go duration format)
+`string`
 
-## Default
 
-`5s`
+## Description
 
-## Usage
+Set the polling interval for watch mode. Default is 5 seconds.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Custom interval
+
+Set watch polling interval
 
 ```yaml
-interval: 500ms
+version: '3'
+
+interval: 2s
+
+tasks:
+  watch:
+    watch: true
+    sources:
+      - src/**/*.go
+    cmds:
+      - go build
+
 ```
+
+
+
+
+
+
+## Related
+
+- [watch](./watch.md)
+
+
+
+

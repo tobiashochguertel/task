@@ -1,0 +1,44 @@
+name: preconditions
+type: "[]Precondition"
+short: Conditions that must be met before task runs.
+description: |
+  Check conditions before executing task. Task fails if any precondition is not met.
+contexts:
+  - Task level
+examples:
+  - title: Check command exists
+    description: Ensure required tool is installed
+    code: |
+      tasks:
+        deploy:
+          preconditions:
+            - sh: which docker
+              msg: "Docker is not installed"
+          cmds:
+            - docker build -t myapp .
+  - title: Check file exists
+    description: Verify required file is present
+    code: |
+      tasks:
+        build:
+          preconditions:
+            - sh: test -f config.yaml
+              msg: "config.yaml not found"
+          cmds:
+            - go build
+  - title: Multiple preconditions
+    description: Check several conditions
+    code: |
+      tasks:
+        release:
+          preconditions:
+            - sh: git diff --quiet
+              msg: "Git working directory is not clean"
+            - sh: test -f CHANGELOG.md
+              msg: "CHANGELOG.md is missing"
+          cmds:
+            - task: build
+            - task: publish
+related:
+  - requires
+  - platforms

@@ -1,0 +1,37 @@
+name: cmds
+type: "[]Command"
+short: Commands to execute for this task.
+description: |
+  A list of shell commands or Task calls to execute. Commands run sequentially.
+contexts:
+  - Task level
+examples:
+  - title: Simple commands
+    description: Run shell commands
+    code: |
+      tasks:
+        build:
+          cmds:
+            - go build -o app
+            - chmod +x app
+  - title: Task calls
+    description: Call other tasks
+    code: |
+      tasks:
+        build:
+          cmds:
+            - task: clean
+            - task: compile
+  - title: Mixed commands
+    description: Mix shell and task calls
+    code: |
+      tasks:
+        deploy:
+          cmds:
+            - echo "Building..."
+            - task: build
+            - echo "Deploying..."
+            - ./deploy.sh
+related:
+  - cmd
+  - deps

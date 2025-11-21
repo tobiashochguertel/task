@@ -1,0 +1,41 @@
+name: silent
+type: boolean
+short: Suppress command output.
+description: |
+  When true, commands won't print to stdout/stderr unless they fail.
+contexts:
+  - Taskfile (root level)
+  - Task level
+  - Command level
+examples:
+  - title: Silent task
+    description: Suppress all output for task
+    code: |
+      tasks:
+        cleanup:
+          silent: true
+          cmds:
+            - rm -rf tmp/
+            - echo "Cleaned up"
+  - title: Silent command
+    description: Suppress output for specific command
+    code: |
+      tasks:
+        build:
+          cmds:
+            - cmd: echo "Building..."
+              silent: true
+            - go build
+  - title: Global silent
+    description: Make all tasks silent by default
+    code: |
+      version: '3'
+      
+      silent: true
+      
+      tasks:
+        build:
+          cmds:
+            - go build
+related:
+  - output
