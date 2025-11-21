@@ -2,13 +2,15 @@ name: dotenv
 type: "[]string"
 short: Load environment variables from .env files.
 description: |
-  Specify .env files to load before task execution. Variables are loaded in order.
+  Load environment variables from .env files before executing tasks. Supports multiple files and templating in file paths. Later files in the list override earlier ones.
+  
+  Dotenv files can be specified at both global (root) and task level. Task-level dotenv files are loaded after global ones.
 contexts:
   - Taskfile (root level)
   - Task level
 examples:
-  - title: Load .env file
-    description: Load environment from .env
+  - title: Basic dotenv
+    description: Load from .env file
     code: |
       version: '3'
       
@@ -17,27 +19,52 @@ examples:
       tasks:
         deploy:
           cmds:
-            - echo "Deploying to $ENV"
-  - title: Multiple env files
-    description: Load from multiple files
+            - echo "Using API key: $API_KEY"
+  - title: Multiple env files with templating
+    description: Load from different locations
     code: |
+      version: '3'
+      
+      env:
+        ENV: testing
+      
+      dotenv:
+        - .env
+        - '{{.ENV}}/.env'
+        - '{{.HOME}}/.env'
+      
       tasks:
-        build:
-          dotenv:
-            - .env
-            - .env.local
+        greet:
           cmds:
-            - npm run build
-  - title: Environment-specific
-    description: Load different files per environment
+            - echo "Using $KEYNAME and endpoint $ENDPOINT"
+  - title: Task-level dotenv
+    description: Different env files per task
     code: |
+      version: '3'
+      
+      env:
+        ENV: testing
+      
       tasks:
-        start:
-          dotenv:
-            - .env
-            - .env.{{.ENV}}
+        greet:
+          dotenv: ['{{.ENV}}/.env']
           cmds:
-            - npm start
+            - echo "Hello from $ENV environment"
+  - title: Environment-specific configs
+    description: Load based on environment variable
+    code: |
+      version: '3'
+      
+      tasks:
+        test:
+          dotenv: ['.env', '.env.test']
+          cmds:
+            - npm test
+        
+        production:
+          dotenv: ['.env', '.env.production']
+          cmds:
+            - npm run deploy
 related:
   - env
   - vars

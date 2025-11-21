@@ -9,7 +9,9 @@ Load environment variables from .env files.
 
 ## Description
 
-Specify .env files to load before task execution. Variables are loaded in order.
+Load environment variables from .env files before executing tasks. Supports multiple files and templating in file paths. Later files in the list override earlier ones.
+
+Dotenv files can be specified at both global (root) and task level. Task-level dotenv files are loaded after global ones.
 
 
 
@@ -33,9 +35,9 @@ This property can be used in:
 ## Examples
 
 
-### Load .env file
+### Basic dotenv
 
-Load environment from .env
+Load from .env file
 
 ```yaml
 version: '3'
@@ -45,41 +47,73 @@ dotenv: ['.env']
 tasks:
   deploy:
     cmds:
-      - echo "Deploying to $ENV"
+      - echo "Using API key: $API_KEY"
 
 ```
 
 
 
-### Multiple env files
+### Multiple env files with templating
 
-Load from multiple files
+Load from different locations
 
 ```yaml
+version: '3'
+
+env:
+  ENV: testing
+
+dotenv:
+  - .env
+  - '{{.ENV}}/.env'
+  - '{{.HOME}}/.env'
+
 tasks:
-  build:
-    dotenv:
-      - .env
-      - .env.local
+  greet:
     cmds:
-      - npm run build
+      - echo "Using $KEYNAME and endpoint $ENDPOINT"
 
 ```
 
 
 
-### Environment-specific
+### Task-level dotenv
 
-Load different files per environment
+Different env files per task
 
 ```yaml
+version: '3'
+
+env:
+  ENV: testing
+
 tasks:
-  start:
-    dotenv:
-      - .env
-      - .env.{{.ENV}}
+  greet:
+    dotenv: ['{{.ENV}}/.env']
     cmds:
-      - npm start
+      - echo "Hello from $ENV environment"
+
+```
+
+
+
+### Environment-specific configs
+
+Load based on environment variable
+
+```yaml
+version: '3'
+
+tasks:
+  test:
+    dotenv: ['.env', '.env.test']
+    cmds:
+      - npm test
+  
+  production:
+    dotenv: ['.env', '.env.production']
+    cmds:
+      - npm run deploy
 
 ```
 
