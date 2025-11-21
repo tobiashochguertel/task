@@ -1,0 +1,19 @@
+version: 1
+output:
+  dir: website/src/docs/reference/properties
+  index: index.md
+features:
+  generateIndex: true
+  linkAutoDetection: true
+schema:
+  storeEnv: JSON_SCHEMA_STORE_LOCAL
+  url: https://taskfile.dev/schema.json
+watch:
+  debounceMs: 400
+markdown:
+  format: md
+  remarkLint: false
+data:
+  propertiesDir: task-docs-gen/data/properties
+templates:
+  dir: task-docs-gen/src/core/docs/formatter/templates

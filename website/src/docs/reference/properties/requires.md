@@ -1,44 +1,77 @@
 # requires
 
-`requires` specifies variables that must be defined for the task to run.
+Require specific Task variables to be set.
 
 ## Type
 
-`Requires`
+`requires_obj`
 
-## Properties
 
-| Property | Type | Description | Example |
-| :--- | :--- | :--- | :--- |
-| `vars` | `[]string` or `[]Var` | List of required variables. | `vars: [VAR1]` |
+## Description
 
-### Var Object
+Declare required variables for the task. Task fails if variables are not provided.
 
-| Property | Type | Description | Example |
-| :--- | :--- | :--- | :--- |
-| `name` | `string` | Name of the variable. | `name: ENV` |
-| `enum` | `[]string` | Allowed values. | `enum: [prod, dev]` |
 
-## Usage
 
-If any required variable is missing, the task will fail.
 
-### Simple List
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Require variables
+
+Task needs specific variables
 
 ```yaml
 tasks:
   deploy:
     requires:
-      vars: [API_KEY, ENV]
+      vars: [ENV, VERSION]
+    cmds:
+      - echo "Deploying {{.VERSION}} to {{.ENV}}"
+
 ```
 
-### With Enum Validation
+
+
+### With error message
+
+Custom error for missing variable
 
 ```yaml
 tasks:
-  deploy:
+  release:
     requires:
       vars:
-        - name: ENV
-          enum: [dev, prod]
+        - TAG
+    cmds:
+      - git tag {{.TAG}}
+
 ```
+
+
+
+
+
+
+## Related
+
+- [vars](./vars.md)
+- [preconditions](./preconditions.md)
+
+
+
+

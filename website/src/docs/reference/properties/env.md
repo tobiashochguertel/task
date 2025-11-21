@@ -1,27 +1,86 @@
 # env
 
-`env` defines global environment variables that are available to all tasks and commands.
+Environment variables for task execution.
 
 ## Type
 
-`map[string]Variable`
+`env`
 
-## Usage
 
-Environment variables defined in `env` are exported to the shell environment where commands are executed.
+## Description
+
+Define environment variables that will be available during task execution.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+## Precedence
+
+Task level → Taskfile level → System environment
+
+
+
+
+
+## Examples
+
+
+### Task-level environment
+
+Set environment for specific task
 
 ```yaml
+tasks:
+  build:
+    env:
+      CGO_ENABLED: 0
+      GOOS: linux
+    cmds:
+      - go build
+
+```
+
+
+
+### Global environment
+
+Set environment for all tasks
+
+```yaml
+version: '3'
+
 env:
   NODE_ENV: production
-  DATABASE_URL: postgres://user:pass@localhost:5432/db
+
+tasks:
+  build:
+    cmds:
+      - npm run build
+
 ```
 
-### Dynamic Environment Variables
 
-You can also use shell commands to set environment variables.
 
-```yaml
-env:
-  GOPATH:
-    sh: go env GOPATH
-```
+
+
+
+## Related
+
+- [vars](./vars.md)
+- [dotenv](./dotenv.md)
+
+
+
+

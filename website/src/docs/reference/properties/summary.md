@@ -1,21 +1,71 @@
 # summary
 
-`summary` provides a detailed description of the task.
+Long description shown with task --summary.
 
 ## Type
 
 `string`
 
-## Usage
 
-This description is displayed when running `task --summary <task>`. It is useful for providing documentation, usage examples, or explaining complex tasks.
+## Description
+
+Detailed description of the task. Displayed when running `task --summary <task>`.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Add summary
+
+Provide detailed task documentation
 
 ```yaml
 tasks:
   deploy:
+    desc: Deploy application
     summary: |
-      Deploys the application to the production environment.
+      Deploys the application to production environment.
       
-      Usage: task deploy [vars...]
-    cmds: ...
+      Prerequisites:
+      - Docker must be installed
+      - AWS credentials configured
+      
+      This task will:
+      1. Build the Docker image
+      2. Push to ECR
+      3. Update ECS service
+    cmds:
+      - task: build-image
+      - task: push-image
+      - task: update-service
+
 ```
+
+
+
+
+
+
+## Related
+
+- [desc](./desc.md)
+
+
+
+

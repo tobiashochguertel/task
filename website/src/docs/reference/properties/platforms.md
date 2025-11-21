@@ -1,30 +1,88 @@
 # platforms
 
-`platforms` specifies which operating systems the task or command should run on.
+Operating systems where task can run.
 
 ## Type
 
-`[]string`
+`platforms`
 
-## Common Values
 
-| Platform | Description | Example |
-| :--- | :--- | :--- |
-| `linux` | Linux | `platforms: [linux]` |
-| `darwin` | macOS | `platforms: [darwin]` |
-| `windows` | Windows | `platforms: [windows]` |
+## Description
 
-## Usage
+Restrict task execution to specific platforms. Task will skip if platform doesn't match.
 
-If the current operating system is not in the list, the task or command will be skipped.
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Linux only
+
+Task runs only on Linux
 
 ```yaml
 tasks:
-  windows-only:
-    platforms: [windows]
-    cmd: echo "This is Windows"
+  install-deps:
+    platforms: [linux]
+    cmds:
+      - apt-get install -y build-essential
 
-  unix-only:
-    platforms: [linux, darwin]
-    cmd: echo "This is Unix"
 ```
+
+
+
+### Multiple platforms
+
+Task runs on Linux or macOS
+
+```yaml
+tasks:
+  build:
+    platforms: [linux, darwin]
+    cmds:
+      - make build
+
+```
+
+
+
+### Windows specific
+
+Task for Windows only
+
+```yaml
+tasks:
+  setup:
+    platforms: [windows]
+    cmds:
+      - choco install golang
+
+```
+
+
+
+
+
+
+## Related
+
+- [preconditions](./preconditions.md)
+
+
+
+

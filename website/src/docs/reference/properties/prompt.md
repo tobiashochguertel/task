@@ -1,31 +1,72 @@
 # prompt
 
-`prompt` requires user confirmation before executing the task.
+Show confirmation prompt before executing.
 
 ## Type
 
-`string` or `[]string`
+`union`
 
-## Usage
 
-If the user denies the prompt (by typing `n` or `no`), the task execution is aborted.
+## Description
 
-### Single Prompt
+Display a yes/no prompt before running the task. Useful for dangerous operations.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Simple prompt
+
+Ask for confirmation
 
 ```yaml
 tasks:
-  clean:
-    prompt: Are you sure you want to delete all files?
-    cmds: ...
+  delete-db:
+    prompt: This will delete the database. Continue?
+    cmds:
+      - rm -rf data/db
+
 ```
 
-### Multiple Prompts
+
+
+### Destructive operation
+
+Protect production deployment
 
 ```yaml
 tasks:
-  deploy:
-    prompt:
-      - This will deploy to production.
-      - Are you absolutely sure?
-    cmds: ...
+  deploy-prod:
+    prompt: Deploy to PRODUCTION environment?
+    env:
+      ENV: production
+    cmds:
+      - task: build
+      - task: push
+      - task: update-service
+
 ```
+
+
+
+
+
+
+
+

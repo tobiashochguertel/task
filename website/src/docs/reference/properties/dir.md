@@ -1,32 +1,77 @@
 # dir
 
-`dir` sets the working directory for the task or included Taskfile.
+Working directory for task execution.
 
 ## Type
 
 `string`
 
-## Usage
 
-### Task Level
+## Description
 
-Sets the working directory for the commands in the task.
+Specify the directory where commands should be executed. Relative to Taskfile location.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Change directory
+
+Run commands in specific directory
 
 ```yaml
 tasks:
-  build:
-    dir: ./src
+  frontend:
+    dir: ./web
     cmds:
-      - go build
+      - npm install
+      - npm run build
+
 ```
 
-### Include Level
 
-Sets the working directory for all tasks in the included Taskfile.
+
+### Using variables
+
+Dynamic directory paths
 
 ```yaml
-includes:
-  backend:
-    taskfile: ./backend
-    dir: ./backend
+vars:
+  PROJECT_DIR: ./projects/myapp
+
+tasks:
+  build:
+    dir: '{{.PROJECT_DIR}}'
+    cmds:
+      - make build
+
 ```
+
+
+
+
+
+
+## Related
+
+- [cmds](./cmds.md)
+
+
+
+

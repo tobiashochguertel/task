@@ -1,0 +1,3 @@
+[submodule "task-docs-gen"]
+	path = task-docs-gen
+	url = https://github.com/tobiashochguertel/task-docs-gen.git

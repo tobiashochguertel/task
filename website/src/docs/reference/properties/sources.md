@@ -1,41 +1,83 @@
 # sources
 
-`sources` defines the files that the task depends on. It is used to determine if a task needs to be re-run.
+Source files to check for staleness.
 
 ## Type
 
-`[]string` (Glob patterns)
+`array`
 
-## Usage
 
-If a task has `sources` defined, Task will check if the files matching the patterns have changed since the last successful run.
+## Description
+
+List of source files or glob patterns. Used with method to determine if task needs to run.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Basic sources
+
+Track source files
 
 ```yaml
 tasks:
   build:
     sources:
-      - '**/*.go'
+      - src/**/*.go
       - go.mod
-      - exclude: '**/*_test.go'
+    generates:
+      - bin/app
     cmds:
-      - go build ./...
+      - go build -o bin/app
+
 ```
 
-### Exclusions
 
-You can exclude files using the `exclude` keyword.
+
+### With exclusions
+
+Use glob patterns with exclusions
 
 ```yaml
-sources:
-  - ./**/*
-  - exclude: .git/**/*
-  - exclude: node_modules/**/*
+tasks:
+  compile:
+    sources:
+      - "src/**/*.ts"
+      - "!src/**/*.test.ts"
+    generates:
+      - dist/**/*.js
+    cmds:
+      - tsc
+
 ```
 
-## Methods
 
-The method used to check for changes is defined by the global `method` property (default: `checksum`).
 
-- **checksum**: Calculates a hash of the file contents.
-- **timestamp**: Checks the file modification time.
-- **none**: Always run the task.
+
+
+
+## Related
+
+- [generates](./generates.md)
+- [method](./method.md)
+- [status](./status.md)
+
+
+
+

@@ -1,21 +1,78 @@
 # shopt
 
-`shopt` allows you to enable Bash-specific shell options.
+Enable bash shell options.
 
 ## Type
 
-`[]string`
+`array`
 
-## Options
 
-| Option | Description | Example |
-| :--- | :--- | :--- |
-| `expand_aliases` | Aliases are expanded. | `shopt: [expand_aliases]` |
-| `globstar` | Enable the `**` pattern for recursive globbing. | `shopt: [globstar]` |
-| `nullglob` | If a pattern matches no files, it expands to a null string rather than itself. | `shopt: [nullglob]` |
+## Description
 
-## Usage
+Set bash-specific shell options using shopt. Alternative to set for bash users.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Enable globstar
+
+Use ** for recursive globbing
 
 ```yaml
-shopt: [globstar]
+tasks:
+  clean:
+    shopt: [globstar]
+    cmds:
+      - rm -rf **/*.pyc
+
 ```
+
+
+
+### Multiple options
+
+Enable several bash options
+
+```yaml
+version: '3'
+
+shopt: [globstar, dotglob]
+
+tasks:
+  lint:
+    cmds:
+      - shellcheck **/*.sh
+
+```
+
+
+
+
+
+
+## Related
+
+- [set](./set.md)
+
+
+
+

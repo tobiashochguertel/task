@@ -1,18 +1,68 @@
 # aliases
 
-`aliases` defines alternative names for a task or namespace.
+Alternative names for the task.
 
 ## Type
 
-`[]string`
+`array`
 
-## Usage
 
-Aliases can be used to run the task from the CLI just like the main task name.
+## Description
+
+Define multiple names for the same task. Useful for shortcuts or compatibility.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Basic aliases
+
+Add shortcuts for task names
 
 ```yaml
 tasks:
-  build:
-    aliases: [b, compile]
-    cmds: ...
+  build-production:
+    aliases: [bp, prod]
+    cmds:
+      - npm run build -- --mode production
+
 ```
+
+
+
+### Multiple aliases
+
+Task with several alternative names
+
+```yaml
+tasks:
+  run-tests:
+    aliases: [test, t, tests]
+    cmds:
+      - npm test
+
+```
+
+
+
+
+
+
+
+

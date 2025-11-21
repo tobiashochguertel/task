@@ -1,20 +1,94 @@
 # status
 
-`status` defines a list of commands to check if a task is up-to-date.
+Shell commands to check if task is up-to-date.
 
 ## Type
 
-`[]string`
+`array`
 
-## Usage
 
-If all commands in the `status` list exit with code `0`, the task is considered up-to-date and will be skipped.
+## Description
+
+Execute commands to determine if task needs to run. Task skips if all commands succeed.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Check file exists
+
+Skip if output file exists
 
 ```yaml
 tasks:
-  generate-file:
+  build:
     status:
-      - test -f generated.txt
+      - test -f bin/app
     cmds:
-      - echo "content" > generated.txt
+      - go build -o bin/app
+
 ```
+
+
+
+### Compare timestamps
+
+Check if sources are newer
+
+```yaml
+tasks:
+  compile:
+    status:
+      - test dist/bundle.js -nt src/index.js
+    cmds:
+      - webpack build
+
+```
+
+
+
+### Multiple checks
+
+All conditions must pass to skip
+
+```yaml
+tasks:
+  setup:
+    status:
+      - test -d node_modules
+      - test -f package-lock.json
+    cmds:
+      - npm install
+
+```
+
+
+
+
+
+
+## Related
+
+- [sources](./sources.md)
+- [generates](./generates.md)
+- [method](./method.md)
+
+
+
+

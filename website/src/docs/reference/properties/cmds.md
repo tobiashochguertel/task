@@ -1,89 +1,91 @@
 # cmds
 
-`cmds` defines the list of commands to be executed by the task.
+Commands to execute for this task.
 
 ## Type
 
-`[]Command`
+`cmds`
 
-## Syntax
 
-`cmds` is a list where each item can be a string or a command object.
+## Description
 
-### Simple String
+A list of shell commands or Task calls to execute. Commands run sequentially.
 
-A simple shell command.
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Simple commands
+
+Run shell commands
 
 ```yaml
 tasks:
   build:
     cmds:
-      - go build ./...
-      - echo "Build complete"
+      - go build -o app
+      - chmod +x app
+
 ```
 
-### Command Object
 
-Allows more control over execution.
+
+### Task calls
+
+Call other tasks
 
 ```yaml
 tasks:
-  example:
+  build:
     cmds:
-      - cmd: echo "Hello World"
-        silent: true
-        ignore_error: false
-        platforms: [linux, darwin]
-        set: [errexit]
-        shopt: [globstar]
+      - task: clean
+      - task: compile
+
 ```
 
-#### Properties
 
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| `cmd` | `string` | The command to execute. |
-| `silent` | `bool` | If `true`, suppresses the command output. |
-| `ignore_error` | `bool` | If `true`, continues execution even if the command fails. |
-| `platforms` | `[]string` | List of platforms where this command should run (e.g., `linux`, `windows`). |
-| `set` | `[]string` | POSIX shell options (e.g., `errexit`, `xtrace`). |
-| `shopt` | `[]string` | Bash shell options (e.g., `globstar`). |
 
-### Task Reference
+### Mixed commands
 
-Execute another task as a command.
+Mix shell and task calls
 
 ```yaml
 tasks:
   deploy:
     cmds:
+      - echo "Building..."
       - task: build
-        vars: { BUILD_TYPE: release }
+      - echo "Deploying..."
+      - ./deploy.sh
+
 ```
 
-### Deferred Commands
 
-Schedule a command to run when the task finishes (successfully or not).
 
-```yaml
-tasks:
-  cleanup:
-    cmds:
-      - mkdir tmp
-      - defer: rm -rf tmp
-      - echo "Working..."
-```
 
-### Loops
 
-Run a command multiple times.
 
-```yaml
-tasks:
-  greet:
-    cmds:
-      - for: [alice, bob]
-        cmd: echo "Hello {{.ITEM}}"
-```
+## Related
 
-See [Looping](../templating.md#loops) for more details.
+- [cmd](./cmd.md)
+- [deps](./deps.md)
+
+
+
+

@@ -1,22 +1,97 @@
 # silent
 
-`silent` suppresses the output of the command being executed.
+Suppress command output.
 
 ## Type
 
-`bool`
+`boolean`
 
-## Default
 
-`false`
+## Description
 
-## Usage
+When true, commands won't print to stdout/stderr unless they fail.
 
-When set to `true`, Task will not print the command itself before executing it. The output of the command (stdout/stderr) is still printed unless the command itself suppresses it or `output` configuration handles it.
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+- Command level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Silent task
+
+Suppress all output for task
 
 ```yaml
 tasks:
-  echo:
-    cmd: echo "Hello"
+  cleanup:
     silent: true
+    cmds:
+      - rm -rf tmp/
+      - echo "Cleaned up"
+
 ```
+
+
+
+### Silent command
+
+Suppress output for specific command
+
+```yaml
+tasks:
+  build:
+    cmds:
+      - cmd: echo "Building..."
+        silent: true
+      - go build
+
+```
+
+
+
+### Global silent
+
+Make all tasks silent by default
+
+```yaml
+version: '3'
+
+silent: true
+
+tasks:
+  build:
+    cmds:
+      - go build
+
+```
+
+
+
+
+
+
+## Related
+
+- [output](./output.md)
+
+
+
+

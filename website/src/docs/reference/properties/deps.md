@@ -1,60 +1,76 @@
 # deps
 
-`deps` defines a list of tasks that must be executed before the current task.
+Task dependencies that run before this task.
 
 ## Type
 
-`[]Dependency`
+`deps`
 
-## Execution
 
-Dependencies are executed in parallel by default. To run them sequentially, you can use the `task` command in `cmds` instead.
+## Description
 
-## Syntax
+Define tasks that must run before the current task. Dependencies run in parallel by default.
 
-`deps` is a list where each item can be a string or a dependency object.
 
-### Simple String
 
-Reference a task by name.
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Simple dependencies
+
+Run tasks before current task
 
 ```yaml
 tasks:
-  deploy:
-    deps: [build, test]
+  build:
+    deps: [clean, install]
+    cmds:
+      - go build
+
 ```
 
-### Dependency Object
 
-Pass variables or configure execution.
+
+### Dependencies with variables
+
+Pass variables to dependencies
 
 ```yaml
 tasks:
   deploy:
     deps:
       - task: build
-        vars: { ENV: production }
-      - task: test
-        silent: true
+        vars:
+          ENV: production
+    cmds:
+      - ./deploy.sh
+
 ```
 
-#### Properties
 
-| Property | Type | Description |
-| :--- | :--- | :--- |
-| `task` | `string` | The name of the task to run. |
-| `vars` | `map[string]Variable` | Variables to pass to the dependency. |
-| `silent` | `bool` | If `true`, suppresses the dependency output. |
 
-### Loops
 
-Run a dependency multiple times.
 
-```yaml
-tasks:
-  test-all:
-    deps:
-      - for: [unit, integration]
-        task: test
-        vars: { TYPE: "{{.ITEM}}" }
-```
+
+## Related
+
+- [cmds](./cmds.md)
+
+
+
+

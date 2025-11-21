@@ -1,21 +1,94 @@
 # method
 
-`method` defines the default strategy used to check if a task is up-to-date (i.e., if it needs to run based on `sources` and `generates`).
+Method for checking if task is up-to-date.
 
 ## Type
 
 `string`
 
+
+## Description
+
+Determines how Task checks if re-execution is needed. Options: checksum, timestamp, none.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+
+
 ## Options
 
-| Option | Description | Example |
-| :--- | :--- | :--- |
-| `checksum` | Calculates a hash of the file contents. (Default) | `method: checksum` |
-| `timestamp` | Checks the file modification time. | `method: timestamp` |
-| `none` | Disables up-to-date checks. | `method: none` |
+| Option | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `checksum` | `string` | Check content hash of source files (default). | `method: checksum` |
+| `timestamp` | `string` | Check file modification times. | `method: timestamp` |
+| `none` | `string` | Always run the task. | `method: none` |
 
-## Usage
+
+
+
+## Examples
+
+
+### Using checksums
+
+Default method - check file content
 
 ```yaml
-method: timestamp
+tasks:
+  build:
+    method: checksum
+    sources:
+      - src/**/*.go
+    generates:
+      - bin/app
+    cmds:
+      - go build
+
 ```
+
+
+
+### Using timestamps
+
+Faster but less accurate
+
+```yaml
+tasks:
+  compile:
+    method: timestamp
+    sources:
+      - src/**/*.ts
+    generates:
+      - dist/**/*.js
+    cmds:
+      - tsc
+
+```
+
+
+
+
+
+
+## Related
+
+- [sources](./sources.md)
+- [generates](./generates.md)
+- [status](./status.md)
+
+
+
+

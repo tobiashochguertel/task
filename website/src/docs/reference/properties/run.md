@@ -1,21 +1,99 @@
 # run
 
-`run` defines the default execution behavior for tasks.
+Control when task should run.
 
 ## Type
 
-`string`
+`run`
+
+
+## Description
+
+Specify task execution behavior. Options: always, once, when_changed.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Taskfile (root level)
+
+- Task level
+
+
+
+
+
 
 ## Options
 
-| Option | Description | Example |
-| :--- | :--- | :--- |
-| `always` | The task will run every time it is called. (Default) | `run: always` |
-| `once` | The task will run only once per execution of the `task` command. | `run: once` |
-| `when_changed` | The task will run only if its sources have changed. | `run: when_changed` |
+| Option | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `always` | `string` | Always run the task (default). | `run: always` |
+| `once` | `string` | Run only once per invocation. | `run: once` |
+| `when_changed` | `string` | Run when sources change. | `run: when_changed` |
 
-## Usage
+
+
+
+## Examples
+
+
+### Run once
+
+Task runs only once even if called multiple times
 
 ```yaml
-run: once
+tasks:
+  setup:
+    run: once
+    cmds:
+      - npm install
+  
+  build:
+    deps: [setup]
+    cmds:
+      - npm run build
+  
+  test:
+    deps: [setup]
+    cmds:
+      - npm test
+
 ```
+
+
+
+### Run when changed
+
+Run only if sources changed
+
+```yaml
+tasks:
+  compile:
+    run: when_changed
+    sources:
+      - src/**/*.ts
+    generates:
+      - dist/**/*.js
+    cmds:
+      - tsc
+
+```
+
+
+
+
+
+
+## Related
+
+- [method](./method.md)
+- [sources](./sources.md)
+
+
+
+

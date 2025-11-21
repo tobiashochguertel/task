@@ -1,18 +1,78 @@
 # desc
 
-`desc` provides a short description of the task.
+Short description shown in task list.
 
 ## Type
 
 `string`
 
-## Usage
 
-This description is displayed when running `task --list` or `task -l`.
+## Description
+
+A brief description of the task. Displayed when running `task --list`.
+
+
+
+
+## Contexts
+
+This property can be used in:
+
+
+- Task level
+
+
+
+
+
+
+
+
+## Examples
+
+
+### Basic description
+
+Add description to task
 
 ```yaml
 tasks:
   build:
     desc: Build the application
-    cmds: ...
+    cmds:
+      - go build
+
 ```
+
+
+
+### Hidden tasks
+
+Tasks without desc are hidden from list
+
+```yaml
+tasks:
+  public-task:
+    desc: This appears in task --list
+    cmds:
+      - echo "visible"
+  
+  private-task:
+    # No desc - hidden from list
+    cmds:
+      - echo "hidden"
+
+```
+
+
+
+
+
+
+## Related
+
+- [summary](./summary.md)
+
+
+
+
