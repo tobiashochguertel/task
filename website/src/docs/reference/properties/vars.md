@@ -74,10 +74,10 @@ The command is executed once, lazily (when the variable is first used).
 
 Task provides some special variables:
 
-*   `{{.TASK}}`: The name of the current task.
-*   `{{.ROOT_DIR}}`: The absolute path to the root Taskfile directory.
-*   `{{.TASKFILE_DIR}}`: The absolute path to the directory of the included Taskfile (if applicable).
-*   `{{.CLI_ARGS}}`: Arguments passed to the task from the CLI.
+*   `{{\.TASK}}`: The name of the current task.
+*   `{{\.ROOT_DIR}}`: The absolute path to the root Taskfile directory.
+*   `{{\.TASKFILE_DIR}}`: The absolute path to the directory of the included Taskfile (if applicable).
+*   `{{\.CLI_ARGS}}`: Arguments passed to the task from the CLI.
 
 ## Templating
 

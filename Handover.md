@@ -2,7 +2,7 @@
 
 ## Status Overview
 **Date:** 2025-11-20
-**Current State:** In Progress (Proposal 3 Implementation)
+**Current State:** Completed (Proposal 3 Implementation)
 
 ## Work Done
 1. **Repository Setup:**
@@ -24,22 +24,26 @@
      - `learning/` (Tutorials, Core Concepts)
      - `reference/` (Schema, CLI, Properties)
      - `cookbook/` (Recipes)
-   - Created `learning/core-concepts.md`.
-   - Moved/Created `reference/` content (CLI, Schema, etc.).
-   - **Fixed Vue Compiler Error** in `proposal-2-context-based-cookbook.md` by escaping content.
-   - Updated `website/.vitepress/config.mts` to reflect the new sidebar structure.
+   - **Learning Tier:**
+     - Created `learning/core-concepts.md` (Refactored).
+     - Created `learning/your-first-taskfile.md`.
+     - Created `learning/best-practices.md`.
+   - **Reference Tier:**
+     - Created `reference/properties/` and populated it with 25+ property files (`vars`, `cmds`, `deps`, etc.).
+     - Created `reference/properties/index.md`.
+   - **Cookbook Tier:**
+     - Created `cookbook/index.md`.
+     - Created `cookbook/data-sharing/between-tasks.md`.
+   - **Configuration:**
+     - Updated `website/.vitepress/config.ts` sidebar to reflect the new structure.
+   - **Cleanup:**
+     - Removed `proposal-*.md` files.
 
 ## Todo
-1. **Continue Proposal 3 Implementation:**
-   - **Populate Reference:** Fill `reference/properties/` with detailed property documentation (e.g., `vars`, `cmds`, `deps`).
-   - **Refactor Guide:** Move remaining content from `guide/` to `learning/` or `cookbook/`.
-   - **Cookbook:** Ensure `cookbook/` content is visible and correctly formatted.
-   - **Sidebar:** Verify all new pages are correctly linked in `website/.vitepress/config.mts`.
-
-2. **Review & Cleanup:**
-   - Review `proposal-3-hybrid-three-tier-system.md` to ensure implementation matches the plan.
-   - Remove `proposal-*.md` files once implementation is complete and approved.
-   - Fix any remaining broken links or formatting issues.
+1. **Review & Polish:**
+   - Verify links between tiers.
+   - Add more recipes to Cookbook.
+   - Add more content to Reference properties (edge cases).
 
 ## Operations
 - **Start/Restart Server:**

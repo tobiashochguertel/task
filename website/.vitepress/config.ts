@@ -197,23 +197,6 @@ export default defineConfig({
       ],
       '/': [
         {
-          text: 'Proposals',
-          items: [
-            {
-              text: '1. Property Reference',
-              link: '/docs/proposal-1-property-reference-guide'
-            },
-            {
-              text: '2. Context Cookbook',
-              link: '/docs/proposal-2-context-based-cookbook'
-            },
-            {
-              text: '3. Hybrid System',
-              link: '/docs/proposal-3-hybrid-three-tier-system'
-            }
-          ]
-        },
-        {
           text: 'Learning',
           items: [
             {
@@ -227,6 +210,14 @@ export default defineConfig({
             {
               text: 'Core Concepts',
               link: '/docs/learning/core-concepts'
+            },
+            {
+              text: 'Your First Taskfile',
+              link: '/docs/learning/your-first-taskfile'
+            },
+            {
+              text: 'Best Practices',
+              link: '/docs/learning/best-practices'
             }
           ]
         },
@@ -254,12 +245,20 @@ export default defineConfig({
           collapsed: true,
           items: [
             {
-              text: 'Taskfile Schema',
+              text: 'Properties',
+              link: '/docs/reference/properties/'
+            },
+            {
+              text: 'CLI',
+              link: '/docs/reference/cli'
+            },
+            {
+              text: 'Schema',
               link: '/docs/reference/schema'
             },
             {
-              text: 'Variables',
-              link: '/docs/reference/properties/vars'
+              text: 'Templating',
+              link: '/docs/reference/templating'
             },
             {
               text: 'Environment',
@@ -268,14 +267,6 @@ export default defineConfig({
             {
               text: 'Configuration',
               link: '/docs/reference/config'
-            },
-            {
-              text: 'CLI',
-              link: '/docs/reference/cli'
-            },
-            {
-              text: 'Templating',
-              link: '/docs/reference/templating'
             },
             {
               text: 'Package API',
