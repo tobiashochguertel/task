@@ -2,32 +2,61 @@ name: sources
 type: "[]string"
 short: Source files to check for staleness.
 description: |
-  List of source files or glob patterns. Used with method to determine if task needs to run.
+  Glob patterns for input files that Task monitors to determine if a task needs to run. Task compares checksums (or timestamps with method: timestamp) of source files against generated files. If sources haven't changed, Task skips execution and shows "Task is up to date".
+  
+  Use exclude: to ignore specific files from patterns. Sources are evaluated in order, so exclude must come after the positive glob it negates.
 contexts:
   - Task level
 examples:
-  - title: Basic sources
-    description: Track source files
+  - title: Basic sources and generates
+    description: Skip task if sources unchanged
+    code: |
+      version: '3'
+      
+      tasks:
+        js:
+          sources:
+            - src/js/**/*.js
+          generates:
+            - public/bundle.js
+          cmds:
+            - esbuild --bundle --minify js/index.js > public/bundle.js
+  - title: Multiple file patterns
+    description: Watch several file types
     code: |
       tasks:
         build:
           sources:
             - src/**/*.go
             - go.mod
+            - go.sum
           generates:
             - bin/app
           cmds:
             - go build -o bin/app
-  - title: With exclusions
-    description: Use glob patterns with exclusions
+  - title: Excluding files
+    description: Ignore specific files from patterns
+    code: |
+      tasks:
+        css:
+          sources:
+            - src/css/**/*.css
+            - exclude: src/css/vendor/**
+            - exclude: src/css/test.css
+          generates:
+            - public/bundle.css
+          cmds:
+            - sass --style=compressed src/css/main.scss public/bundle.css
+  - title: With multiple generates
+    description: One source produces multiple outputs
     code: |
       tasks:
         compile:
           sources:
-            - "src/**/*.ts"
-            - "!src/**/*.test.ts"
+            - src/**/*.ts
           generates:
             - dist/**/*.js
+            - dist/**/*.d.ts
           cmds:
             - tsc
 related:

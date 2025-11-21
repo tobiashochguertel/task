@@ -29,6 +29,6 @@ Complete reference for all Taskfile properties.
 | [sources](./sources.md) | `array` | Source files to check for staleness. |
 | [status](./status.md) | `array` | Shell commands to check if task is up-to-date. |
 | [summary](./summary.md) | `string` | Long description shown with task --summary. |
-| [vars](./vars.md) | `vars` | Global variables available to all tasks. |
+| [vars](./vars.md) | `vars` | Variables for tasks and templates. |
 | [version](./version.md) | `string` | Taskfile schema version. |
 | [watch](./watch.md) | `boolean` | Enable watch mode for continuous execution. |

@@ -9,7 +9,9 @@ Source files to check for staleness.
 
 ## Description
 
-List of source files or glob patterns. Used with method to determine if task needs to run.
+Glob patterns for input files that Task monitors to determine if a task needs to run. Task compares checksums (or timestamps with method: timestamp) of source files against generated files. If sources haven't changed, Task skips execution and shows "Task is up to date".
+
+Use exclude: to ignore specific files from patterns. Sources are evaluated in order, so exclude must come after the positive glob it negates.
 
 
 
@@ -31,9 +33,29 @@ This property can be used in:
 ## Examples
 
 
-### Basic sources
+### Basic sources and generates
 
-Track source files
+Skip task if sources unchanged
+
+```yaml
+version: '3'
+
+tasks:
+  js:
+    sources:
+      - src/js/**/*.js
+    generates:
+      - public/bundle.js
+    cmds:
+      - esbuild --bundle --minify js/index.js > public/bundle.js
+
+```
+
+
+
+### Multiple file patterns
+
+Watch several file types
 
 ```yaml
 tasks:
@@ -41,6 +63,7 @@ tasks:
     sources:
       - src/**/*.go
       - go.mod
+      - go.sum
     generates:
       - bin/app
     cmds:
@@ -50,18 +73,38 @@ tasks:
 
 
 
-### With exclusions
+### Excluding files
 
-Use glob patterns with exclusions
+Ignore specific files from patterns
+
+```yaml
+tasks:
+  css:
+    sources:
+      - src/css/**/*.css
+      - exclude: src/css/vendor/**
+      - exclude: src/css/test.css
+    generates:
+      - public/bundle.css
+    cmds:
+      - sass --style=compressed src/css/main.scss public/bundle.css
+
+```
+
+
+
+### With multiple generates
+
+One source produces multiple outputs
 
 ```yaml
 tasks:
   compile:
     sources:
-      - "src/**/*.ts"
-      - "!src/**/*.test.ts"
+      - src/**/*.ts
     generates:
       - dist/**/*.js
+      - dist/**/*.d.ts
     cmds:
       - tsc
 
