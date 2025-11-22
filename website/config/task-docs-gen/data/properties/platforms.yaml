@@ -2,33 +2,63 @@ name: platforms
 type: "[]string"
 short: Operating systems where task can run.
 description: |
-  Restrict task execution to specific platforms. Task will skip if platform doesn't match.
+  Restrict task or command execution to specific platforms (OS and/or architecture). Uses Go's GOOS and GOARCH values. On a platform mismatch, the task or command is skipped without error.
+  
+  Can specify OS only (e.g., windows), architecture only (e.g., amd64), or both (e.g., windows/amd64). Multiple platforms can be specified.
 contexts:
   - Task level
+  - Command level
 examples:
-  - title: Linux only
-    description: Task runs only on Linux
+  - title: OS-only restriction
+    description: Run only on Windows
     code: |
+      version: '3'
+      
       tasks:
-        install-deps:
-          platforms: [linux]
-          cmds:
-            - apt-get install -y build-essential
-  - title: Multiple platforms
-    description: Task runs on Linux or macOS
-    code: |
-      tasks:
-        build:
-          platforms: [linux, darwin]
-          cmds:
-            - make build
-  - title: Windows specific
-    description: Task for Windows only
-    code: |
-      tasks:
-        setup:
+        build-windows:
           platforms: [windows]
           cmds:
-            - choco install golang
+            - echo 'Running command on Windows'
+  - title: OS and architecture
+    description: Run on specific OS/arch combination
+    code: |
+      version: '3'
+      
+      tasks:
+        build-windows-amd64:
+          platforms: [windows/amd64]
+          cmds:
+            - echo 'Running command on Windows (amd64)'
+  - title: Architecture-only restriction
+    description: Run on specific architecture regardless of OS
+    code: |
+      version: '3'
+      
+      tasks:
+        build-amd64:
+          platforms: [amd64]
+          cmds:
+            - echo 'Running command on amd64'
+  - title: Multiple platforms
+    description: Run on several platforms
+    code: |
+      version: '3'
+      
+      tasks:
+        build:
+          platforms: [windows/amd64, darwin]
+          cmds:
+            - echo 'Running command on Windows (amd64) and macOS'
+  - title: Command-level platforms
+    description: Different commands for different platforms
+    code: |
+      version: '3'
+      
+      tasks:
+        build:
+          cmds:
+            - cmd: echo 'Running command on Windows (amd64) and macOS'
+              platforms: [windows/amd64, darwin]
+            - cmd: echo 'Running on all platforms'
 related:
   - preconditions

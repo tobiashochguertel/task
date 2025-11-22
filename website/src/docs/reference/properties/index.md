@@ -25,7 +25,7 @@ Complete reference for all Taskfile properties.
 | [run](./run.md) | `run` | Control when task should run. |
 | [set](./set.md) | `array` | Enable POSIX shell options. |
 | [shopt](./shopt.md) | `array` | Enable bash shell options. |
-| [silent](./silent.md) | `boolean` | Suppress command output. |
+| [silent](./silent.md) | `boolean` | Suppress command echo before execution. |
 | [sources](./sources.md) | `array` | Source files to check for staleness. |
 | [status](./status.md) | `array` | Shell commands to check if task is up-to-date. |
 | [summary](./summary.md) | `string` | Long description shown with task --summary. |

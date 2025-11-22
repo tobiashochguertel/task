@@ -2,36 +2,96 @@ name: cmds
 type: "[]Command"
 short: Commands to execute for this task.
 description: |
-  A list of shell commands or Task calls to execute. Commands run sequentially.
+  A list of shell commands or Task calls to execute sequentially. Unlike deps which run in parallel, cmds run one after another in order. Supports regular commands, task calls, and deferred cleanup commands.
+  
+  Commands can be strings for simple shell commands, or objects for advanced features like passing variables, controlling silent mode, or using defer for cleanup.
 contexts:
   - Task level
 examples:
-  - title: Simple commands
-    description: Run shell commands
+  - title: Simple shell commands
+    description: Run commands sequentially
     code: |
       tasks:
         build:
           cmds:
             - go build -o app
             - chmod +x app
-  - title: Task calls
-    description: Call other tasks
+            - ./app --version
+  - title: Calling other tasks
+    description: Execute tasks serially
     code: |
+      version: '3'
+      
+      tasks:
+        main-task:
+          cmds:
+            - task: task-to-be-called
+            - task: another-task
+            - echo "Both done"
+        
+        task-to-be-called:
+          cmds:
+            - echo "Task to be called"
+        
+        another-task:
+          cmds:
+            - echo "Another task"
+  - title: Task calls with variables
+    description: Pass variables to called tasks
+    code: |
+      version: '3'
+      
+      tasks:
+        greet:
+          vars:
+            RECIPIENT: '{{default "World" .RECIPIENT}}'
+          cmds:
+            - echo "Hello, {{.RECIPIENT}}!"
+        
+        greet-pessimistically:
+          cmds:
+            - task: greet
+              vars: { RECIPIENT: 'Cruel World' }
+              silent: true
+  - title: Deferred cleanup
+    description: Cleanup that runs after task completes
+    code: |
+      version: '3'
+      
+      tasks:
+        default:
+          cmds:
+            - mkdir -p tmpdir/
+            - defer: rm -rf tmpdir/
+            - echo 'Do work on tmpdir/'
+  - title: Deferred task call
+    description: Cleanup via another task
+    code: |
+      version: '3'
+      
+      tasks:
+        default:
+          cmds:
+            - mkdir -p tmpdir/
+            - defer: { task: cleanup }
+            - echo 'Do work on tmpdir/'
+        
+        cleanup:
+          cmds:
+            - rm -rf tmpdir/
+  - title: Using EXIT_CODE in defer
+    description: Check task success in cleanup
+    code: |
+      version: '3'
+      
       tasks:
         build:
           cmds:
-            - task: clean
-            - task: compile
-  - title: Mixed commands
-    description: Mix shell and task calls
-    code: |
-      tasks:
-        deploy:
-          cmds:
-            - echo "Building..."
-            - task: build
-            - echo "Deploying..."
-            - ./deploy.sh
+            - go build
+            - defer: |
+                if [ "$EXIT_CODE" != "0" ]; then
+                  echo "Build failed, cleaning up..."
+                  rm -rf dist/
+                fi
 related:
-  - cmd
   - deps

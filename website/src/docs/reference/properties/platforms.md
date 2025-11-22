@@ -9,7 +9,9 @@ Operating systems where task can run.
 
 ## Description
 
-Restrict task execution to specific platforms. Task will skip if platform doesn't match.
+Restrict task or command execution to specific platforms (OS and/or architecture). Uses Go's GOOS and GOARCH values. On a platform mismatch, the task or command is skipped without error.
+
+Can specify OS only (e.g., windows), architecture only (e.g., amd64), or both (e.g., windows/amd64). Multiple platforms can be specified.
 
 
 
@@ -21,6 +23,8 @@ This property can be used in:
 
 - Task level
 
+- Command level
+
 
 
 
@@ -31,16 +35,52 @@ This property can be used in:
 ## Examples
 
 
-### Linux only
+### OS-only restriction
 
-Task runs only on Linux
+Run only on Windows
 
 ```yaml
+version: '3'
+
 tasks:
-  install-deps:
-    platforms: [linux]
+  build-windows:
+    platforms: [windows]
     cmds:
-      - apt-get install -y build-essential
+      - echo 'Running command on Windows'
+
+```
+
+
+
+### OS and architecture
+
+Run on specific OS/arch combination
+
+```yaml
+version: '3'
+
+tasks:
+  build-windows-amd64:
+    platforms: [windows/amd64]
+    cmds:
+      - echo 'Running command on Windows (amd64)'
+
+```
+
+
+
+### Architecture-only restriction
+
+Run on specific architecture regardless of OS
+
+```yaml
+version: '3'
+
+tasks:
+  build-amd64:
+    platforms: [amd64]
+    cmds:
+      - echo 'Running command on amd64'
 
 ```
 
@@ -48,29 +88,34 @@ tasks:
 
 ### Multiple platforms
 
-Task runs on Linux or macOS
+Run on several platforms
 
 ```yaml
+version: '3'
+
 tasks:
   build:
-    platforms: [linux, darwin]
+    platforms: [windows/amd64, darwin]
     cmds:
-      - make build
+      - echo 'Running command on Windows (amd64) and macOS'
 
 ```
 
 
 
-### Windows specific
+### Command-level platforms
 
-Task for Windows only
+Different commands for different platforms
 
 ```yaml
+version: '3'
+
 tasks:
-  setup:
-    platforms: [windows]
+  build:
     cmds:
-      - choco install golang
+      - cmd: echo 'Running command on Windows (amd64) and macOS'
+        platforms: [windows/amd64, darwin]
+      - cmd: echo 'Running on all platforms'
 
 ```
 

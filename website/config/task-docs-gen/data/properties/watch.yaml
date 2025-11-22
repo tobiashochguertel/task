@@ -2,45 +2,74 @@ name: watch
 type: boolean
 short: Enable watch mode for continuous execution.
 description: |
-  When true, task watches for file changes and re-runs automatically.
+  When set to true, the task automatically runs in watch mode, monitoring source files and re-executing on changes. Requires the sources attribute to be defined. Only runs in watch mode when invoked directly from CLI, not when called as a dependency.
+  
+  The default watch interval is 100ms, but can be customized globally with interval setting or --interval flag. The interval is the debounce time - Task waits this long for duplicate events and only runs once.
 contexts:
   - Task level
 examples:
-  - title: Watch mode
-    description: Auto-rebuild on changes
+  - title: Basic watch mode
+    description: Auto-rebuild on file changes
     code: |
+      version: '3'
+      
+      tasks:
+        build:
+          desc: Builds the Go application
+          watch: true
+          sources:
+            - '**/*.go'
+          cmds:
+            - go build
+  - title: Watch with custom interval
+    description: Set global watch debounce interval
+    code: |
+      version: '3'
+      
+      interval: 500ms
+      
+      tasks:
+        build:
+          desc: Builds the Go application
+          watch: true
+          sources:
+            - '**/*.go'
+          cmds:
+            - go build
+  - title: Frontend development
+    description: Watch TypeScript files
+    code: |
+      version: '3'
+      
       tasks:
         dev:
           watch: true
           sources:
-            - src/**/*.ts
+            - 'src/**/*.ts'
+            - 'src/**/*.tsx'
           cmds:
-            - tsc
-            - node dist/index.js
-  - title: Development workflow
-    description: Combined watch tasks
+            - npm run build
+  - title: Multiple watch tasks
+    description: Different watch patterns per task
     code: |
+      version: '3'
+      
+      interval: 300ms
+      
       tasks:
-        watch-all:
-          deps:
-            - task: watch-backend
-            - task: watch-frontend
-        
         watch-backend:
           watch: true
-          dir: backend
           sources:
-            - "**/*.go"
+            - 'backend/**/*.go'
           cmds:
-            - go build
-            - ./app
+            - go build ./backend
         
         watch-frontend:
           watch: true
-          dir: frontend
           sources:
-            - "**/*.ts"
+            - 'frontend/**/*.{ts,tsx,css}'
           cmds:
-            - npm run build
+            - npm run build:frontend
 related:
   - sources
+  - interval
