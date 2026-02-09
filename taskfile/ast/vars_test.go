@@ -8,10 +8,6 @@ import (
 	"github.com/go-task/task/v3/taskfile/ast"
 )
 
-func stringPtr(s string) *string {
-	return &s
-}
-
 func TestVarsMerge(t *testing.T) {
 	t.Parallel()
 
