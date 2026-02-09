@@ -8,6 +8,7 @@ type (
 	// Namespace wraps task list output for use in editor integrations (e.g. VSCode, etc)
 	Namespace struct {
 		Tasks      []Task                `json:"tasks"`
+		Vars       []Variable            `json:"vars,omitempty"`
 		Namespaces map[string]*Namespace `json:"namespaces,omitempty"`
 		Location   string                `json:"location,omitempty"`
 	}
@@ -20,6 +21,12 @@ type (
 		Aliases  []string  `json:"aliases"`
 		UpToDate *bool     `json:"up_to_date,omitempty"`
 		Location *Location `json:"location"`
+	}
+	// Variable describes a variable with its metadata
+	Variable struct {
+		Name  string `json:"name"`
+		Desc  string `json:"desc,omitempty"`
+		Value string `json:"value,omitempty"`
 	}
 	// Location describes a task's location in a taskfile
 	Location struct {

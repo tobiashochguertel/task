@@ -139,6 +139,10 @@ func run() error {
 		return os.RemoveAll(cachePath)
 	}
 
+	if flags.ListVars {
+		return e.ListVariables(flags.ListJson)
+	}
+
 	listOptions := task.NewListOptions(
 		flags.List,
 		flags.ListAll,

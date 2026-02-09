@@ -137,6 +137,54 @@ func (e *Executor) ListTaskNames(allTasks bool) error {
 	return nil
 }
 
+// ListVariables prints a list of global variables with their descriptions
+func (e *Executor) ListVariables(formatAsJson bool) error {
+	vars := e.Taskfile.Vars
+	
+	if formatAsJson {
+		type varInfo struct {
+			Name  string `json:"name"`
+			Desc  string `json:"desc,omitempty"`
+			Value string `json:"value,omitempty"`
+		}
+		
+		output := make([]varInfo, 0, vars.Len())
+		for k, v := range vars.All() {
+			vi := varInfo{
+				Name: k,
+				Desc: v.Desc,
+			}
+			// Include value for static variables only (not dynamic sh/ref)
+			if v.Value != nil && v.Sh == nil && v.Ref == "" {
+				vi.Value = fmt.Sprintf("%v", v.Value)
+			}
+			output = append(output, vi)
+		}
+		
+		encoder := json.NewEncoder(e.Stdout)
+		encoder.SetIndent("", "  ")
+		return encoder.Encode(output)
+	}
+	
+	// Format as human-readable table
+	if vars.Len() == 0 {
+		e.Logger.Outf(logger.Yellow, "task: No variables defined in this Taskfile\n")
+		return nil
+	}
+	
+	e.Logger.Outf(logger.Default, "task: Available variables for this project:\n")
+	w := tabwriter.NewWriter(e.Stdout, 0, 8, 6, ' ', 0)
+	for k, v := range vars.All() {
+		e.Logger.FOutf(w, logger.Yellow, "* ")
+		e.Logger.FOutf(w, logger.Green, k)
+		if v.Desc != "" {
+			e.Logger.FOutf(w, logger.Default, ": \t%s", v.Desc)
+		}
+		_, _ = fmt.Fprint(w, "\n")
+	}
+	return w.Flush()
+}
+
 func (e *Executor) ToEditorOutput(tasks []*ast.Task, noStatus bool, nested bool) (*editors.Namespace, error) {
 	var g errgroup.Group
 	editorTasks := make([]editors.Task, len(tasks))
@@ -175,6 +223,20 @@ func (e *Executor) ToEditorOutput(tasks []*ast.Task, noStatus bool, nested bool)
 		return nil, err
 	}
 
+	// Add global variables to the output
+	editorVars := make([]editors.Variable, 0, e.Taskfile.Vars.Len())
+	for k, v := range e.Taskfile.Vars.All() {
+		editorVar := editors.Variable{
+			Name: k,
+			Desc: v.Desc,
+		}
+		// Include value for static variables only (not dynamic sh/ref)
+		if v.Value != nil && v.Sh == nil && v.Ref == "" {
+			editorVar.Value = fmt.Sprintf("%v", v.Value)
+		}
+		editorVars = append(editorVars, editorVar)
+	}
+
 	// Create the root namespace
 	var tasksLen int
 	if !nested {
@@ -182,6 +244,7 @@ func (e *Executor) ToEditorOutput(tasks []*ast.Task, noStatus bool, nested bool)
 	}
 	rootNamespace := &editors.Namespace{
 		Tasks:    make([]editors.Task, tasksLen),
+		Vars:     editorVars,
 		Location: e.Taskfile.Location,
 	}
 
