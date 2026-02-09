@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- **New feature**: Variables can now have optional `desc` field to document their
+  purpose. Variable descriptions support inheritance across scopes and can be
+  listed with `task --list-vars`. JSON output for editor integrations now includes
+  variable information (#TBD by @tobiashochguertel).
 - Fixed Remote Git Taskfiles failing on Windows due to backslashes in URL paths
   (#2656 by @Trim21).
 
