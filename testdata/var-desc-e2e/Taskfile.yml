@@ -1,0 +1,108 @@
+version: '3'
+
+# Real-world example: A deployment pipeline with documented variables
+
+vars:
+  # Environment configuration
+  ENVIRONMENT:
+    desc: "Deployment environment (dev, staging, prod)"
+    value: "dev"
+  
+  # Application settings  
+  APP_NAME:
+    desc: "Application identifier used in deployments"
+    value: "my-service"
+  
+  APP_VERSION:
+    desc: "Application version from git"
+    sh: git describe --tags --always || echo "dev"
+  
+  # Build configuration
+  BUILD_DIR:
+    desc: "Directory where build artifacts are stored"
+    value: "./build"
+  
+  DOCKER_REGISTRY:
+    desc: "Docker registry URL"
+    value: "registry.example.com"
+  
+  DOCKER_IMAGE:
+    desc: "Full Docker image name with registry"
+    value: "{{.DOCKER_REGISTRY}}/{{.APP_NAME}}"
+  
+  # Deployment configuration
+  DEPLOY_TIMEOUT:
+    desc: "Maximum time to wait for deployment (seconds)"
+    value: 300
+  
+  HEALTH_CHECK_URL:
+    desc: "URL for application health check"
+    value: "http://localhost:8080/health"
+
+tasks:
+  default:
+    desc: Show all configuration variables
+    cmds:
+      - echo "=== Build Configuration ==="
+      - echo "Environment {{.ENVIRONMENT}}"
+      - echo "App {{.APP_NAME}} v{{.APP_VERSION}}"
+      - echo "Build directory {{.BUILD_DIR}}"
+      - echo ""
+      - echo "=== Docker Configuration ==="
+      - echo "Registry {{.DOCKER_REGISTRY}}"
+      - echo "Image {{.DOCKER_IMAGE}}"
+      - echo ""
+      - echo "=== Deployment Configuration ==="
+      - echo "Timeout {{.DEPLOY_TIMEOUT}}s"
+      - echo "Health check {{.HEALTH_CHECK_URL}}"
+  
+  build:
+    desc: Build the application
+    vars:
+      BUILD_TIME:
+        desc: "Timestamp when the build started"
+        sh: date +%Y%m%d-%H%M%S
+    cmds:
+      - echo "Building {{.APP_NAME}} v{{.APP_VERSION}}"
+      - echo "Build time {{.BUILD_TIME}}"
+      - mkdir -p {{.BUILD_DIR}}
+      - echo "{{.APP_VERSION}}" > {{.BUILD_DIR}}/version.txt
+  
+  docker-build:
+    desc: Build Docker image
+    deps: [build]
+    vars:
+      IMAGE_TAG:
+        desc: "Docker image tag (defaults to app version)"
+        sh: echo "{{.APP_VERSION}}"
+    cmds:
+      - echo "Building Docker image {{.DOCKER_IMAGE}}:{{.IMAGE_TAG}}"
+      - echo "docker build -t {{.DOCKER_IMAGE}}:{{.IMAGE_TAG}} ."
+  
+  deploy:
+    desc: Deploy to environment
+    deps: [docker-build]
+    vars:
+      ENVIRONMENT:
+        desc: "Override deployment environment"
+        value: "{{.ENVIRONMENT}}"
+      DEPLOY_TIMESTAMP:
+        desc: "Deployment timestamp"
+        sh: date -u +%Y-%m-%dT%H:%M:%SZ
+    cmds:
+      - echo "Deploying {{.APP_NAME}} v{{.APP_VERSION}} to {{.ENVIRONMENT}}"
+      - echo "Deployment started at {{.DEPLOY_TIMESTAMP}}"
+      - echo "Using image {{.DOCKER_IMAGE}}:{{.APP_VERSION}}"
+      - echo "Timeout set to {{.DEPLOY_TIMEOUT}} seconds"
+  
+  status:
+    desc: Check deployment status
+    cmds:
+      - echo "Checking {{.APP_NAME}} at {{.HEALTH_CHECK_URL}}"
+      - echo "curl -f {{.HEALTH_CHECK_URL}} || echo 'Service not healthy'"
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - echo "Cleaning {{.BUILD_DIR}}"
+      - rm -rf {{.BUILD_DIR}}

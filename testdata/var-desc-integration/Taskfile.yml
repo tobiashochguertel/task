@@ -1,0 +1,68 @@
+version: '3'
+
+vars:
+  APP_NAME:
+    desc: "The name of the application"
+    value: "my-awesome-app"
+  
+  VERSION:
+    desc: "Application version number"
+    sh: echo "1.0.0"
+  
+  PORT:
+    desc: "Server port"
+    value: 8080
+  
+  DEBUG:
+    desc: "Enable debug mode"
+    value: false
+  
+  CONFIG:
+    desc: "Application configuration"
+    value:
+      database:
+        host: localhost
+        port: 5432
+      cache:
+        enabled: true
+
+tasks:
+  show-vars:
+    desc: Display all variable values
+    cmds:
+      - echo "APP_NAME={{.APP_NAME}}"
+      - echo "VERSION={{.VERSION}}"
+      - echo "PORT={{.PORT}}"
+      - echo "DEBUG={{.DEBUG}}"
+      - echo "DB_HOST={{.CONFIG.database.host}}"
+  
+  task-with-override:
+    desc: Task that overrides global variable
+    vars:
+      APP_NAME:
+        desc: "Task-specific app name"
+        value: "task-app"
+    cmds:
+      - echo "APP_NAME={{.APP_NAME}}"
+  
+  task-inherits-desc:
+    desc: Task that inherits global variable description
+    vars:
+      VERSION:
+        # No description - should inherit from global
+        sh: echo "2.0.0"
+    cmds:
+      - echo "VERSION={{.VERSION}}"
+  
+  nested-task:
+    desc: Task that calls another task with variables
+    cmds:
+      - task: called-task
+        vars:
+          MESSAGE:
+            desc: "Message to display"
+            value: "Hello from nested task"
+  
+  called-task:
+    cmds:
+      - echo "{{.MESSAGE}}"

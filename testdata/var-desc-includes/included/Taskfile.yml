@@ -1,0 +1,26 @@
+version: '3'
+
+vars:
+  INCLUDED_VAR:
+    desc: "Variable defined in included Taskfile"
+    value: "included-value"
+  
+  OVERRIDE_VAR:
+    desc: "Overridden description in included Taskfile"
+    value: "included-override"
+
+tasks:
+  show-included:
+    desc: Show included variable
+    cmds:
+      - echo "INCLUDED_VAR={{.INCLUDED_VAR}}"
+      - echo "OVERRIDE_VAR={{.OVERRIDE_VAR}}"
+  
+  inherit-global:
+    desc: Task that uses global variable
+    vars:
+      GLOBAL_VAR:
+        # Should inherit description from main Taskfile
+        value: "inherited-value"
+    cmds:
+      - echo "GLOBAL_VAR={{.GLOBAL_VAR}}"

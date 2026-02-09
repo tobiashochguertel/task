@@ -1,0 +1,29 @@
+version: '3'
+
+includes:
+  sub:
+    taskfile: ./included
+    dir: ./included
+
+vars:
+  GLOBAL_VAR:
+    desc: "Global variable in main Taskfile"
+    value: "global-value"
+  
+  OVERRIDE_VAR:
+    desc: "Variable that will be overridden by include"
+    value: "main-value"
+
+tasks:
+  default:
+    desc: Run all tests
+    cmds:
+      - task: show-global
+      - task: sub:show-included
+      - task: sub:inherit-global
+  
+  show-global:
+    desc: Show global variable
+    cmds:
+      - echo "GLOBAL_VAR={{.GLOBAL_VAR}}"
+      - echo "OVERRIDE_VAR={{.OVERRIDE_VAR}}"

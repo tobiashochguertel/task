@@ -2672,3 +2672,248 @@ func enableExperimentForTest(t *testing.T, e *experiments.Experiment, val int) {
 	}
 	t.Cleanup(func() { *e = prev })
 }
+
+// TestVariableDescriptions tests basic variable description functionality
+func TestVariableDescriptions(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/var-desc-integration"
+
+	tests := []struct {
+		name     string
+		task     string
+		expected []string
+	}{
+		{
+			name: "show variables with descriptions",
+			task: "show-vars",
+			expected: []string{
+				"APP_NAME=my-awesome-app",
+				"VERSION=1.0.0",
+				"PORT=8080",
+				"DEBUG=false",
+				"DB_HOST=localhost",
+			},
+		},
+		{
+			name: "task overrides variable description",
+			task: "task-with-override",
+			expected: []string{
+				"APP_NAME=task-app",
+			},
+		},
+		{
+			name: "task inherits variable description",
+			task: "task-inherits-desc",
+			expected: []string{
+				"VERSION=2.0.0",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var buff bytes.Buffer
+			e := task.NewExecutor(
+				task.WithDir(dir),
+				task.WithStdout(&buff),
+				task.WithStderr(&buff),
+			)
+			require.NoError(t, e.Setup())
+			require.NoError(t, e.Run(t.Context(), &task.Call{Task: tt.task}))
+
+			output := buff.String()
+			for _, expected := range tt.expected {
+				assert.Contains(t, output, expected, "Expected output to contain: %s", expected)
+			}
+		})
+	}
+}
+
+// TestVariableDescriptionsIncludes tests variable descriptions with included Taskfiles
+func TestVariableDescriptionsIncludes(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/var-desc-includes"
+
+	var buff bytes.Buffer
+	e := task.NewExecutor(
+		task.WithDir(dir),
+		task.WithStdout(&buff),
+		task.WithStderr(&buff),
+	)
+	require.NoError(t, e.Setup())
+
+	// Test that global variables work
+	buff.Reset()
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "show-global"}))
+	assert.Contains(t, buff.String(), "GLOBAL_VAR=global-value")
+	assert.Contains(t, buff.String(), "OVERRIDE_VAR=main-value")
+
+	// Test that included Taskfile variables work
+	buff.Reset()
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "sub:show-included"}))
+	assert.Contains(t, buff.String(), "INCLUDED_VAR=included-value")
+	assert.Contains(t, buff.String(), "OVERRIDE_VAR=included-override")
+
+	// Test that included tasks can inherit global variable descriptions
+	buff.Reset()
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "sub:inherit-global"}))
+	assert.Contains(t, buff.String(), "GLOBAL_VAR=inherited-value")
+}
+
+// TestListVariablesCommand tests the --list-vars flag
+func TestListVariablesCommand(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/var-desc-integration"
+
+	t.Run("list variables in table format", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		// Call ListVariables directly
+		err := e.ListVariables(false)
+		require.NoError(t, err)
+
+		output := buff.String()
+		// Check that variable names and descriptions appear
+		assert.Contains(t, output, "APP_NAME")
+		assert.Contains(t, output, "The name of the application")
+		assert.Contains(t, output, "VERSION")
+		assert.Contains(t, output, "Application version number")
+		assert.Contains(t, output, "PORT")
+		assert.Contains(t, output, "Server port")
+	})
+
+	t.Run("list variables in JSON format", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		// Call ListVariables with JSON format
+		err := e.ListVariables(true)
+		require.NoError(t, err)
+
+		output := buff.String()
+		// Check that JSON output contains variable information
+		assert.Contains(t, output, `"name":"APP_NAME"`)
+		assert.Contains(t, output, `"desc":"The name of the application"`)
+		assert.Contains(t, output, `"name":"VERSION"`)
+		assert.Contains(t, output, `"desc":"Application version number"`)
+		// Static variables should include value
+		assert.Contains(t, output, `"value":"my-awesome-app"`)
+		// Dynamic variables (sh) should not include value
+		assert.NotContains(t, output, `"value":"1.0.0"`)
+	})
+}
+
+// TestVariableDescriptionsE2E tests a real-world workflow with variable descriptions
+func TestVariableDescriptionsE2E(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/var-desc-e2e"
+
+	t.Run("deployment pipeline workflow", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		// Run the full pipeline
+		require.NoError(t, e.Run(t.Context(), &task.Call{Task: "deploy"}))
+
+		output := buff.String()
+		// Verify the workflow executed correctly with all variables
+		assert.Contains(t, output, "Building my-service")
+		assert.Contains(t, output, "Deploying my-service")
+		assert.Contains(t, output, "to dev")
+		assert.Contains(t, output, "registry.example.com/my-service")
+	})
+
+	t.Run("list all pipeline variables", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		err := e.ListVariables(false)
+		require.NoError(t, err)
+
+		output := buff.String()
+		// Verify all documented variables appear
+		assert.Contains(t, output, "ENVIRONMENT")
+		assert.Contains(t, output, "Deployment environment")
+		assert.Contains(t, output, "APP_NAME")
+		assert.Contains(t, output, "Application identifier")
+		assert.Contains(t, output, "APP_VERSION")
+		assert.Contains(t, output, "from git")
+		assert.Contains(t, output, "DOCKER_REGISTRY")
+		assert.Contains(t, output, "DEPLOY_TIMEOUT")
+		assert.Contains(t, output, "Maximum time to wait")
+	})
+
+	t.Run("verify variable descriptions in JSON output", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		err := e.ListVariables(true)
+		require.NoError(t, err)
+
+		output := buff.String()
+		// Verify JSON structure includes descriptions
+		assert.Contains(t, output, `"desc":"Deployment environment (dev, staging, prod)"`)
+		assert.Contains(t, output, `"desc":"Application identifier used in deployments"`)
+		assert.Contains(t, output, `"desc":"Docker registry URL"`)
+		assert.Contains(t, output, `"value":"dev"`)
+		assert.Contains(t, output, `"value":"my-service"`)
+		assert.Contains(t, output, `"value":"registry.example.com"`)
+	})
+
+	t.Run("clean up after deployment", func(t *testing.T) {
+		var buff bytes.Buffer
+		e := task.NewExecutor(
+			task.WithDir(dir),
+			task.WithStdout(&buff),
+			task.WithStderr(&buff),
+		)
+		require.NoError(t, e.Setup())
+
+		require.NoError(t, e.Run(t.Context(), &task.Call{Task: "clean"}))
+		output := buff.String()
+		assert.Contains(t, output, "Cleaning ./build")
+	})
+}
+		assert.Contains(t, output, `"name":"APP_NAME"`)
+		assert.Contains(t, output, `"desc":"The name of the application"`)
+		assert.Contains(t, output, `"name":"VERSION"`)
+		assert.Contains(t, output, `"desc":"Application version number"`)
+		// Static variables should include value
+		assert.Contains(t, output, `"value":"my-awesome-app"`)
+		// Dynamic variables (sh) should not include value
+		assert.NotContains(t, output, `"value":"1.0.0"`)
+	})
+}
+
