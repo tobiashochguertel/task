@@ -1334,6 +1334,100 @@ tasks:
       - 'echo {{.MAP.A}}' # 1
 ```
 
+### Variable Descriptions
+
+Variables can have optional descriptions to document their purpose and usage.
+This makes Taskfiles more maintainable and helps team members understand
+what each variable is for.
+
+```yaml
+version: 3
+
+vars:
+  APP_NAME:
+    desc: The name of the application used in build artifacts
+    sh: echo "myapp"
+  
+  VERSION:
+    desc: Application version, derived from git tags
+    sh: git describe --tags --always
+  
+  DEBUG:
+    desc: Enable debug logging and verbose output
+    sh: echo "false"
+  
+  PORT:
+    desc: The port number the application listens on
+    map: 8080
+
+tasks:
+  build:
+    desc: Build the application
+    cmds:
+      - echo "Building {{.APP_NAME}} version {{.VERSION}}"
+```
+
+You can list all variables with their descriptions using:
+
+```shell
+$ task --list-vars
+task: Available variables for this project:
+* APP_NAME:     The name of the application used in build artifacts
+* VERSION:      Application version, derived from git tags
+* DEBUG:        Enable debug logging and verbose output
+* PORT:         The port number the application listens on
+```
+
+Or in JSON format for editor integrations:
+
+```shell
+$ task --list-vars --json
+[
+  {
+    "name": "APP_NAME",
+    "desc": "The name of the application used in build artifacts"
+  },
+  {
+    "name": "VERSION",
+    "desc": "Application version, derived from git tags"
+  }
+]
+```
+
+#### Description Inheritance
+
+When a variable is redefined at a deeper scope (e.g., in a task), it inherits
+the description from the parent scope unless a new description is explicitly provided.
+
+```yaml
+version: 3
+
+vars:
+  VERSION:
+    desc: Application version number
+    sh: echo "1.0.0"
+
+tasks:
+  build:
+    vars:
+      VERSION:
+        # Inherits "Application version number" description
+        sh: echo "2.0.0"
+    cmds:
+      - echo "Building version {{.VERSION}}"
+  
+  deploy:
+    vars:
+      VERSION:
+        desc: Deployment-specific version override
+        sh: echo "3.0.0"
+    cmds:
+      - echo "Deploying version {{.VERSION}}"
+```
+
+The `desc` field is optional - variables without descriptions work exactly
+as they did before this feature was added.
+
 Variables can be set in many places in a Taskfile. When executing
 [templates][templating-reference], Task will look for variables in the order
 listed below (most important first):

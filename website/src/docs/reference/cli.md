@@ -63,6 +63,31 @@ task --list-all
 task -a
 ```
 
+### `task --list-vars`
+
+List all global variables with their descriptions.
+
+```bash
+task --list-vars
+```
+
+Add `--json` for JSON output:
+
+```bash
+task --list-vars --json
+[
+  {
+    "name": "APP_NAME",
+    "desc": "The name of the application",
+    "value": "myapp"
+  },
+  {
+    "name": "VERSION",
+    "desc": "Application version"
+  }
+]
+```
+
 ### `task --init`
 
 Create a new Taskfile.yml in the current directory.
@@ -266,10 +291,11 @@ task build --summary
 
 #### `--json`
 
-Output task information in JSON format (use with `--list` or `--list-all`).
+Output task or variable information in JSON format (use with `--list`, `--list-all`, or `--list-vars`).
 
 ```bash
 task --list --json
+task --list-vars --json
 ```
 
 #### `--sort <mode>`
@@ -372,6 +398,8 @@ The complete list of exit codes is available in the repository at
 
 ## JSON Output Format
 
+### Task List
+
 When using `--json` with `--list` or `--list-all`:
 
 ```json
@@ -390,6 +418,42 @@ When using `--json` with `--list` or `--list-all`:
       }
     }
   ],
+  "vars": [
+    {
+      "name": "APP_NAME",
+      "desc": "The name of the application",
+      "value": "myapp"
+    },
+    {
+      "name": "VERSION",
+      "desc": "Application version"
+    }
+  ],
   "location": "/path/to/Taskfile.yml"
 }
 ```
+
+### Variable List
+
+When using `--json` with `--list-vars`:
+
+```json
+[
+  {
+    "name": "APP_NAME",
+    "desc": "The name of the application",
+    "value": "myapp"
+  },
+  {
+    "name": "VERSION",
+    "desc": "Application version"
+  }
+]
+```
+
+::: info
+
+The `value` field is only included for static variables. Dynamic variables
+(those using `sh` or `ref`) do not include a value in the output.
+
+:::

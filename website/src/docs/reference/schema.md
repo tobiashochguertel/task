@@ -354,6 +354,9 @@ vars:
     sh: git rev-parse HEAD
   BUILD_TIME:
     sh: date -u +"%Y-%m-%dT%H:%M:%SZ"
+  COMMIT_HASH_DESC:
+    desc: The current Git commit hash
+    sh: git rev-parse HEAD
 ```
 
 ### Variable References (`ref`)
@@ -362,6 +365,9 @@ vars:
 vars:
   BASE_VERSION: 1.0.0
   FULL_VERSION:
+    ref: .BASE_VERSION
+  VERSION_WITH_DESC:
+    desc: Full version string
     ref: .BASE_VERSION
 ```
 
@@ -377,6 +383,64 @@ vars:
       cache:
         type: redis
         ttl: 3600
+  CONFIG_WITH_DESC:
+    desc: Application configuration settings
+    map:
+      database:
+        host: localhost
+        port: 5432
+```
+
+### Variable Descriptions (`desc`)
+
+Variables can have optional descriptions to document their purpose:
+
+```yaml
+vars:
+  APP_NAME:
+    desc: The name of the application
+    sh: echo "myapp"
+  
+  PORT:
+    desc: Server port number
+    map: 8080
+  
+  # Description is optional
+  OLD_VAR:
+    sh: echo "value"
+```
+
+The `desc` field can be combined with any variable type (`sh`, `ref`, or `map`).
+Descriptions are displayed when listing variables with `task --list-vars` and are
+included in JSON output for editor integrations.
+
+#### Description Inheritance
+
+Variables inherit descriptions from parent scopes when not explicitly provided:
+
+```yaml
+vars:
+  VERSION:
+    desc: Global version number
+    sh: echo "1.0.0"
+
+tasks:
+  build:
+    vars:
+      VERSION:
+        # Inherits "Global version number" description
+        sh: echo "2.0.0"
+```
+
+Child scopes can override inherited descriptions:
+
+```yaml
+tasks:
+  build:
+    vars:
+      VERSION:
+        desc: Task-specific version
+        sh: echo "2.0.0"
 ```
 
 ### Variable Ordering
