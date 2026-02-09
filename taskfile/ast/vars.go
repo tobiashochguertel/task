@@ -126,10 +126,20 @@ func (vars *Vars) Merge(other *Vars, include *Include) {
 	defer other.mutex.RUnlock()
 	other.mutex.RLock()
 	for pair := other.om.Front(); pair != nil; pair = pair.Next() {
-		if include != nil && include.AdvancedImport {
-			pair.Value.Dir = include.Dir
+		newVar := pair.Value
+
+		// Handle description inheritance
+		if existingVar, exists := vars.om.Get(pair.Key); exists {
+			// If the new variable doesn't have a description, inherit it from the existing one
+			if newVar.Desc == "" && existingVar.Desc != "" {
+				newVar.Desc = existingVar.Desc
+			}
 		}
-		vars.om.Set(pair.Key, pair.Value)
+
+		if include != nil && include.AdvancedImport {
+			newVar.Dir = include.Dir
+		}
+		vars.om.Set(pair.Key, newVar)
 	}
 }
 

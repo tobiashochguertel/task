@@ -1,0 +1,20 @@
+version: '3'
+
+vars:
+  APP_NAME:
+    desc: The name of the application
+    sh: echo "myapp"
+  VERSION:
+    desc: Application version
+    sh: echo "1.0.0"
+  DEBUG:
+    desc: Enable debug logging
+    sh: echo "false"
+
+tasks:
+  test:
+    desc: Test variable descriptions
+    cmds:
+      - echo "App is {{.APP_NAME}}"
+      - echo "Version is {{.VERSION}}"
+      - echo "Debug is {{.DEBUG}}"

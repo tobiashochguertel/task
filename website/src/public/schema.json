@@ -318,6 +318,10 @@
         "map": {
           "type": "object",
           "description": "The value will be treated as a literal map type and stored in the variable"
+        },
+        "desc": {
+          "type": "string",
+          "description": "A description of what this variable is used for"
         }
       },
       "additionalProperties": false

@@ -1,0 +1,27 @@
+version: '3'
+
+vars:
+  APP_NAME:
+    desc: The name of the application
+    sh: echo "myapp"
+  VERSION:
+    desc: Global version number
+    sh: echo "1.0.0"
+
+tasks:
+  inherit:
+    desc: Test inheritance - VERSION should inherit desc
+    vars:
+      VERSION:
+        sh: echo "2.0.0"
+    cmds:
+      - echo "Version {{.VERSION}}"
+  
+  override:
+    desc: Test override - VERSION gets new desc
+    vars:
+      VERSION:
+        desc: Task-specific version override
+        sh: echo "3.0.0"
+    cmds:
+      - echo "Version {{.VERSION}}"
