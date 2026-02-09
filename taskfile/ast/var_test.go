@@ -266,6 +266,181 @@ desc: "Just a description"
 	assert.Nil(t, v.Value)
 }
 
+func TestVarStaticValueWithDescription(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		yaml     string
+		wantDesc string
+		wantVal  any
+	}{
+		{
+			name: "string value with description",
+			yaml: `
+desc: "Application name"
+value: "super-app"
+`,
+			wantDesc: "Application name",
+			wantVal:  "super-app",
+		},
+		{
+			name: "number value with description",
+			yaml: `
+desc: "Server port"
+value: 8080
+`,
+			wantDesc: "Server port",
+			wantVal:  8080,
+		},
+		{
+			name: "boolean value with description",
+			yaml: `
+desc: "Debug mode"
+value: true
+`,
+			wantDesc: "Debug mode",
+			wantVal:  true,
+		},
+		{
+			name: "object value with description using value field",
+			yaml: `
+desc: "Configuration object"
+value:
+  host: localhost
+  port: 5432
+`,
+			wantDesc: "Configuration object",
+			wantVal: map[string]any{
+				"host": "localhost",
+				"port": 5432,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var v ast.Var
+			err := yaml.Unmarshal([]byte(tt.yaml), &v)
+			require.NoError(t, err)
+			assert.Equal(t, tt.wantDesc, v.Desc)
+			assert.Equal(t, tt.wantVal, v.Value)
+			assert.Nil(t, v.Sh)
+			assert.Equal(t, "", v.Ref)
+		})
+	}
+}
+
+func TestVarMapWithDescription(t *testing.T) {
+	t.Parallel()
+
+	// Test that 'map' field still works with description
+	content := `
+desc: "Database configuration"
+map:
+  host: localhost
+  port: 5432
+  ssl: true
+`
+	var v ast.Var
+	err := yaml.Unmarshal([]byte(content), &v)
+	require.NoError(t, err)
+	assert.Equal(t, "Database configuration", v.Desc)
+	assert.Equal(t, map[string]any{
+		"host": "localhost",
+		"port": 5432,
+		"ssl":  true,
+	}, v.Value)
+}
+
+func TestVarMutuallyExclusiveFields(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name    string
+		yaml    string
+		wantErr string
+	}{
+		{
+			name: "sh and value",
+			yaml: `
+desc: "Test"
+sh: echo test
+value: "test"
+`,
+			wantErr: `cannot have more than one of`,
+		},
+		{
+			name: "sh and ref",
+			yaml: `
+sh: echo test
+ref: .OTHER
+`,
+			wantErr: `cannot have more than one of`,
+		},
+		{
+			name: "value and ref",
+			yaml: `
+value: test
+ref: .OTHER
+`,
+			wantErr: `cannot have more than one of`,
+		},
+		{
+			name: "sh and map",
+			yaml: `
+sh: echo test
+map:
+  key: value
+`,
+			wantErr: `cannot have more than one of`,
+		},
+		{
+			name: "value and map",
+			yaml: `
+value: test
+map:
+  key: value
+`,
+			wantErr: `cannot have more than one of`,
+		},
+		{
+			name: "all three",
+			yaml: `
+sh: echo test
+ref: .OTHER
+value: test
+`,
+			wantErr: `cannot have more than one of`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var v ast.Var
+			err := yaml.Unmarshal([]byte(tt.yaml), &v)
+			require.Error(t, err)
+			assert.Contains(t, err.Error(), tt.wantErr)
+		})
+	}
+}
+
+func TestVarDescOnlyIsAllowed(t *testing.T) {
+	t.Parallel()
+
+	// Description-only is allowed (though not particularly useful)
+	content := `
+desc: "Just a description, no value yet"
+`
+	var v ast.Var
+	err := yaml.Unmarshal([]byte(content), &v)
+	require.NoError(t, err)
+	assert.Equal(t, "Just a description, no value yet", v.Desc)
+	assert.Nil(t, v.Value)
+	assert.Nil(t, v.Sh)
+	assert.Equal(t, "", v.Ref)
+}
+
 func TestVarDescriptionBackwardCompatibility(t *testing.T) {
 	t.Parallel()
 

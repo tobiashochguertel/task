@@ -1,0 +1,45 @@
+version: '3'
+
+vars:
+  # Simple static value with description using 'value' field
+  APP_NAME:
+    desc: "The name of the application"
+    value: "super-app"
+  
+  # Number with description
+  PORT:
+    desc: "Server port number"
+    value: 8080
+  
+  # Boolean with description
+  DEBUG:
+    desc: "Enable debug logging"
+    value: true
+  
+  # Object with description using 'value' field
+  CONFIG:
+    desc: "Application configuration"
+    value:
+      database:
+        host: localhost
+        port: 5432
+      cache:
+        enabled: true
+        ttl: 3600
+  
+  # Object with description using 'map' field (legacy style)
+  SETTINGS:
+    desc: "Application settings"
+    map:
+      theme: dark
+      language: en
+
+tasks:
+  test:
+    desc: Test static variables with descriptions
+    cmds:
+      - echo "App is {{.APP_NAME}}"
+      - echo "Port is {{.PORT}}"
+      - echo "Debug is {{.DEBUG}}"
+      - echo "DB Host is {{.CONFIG.database.host}}"
+      - echo "Theme is {{.SETTINGS.theme}}"

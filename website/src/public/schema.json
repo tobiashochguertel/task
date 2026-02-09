@@ -319,6 +319,9 @@
           "type": "object",
           "description": "The value will be treated as a literal map type and stored in the variable"
         },
+        "value": {
+          "description": "A static value to be assigned to the variable (cannot be used with sh, ref, or map)"
+        },
         "desc": {
           "type": "string",
           "description": "A description of what this variable is used for"
