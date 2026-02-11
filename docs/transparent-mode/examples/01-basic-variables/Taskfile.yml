@@ -1,0 +1,24 @@
+version: '3'
+
+# Basic example: global vars and task-level vars
+vars:
+  APP_NAME: "my-app"
+  VERSION: "1.0.0"
+  ENV: "development"
+
+tasks:
+  default:
+    desc: Show basic variable resolution
+    cmds:
+      - "echo 'App: {{.APP_NAME}}'"
+      - "echo 'Version: {{.VERSION}}'"
+      - "echo 'Environment: {{.ENV}}'"
+
+  with-task-vars:
+    desc: Task with its own variables
+    vars:
+      BUILD_DIR: "./build"
+      OUTPUT: '{{.APP_NAME}}-{{.VERSION}}'
+    cmds:
+      - "echo 'Output: {{.OUTPUT}}'"
+      - "echo 'Build dir: {{.BUILD_DIR}}'"

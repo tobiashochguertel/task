@@ -1,0 +1,13 @@
+version: '3'
+
+vars:
+  INCLUDED_VAR: "from-included"
+  SHARED: "included-shared"
+
+tasks:
+  greet:
+    desc: Task in included taskfile
+    cmds:
+      - "echo 'Included var: {{.INCLUDED_VAR}}'"
+      - "echo 'Shared: {{.SHARED}}'"
+      - "echo 'Parent var: {{.PARENT_VAR}}'"

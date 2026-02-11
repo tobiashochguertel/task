@@ -1,0 +1,45 @@
+version: '3'
+
+# Advanced example combining multiple features
+vars:
+  PROJECT: "myproject"
+  VERSION: "2.0.0"
+  BUILD_DATE:
+    sh: echo "2026-02-11"
+
+tasks:
+  build:
+    desc: Build with computed variables
+    vars:
+      ARTIFACT: '{{.PROJECT}}-{{.VERSION}}'
+      TAG: '{{.PROJECT}}/{{.VERSION | replace "." "-"}}'
+    cmds:
+      - "echo 'Building {{.ARTIFACT}}'"
+      - "echo 'Tag: {{.TAG}}'"
+      - "echo 'Date: {{.BUILD_DATE}}'"
+
+  deploy:
+    desc: Deploy with dependencies
+    deps:
+      - build
+    vars:
+      TARGET: "production"
+    cmds:
+      - "echo 'Deploying {{.PROJECT}} to {{.TARGET}}'"
+
+  matrix:
+    desc: For loop with template expansion
+    cmds:
+      - for:
+          var: PLATFORMS
+        cmd: "echo 'Building {{.PROJECT}} for {{.ITEM}}'"
+    vars:
+      PLATFORMS: "linux darwin windows"
+
+  conditional:
+    desc: Conditional with template logic
+    vars:
+      DEBUG: "true"
+    cmds:
+      - echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
+      - echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'

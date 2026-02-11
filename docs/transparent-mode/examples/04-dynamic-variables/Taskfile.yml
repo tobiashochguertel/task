@@ -1,0 +1,27 @@
+version: '3'
+
+# Demonstrates dynamic variables resolved via shell commands
+vars:
+  STATIC_VAR: "static-value"
+  HOSTNAME:
+    sh: echo "test-host"
+  DATE:
+    sh: echo "2026-02-11"
+
+tasks:
+  default:
+    desc: Mix of static and dynamic variables
+    cmds:
+      - "echo 'Static: {{.STATIC_VAR}}'"
+      - "echo 'Hostname: {{.HOSTNAME}}'"
+      - "echo 'Date: {{.DATE}}'"
+
+  task-dynamic:
+    desc: Task-level dynamic variables
+    vars:
+      TASK_ID:
+        sh: echo "task-123"
+      COMBINED: '{{.HOSTNAME}}-{{.TASK_ID}}'
+    cmds:
+      - "echo 'Task ID: {{.TASK_ID}}'"
+      - "echo 'Combined: {{.COMBINED}}'"

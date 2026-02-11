@@ -1,0 +1,18 @@
+version: '3'
+
+# Demonstrates variable resolution across included taskfiles
+vars:
+  PARENT_VAR: "from-parent"
+  SHARED: "parent-shared"
+
+includes:
+  sub:
+    taskfile: ./included/Taskfile.yml
+    vars:
+      PARENT_VAR: '{{.PARENT_VAR}}'
+
+tasks:
+  default:
+    desc: Call included task
+    cmds:
+      - task: sub:greet

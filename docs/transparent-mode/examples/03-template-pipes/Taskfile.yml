@@ -1,0 +1,37 @@
+version: '3'
+
+# Demonstrates template pipe chains and function calls
+vars:
+  NAME: "  world  "
+  TITLE: "hello world"
+  ITEMS: "apple,banana,cherry"
+
+tasks:
+  printf-basic:
+    desc: Basic printf usage
+    cmds:
+      - "echo '{{printf \"%s : %s\" \"NAME\" .NAME}}'"
+
+  trim-pipe:
+    desc: Trim whitespace from variable
+    cmds:
+      - "echo '{{.NAME | trim}}'"
+      - "echo '{{printf \"%s:%s\" \"NAME\" (.NAME | trim)}}'"
+
+  upper-lower:
+    desc: Case conversion pipes
+    cmds:
+      - "echo '{{.TITLE | upper}}'"
+      - "echo '{{.TITLE | title}}'"
+
+  combined-pipes:
+    desc: Multiple pipe operations chained
+    cmds:
+      - "echo '{{.NAME | trim | upper}}'"
+      - "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'"
+
+  quote-pipe:
+    desc: Quote and shell-safe operations
+    cmds:
+      - "echo {{.TITLE | quote}}"
+      - "echo '{{.NAME | trim | quote}}'"

@@ -1,0 +1,31 @@
+version: '3'
+
+# Demonstrates variable shadowing: task vars override global vars
+vars:
+  NAME: "global-value"
+  GREETING: "Hello"
+  SHARED: "from-global"
+
+tasks:
+  default:
+    desc: Uses global NAME
+    cmds:
+      - echo '{{.GREETING}} {{.NAME}}'
+      - echo 'SHARED = {{.SHARED}}'
+
+  override:
+    desc: Overrides NAME at task level
+    vars:
+      NAME: "task-override"
+    cmds:
+      - echo '{{.GREETING}} {{.NAME}}'
+      - echo 'SHARED = {{.SHARED}}'
+
+  double-override:
+    desc: Overrides both NAME and SHARED
+    vars:
+      NAME: "double-task"
+      SHARED: "from-task"
+    cmds:
+      - echo '{{.GREETING}} {{.NAME}}'
+      - echo 'SHARED = {{.SHARED}}'
