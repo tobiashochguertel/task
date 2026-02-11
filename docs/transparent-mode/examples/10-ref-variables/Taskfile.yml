@@ -1,0 +1,21 @@
+version: '3'
+
+vars:
+  GREETING: hello-world
+  ALIAS:
+    ref: .GREETING
+
+tasks:
+  default:
+    desc: Show ref variable identity
+    cmds:
+      - "echo 'Greeting: {{.GREETING}}'"
+      - "echo 'Alias: {{.ALIAS}}'"
+
+  with-task-ref:
+    desc: Task-level ref to global var
+    vars:
+      LOCAL_GREETING:
+        ref: .GREETING
+    cmds:
+      - "echo 'Local greeting: {{.LOCAL_GREETING}}'"

@@ -1,0 +1,33 @@
+version: '3'
+
+vars:
+  APP_NAME: my-app
+  VERSION: "2.0.0"
+  ENV: production
+
+tasks:
+  with-label:
+    desc: "Build {{.APP_NAME}}"
+    label: "build-{{.APP_NAME}}-{{.VERSION}}"
+    cmds:
+      - "echo 'Building {{.APP_NAME}}'"
+
+  with-summary:
+    desc: "Deploy task"
+    summary: |
+      Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.
+      This task handles the full deployment pipeline.
+    cmds:
+      - "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'"
+
+  with-dir:
+    desc: Task with templated dir
+    dir: "/tmp/{{.APP_NAME}}"
+    cmds:
+      - "echo 'Working in {{.APP_NAME}} directory'"
+
+  with-prefix:
+    desc: Task with templated prefix
+    prefix: "[{{.APP_NAME}}]"
+    cmds:
+      - "echo 'Running with prefix'"

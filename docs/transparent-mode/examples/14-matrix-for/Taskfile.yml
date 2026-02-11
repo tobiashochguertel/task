@@ -1,0 +1,36 @@
+version: '3'
+
+vars:
+  PROJECT: my-app
+  PLATFORMS:
+    - linux
+    - darwin
+    - windows
+  ARCHS:
+    - amd64
+    - arm64
+
+tasks:
+  build-platforms:
+    desc: Build for each platform
+    cmds:
+      - for:
+          var: PLATFORMS
+        cmd: "echo 'Building {{.PROJECT}} for {{.ITEM}}'"
+
+  build-matrix:
+    desc: Build with matrix of platforms and archs
+    cmds:
+      - for:
+          matrix:
+            PLATFORM:
+              ref: PLATFORMS
+            ARCH:
+              ref: ARCHS
+        cmd: "echo 'Build: {{.PROJECT}}-{{.PLATFORM}}-{{.ARCH}}'"
+
+  build-inline:
+    desc: Build with inline list
+    cmds:
+      - for: [debug, release]
+        cmd: "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'"

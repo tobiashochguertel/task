@@ -1,0 +1,22 @@
+version: '3'
+
+dotenv:
+  - .env
+
+vars:
+  APP_NAME: my-dotenv-app
+
+tasks:
+  default:
+    desc: Show variables from .env file
+    cmds:
+      - "echo 'DB Host: {{.DB_HOST}}'"
+      - "echo 'DB Port: {{.DB_PORT}}'"
+      - "echo 'App: {{.APP_NAME}}'"
+
+  combined:
+    desc: Combine dotenv vars with taskfile vars
+    vars:
+      CONNECTION: "{{.DB_HOST}}:{{.DB_PORT}}/{{.DB_NAME}}"
+    cmds:
+      - "echo 'Connection: {{.CONNECTION}}'"

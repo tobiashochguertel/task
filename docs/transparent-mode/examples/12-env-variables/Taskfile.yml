@@ -1,0 +1,24 @@
+version: '3'
+
+env:
+  APP_ENV: staging
+  LOG_LEVEL: info
+
+vars:
+  APP_NAME: my-app
+  APP_ENV: production
+
+tasks:
+  default:
+    desc: Show env vs vars interaction
+    cmds:
+      - "echo 'App: {{.APP_NAME}}'"
+      - "echo 'Env: {{.APP_ENV}}'"
+      - "echo 'Log: {{.LOG_LEVEL}}'"
+
+  with-task-env:
+    desc: Task with env override
+    env:
+      APP_ENV: testing
+    cmds:
+      - "echo 'Task env: {{.APP_ENV}}'"

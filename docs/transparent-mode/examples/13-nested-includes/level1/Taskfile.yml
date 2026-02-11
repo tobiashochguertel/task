@@ -1,0 +1,17 @@
+version: '3'
+
+vars:
+  LEVEL1_VAR: from-level1
+
+includes:
+  level2:
+    taskfile: ./level2/Taskfile.yml
+    vars:
+      L1_TO_L2: from-level1-include
+
+tasks:
+  greet:
+    desc: Task at level 1
+    cmds:
+      - "echo 'Level1: {{.LEVEL1_VAR}}'"
+      - "echo 'Parent: {{.PARENT_VAR}}'"

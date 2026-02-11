@@ -1,0 +1,10 @@
+version: '3'
+
+vars:
+  ROOT_VAR: from-root
+
+includes:
+  level1:
+    taskfile: ./level1/Taskfile.yml
+    vars:
+      PARENT_VAR: from-root-include

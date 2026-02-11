@@ -1,0 +1,12 @@
+version: '3'
+
+vars:
+  LEVEL2_VAR: from-level2
+
+tasks:
+  greet:
+    desc: Task at level 2
+    cmds:
+      - "echo 'Level2: {{.LEVEL2_VAR}}'"
+      - "echo 'L1 to L2: {{.L1_TO_L2}}'"
+      - "echo 'Parent: {{.PARENT_VAR}}'"

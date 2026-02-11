@@ -1,0 +1,22 @@
+version: '3'
+
+vars:
+  APP_NAME: my-app
+  VERSION: "1.0.0"
+
+tasks:
+  check-binary:
+    desc: Check if a binary exists before running
+    preconditions:
+      - sh: which echo
+        msg: "echo command not found"
+    cmds:
+      - "echo '{{.APP_NAME}} is ready'"
+
+  check-version:
+    desc: Precondition with template in msg
+    preconditions:
+      - sh: "test '{{.VERSION}}' != ''"
+        msg: "VERSION must not be empty (got: '{{.VERSION}}')"
+    cmds:
+      - "echo 'Version {{.VERSION}} validated'"
