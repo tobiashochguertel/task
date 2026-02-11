@@ -231,9 +231,243 @@ func assertContains(t *testing.T, output, substr string) {
 	}
 }
 
+func assertNotContains(t *testing.T, output, substr string) {
+	t.Helper()
+	if strings.Contains(output, substr) {
+		t.Errorf("expected output NOT to contain %q\nGot:\n%s", substr, truncateOutput(output, 500))
+	}
+}
+
 func truncateOutput(s string, max int) string {
 	if len(s) <= max {
 		return s
 	}
 	return s[:max] + "\n... (truncated)"
+}
+
+// --- New E2E tests for expanded examples ---
+
+func TestE2EDotenv(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "07-dotenv")
+	output := runTransparent(t, dir, "default")
+
+	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "Task: default")
+	assertContains(t, output, "DB_HOST")
+	assertContains(t, output, "localhost")
+	assertContains(t, output, "DB_PORT")
+	assertContains(t, output, "5432")
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-dotenv-app")
+}
+
+func TestE2EDotenvCombined(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "07-dotenv")
+	output := runTransparent(t, dir, "combined")
+
+	assertContains(t, output, "CONNECTION")
+	assertContains(t, output, "localhost:5432/mydb")
+}
+
+func TestE2EPreconditions(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "08-preconditions")
+	output := runTransparent(t, dir, "check-binary")
+
+	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-app")
+	assertContains(t, output, "Commands:")
+}
+
+func TestE2EPreconditionsTemplate(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "08-preconditions")
+	output := runTransparent(t, dir, "check-version")
+
+	assertContains(t, output, "VERSION")
+	assertContains(t, output, "1.0.0")
+}
+
+func TestE2ETemplateFieldsLabel(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "09-template-fields")
+	output := runTransparent(t, dir, "with-label")
+
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-app")
+	assertContains(t, output, "VERSION")
+	assertContains(t, output, "2.0.0")
+	assertContains(t, output, "Building my-app")
+}
+
+func TestE2ETemplateFieldsSummary(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "09-template-fields")
+	output := runTransparent(t, dir, "with-summary")
+
+	assertContains(t, output, "Deploying my-app v2.0.0 to production")
+}
+
+func TestE2ETemplateFieldsDir(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "09-template-fields")
+	output := runTransparent(t, dir, "with-dir")
+
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-app")
+}
+
+func TestE2ERefVariables(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "10-ref-variables")
+	output := runTransparent(t, dir, "default")
+
+	assertContains(t, output, "GREETING")
+	assertContains(t, output, "hello-world")
+	assertContains(t, output, "ALIAS")
+	// Ref marker should appear
+	assertContains(t, output, "ref")
+	assertContains(t, output, ".GREETING")
+}
+
+func TestE2ERefVariablesTaskLevel(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "10-ref-variables")
+	output := runTransparent(t, dir, "with-task-ref")
+
+	assertContains(t, output, "LOCAL_GREETING")
+	assertContains(t, output, "hello-world")
+	assertContains(t, output, "ref")
+}
+
+func TestE2EStatusSources(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "11-status-sources")
+	output := runTransparent(t, dir, "build")
+
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-app")
+	assertContains(t, output, "VERSION")
+	assertContains(t, output, "BUILD_DIR")
+	assertContains(t, output, "Building my-app v1.0.0")
+}
+
+func TestE2EEnvVariables(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "12-env-variables")
+	output := runTransparent(t, dir, "default")
+
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "my-app")
+	// APP_ENV should show as taskfile-vars (vars override env)
+	assertContains(t, output, "APP_ENV")
+	assertContains(t, output, "production")
+	// LOG_LEVEL from env: block
+	assertContains(t, output, "LOG_LEVEL")
+}
+
+func TestE2EEnvVariablesShadowing(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "12-env-variables")
+	output := runTransparent(t, dir, "default")
+
+	// APP_ENV is defined in both env: and vars: — should show shadow
+	assertContains(t, output, "shadows")
+}
+
+func TestE2ENestedIncludesLevel1(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "13-nested-includes")
+	output := runTransparent(t, dir, "level1:greet")
+
+	assertContains(t, output, "Task: level1:greet")
+	assertContains(t, output, "LEVEL1_VAR")
+	assertContains(t, output, "from-level1")
+	assertContains(t, output, "PARENT_VAR")
+	assertContains(t, output, "from-root-include")
+	assertContains(t, output, "include-vars")
+}
+
+func TestE2ENestedIncludesLevel2(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "13-nested-includes")
+	output := runTransparent(t, dir, "level1:level2:greet")
+
+	assertContains(t, output, "Task: level1:level2:greet")
+	assertContains(t, output, "LEVEL2_VAR")
+	assertContains(t, output, "from-level2")
+	assertContains(t, output, "L1_TO_L2")
+	assertContains(t, output, "from-level1-include")
+	// Parent var propagates through
+	assertContains(t, output, "PARENT_VAR")
+	assertContains(t, output, "from-root-include")
+}
+
+func TestE2EMatrixFor(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "14-matrix-for")
+	output := runTransparent(t, dir, "build-platforms")
+
+	assertContains(t, output, "PROJECT")
+	assertContains(t, output, "my-app")
+	// For-loop should expand commands
+	assertContains(t, output, "Commands:")
+	assertContains(t, output, "Building my-app for linux")
+	assertContains(t, output, "Building my-app for darwin")
+	assertContains(t, output, "Building my-app for windows")
+}
+
+func TestE2EMatrixForInline(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "14-matrix-for")
+	output := runTransparent(t, dir, "build-inline")
+
+	assertContains(t, output, "Mode: debug for my-app")
+	assertContains(t, output, "Mode: release for my-app")
+}
+
+func TestE2EMatrixForMatrix(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "14-matrix-for")
+	output := runTransparent(t, dir, "build-matrix")
+
+	// Matrix should produce platform x arch combinations
+	assertContains(t, output, "my-app-linux-amd64")
+	assertContains(t, output, "my-app-darwin-arm64")
+	assertContains(t, output, "my-app-windows-amd64")
+}
+
+func TestE2EMultiLevelShadowChain(t *testing.T) {
+	// Test that a variable shadowed through multiple scopes is detected
+	dir := filepath.Join(examplesDir(), "12-env-variables")
+	output := runTransparent(t, dir, "default")
+
+	// APP_ENV defined in env: then overridden in vars:
+	assertContains(t, output, "APP_ENV")
+	assertContains(t, output, "shadows")
+}
+
+func TestE2EColorFlagFalse(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "--color=false", "-d", dir, "default")
+	// Don't set NO_COLOR — rely on --color=false flag
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("task --transparent --color=false failed: %v\nOutput: %s", err, string(out))
+	}
+	output := string(out)
+	assertContains(t, output, "Transparent Mode Report")
+	// Should not contain raw ANSI escape codes
+	assertNotContains(t, output, "\033[")
+}
+
+func TestE2EOutputToStderr(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "-d", dir, "default")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+
+	var stdout, stderr strings.Builder
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	err := cmd.Run()
+	if err != nil {
+		t.Fatalf("task --transparent failed: %v\nStderr: %s", err, stderr.String())
+	}
+
+	// Report should be on stderr, not stdout
+	if !strings.Contains(stderr.String(), "Transparent Mode Report") {
+		t.Error("expected report on stderr")
+	}
+	if strings.Contains(stdout.String(), "Transparent Mode Report") {
+		t.Error("expected report NOT on stdout")
+	}
 }

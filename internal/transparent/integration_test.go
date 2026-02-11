@@ -183,3 +183,147 @@ func TestIntegrationMultipleTasks(t *testing.T) {
 		t.Fatalf("expected at least 2 tasks, got %d", len(report.Tasks))
 	}
 }
+
+func TestIntegrationDotenv(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "07-dotenv")
+	e := setupExecutor(t, dir)
+
+	err := e.RunTransparent(context.Background(), &task.Call{Task: "default"})
+	if err != nil {
+		t.Fatalf("RunTransparent failed: %v", err)
+	}
+
+	report := e.Compiler.Tracer.Report()
+	taskTrace := report.Tasks[0]
+
+	// Check dotenv vars are present
+	found := map[string]bool{}
+	for _, v := range taskTrace.Vars {
+		if v.Name == "DB_HOST" || v.Name == "DB_PORT" || v.Name == "DB_NAME" {
+			found[v.Name] = true
+		}
+	}
+	for _, name := range []string{"DB_HOST", "DB_PORT", "DB_NAME"} {
+		if !found[name] {
+			t.Errorf("expected dotenv variable %s in trace", name)
+		}
+	}
+}
+
+func TestIntegrationRefVariables(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "10-ref-variables")
+	e := setupExecutor(t, dir)
+
+	err := e.RunTransparent(context.Background(), &task.Call{Task: "default"})
+	if err != nil {
+		t.Fatalf("RunTransparent failed: %v", err)
+	}
+
+	report := e.Compiler.Tracer.Report()
+	taskTrace := report.Tasks[0]
+
+	// Find ALIAS and verify it has IsRef set
+	var aliasVar *transparent.VarTrace
+	for i := range taskTrace.Vars {
+		if taskTrace.Vars[i].Name == "ALIAS" && taskTrace.Vars[i].IsRef {
+			aliasVar = &taskTrace.Vars[i]
+			break
+		}
+	}
+	if aliasVar == nil {
+		t.Fatal("expected ALIAS var with IsRef=true")
+	}
+	if aliasVar.RefName != ".GREETING" {
+		t.Errorf("expected RefName=.GREETING, got %s", aliasVar.RefName)
+	}
+}
+
+func TestIntegrationNestedIncludes(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "13-nested-includes")
+	e := setupExecutor(t, dir)
+
+	err := e.RunTransparent(context.Background(), &task.Call{Task: "level1:level2:greet"})
+	if err != nil {
+		t.Fatalf("RunTransparent failed: %v", err)
+	}
+
+	report := e.Compiler.Tracer.Report()
+	taskTrace := report.Tasks[0]
+
+	// Verify include-vars from multiple levels
+	var l1ToL2 *transparent.VarTrace
+	var parentVar *transparent.VarTrace
+	for i := range taskTrace.Vars {
+		switch taskTrace.Vars[i].Name {
+		case "L1_TO_L2":
+			if taskTrace.Vars[i].Origin == transparent.OriginIncludeVars {
+				l1ToL2 = &taskTrace.Vars[i]
+			}
+		case "PARENT_VAR":
+			if taskTrace.Vars[i].Origin == transparent.OriginIncludeVars {
+				parentVar = &taskTrace.Vars[i]
+			}
+		}
+	}
+	if l1ToL2 == nil {
+		t.Fatal("expected L1_TO_L2 include-vars")
+	}
+	if l1ToL2.Value != "from-level1-include" {
+		t.Errorf("expected L1_TO_L2=from-level1-include, got %v", l1ToL2.Value)
+	}
+	if parentVar == nil {
+		t.Fatal("expected PARENT_VAR propagated through levels")
+	}
+	if parentVar.Value != "from-root-include" {
+		t.Errorf("expected PARENT_VAR=from-root-include, got %v", parentVar.Value)
+	}
+}
+
+func TestIntegrationEnvVarsShadow(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "12-env-variables")
+	e := setupExecutor(t, dir)
+
+	err := e.RunTransparent(context.Background(), &task.Call{Task: "default"})
+	if err != nil {
+		t.Fatalf("RunTransparent failed: %v", err)
+	}
+
+	report := e.Compiler.Tracer.Report()
+	taskTrace := report.Tasks[0]
+
+	// APP_ENV is in both env: and vars: — vars wins, should shadow
+	var appEnvVar *transparent.VarTrace
+	for i := range taskTrace.Vars {
+		if taskTrace.Vars[i].Name == "APP_ENV" && taskTrace.Vars[i].Origin == transparent.OriginTaskfileVars {
+			appEnvVar = &taskTrace.Vars[i]
+			break
+		}
+	}
+	if appEnvVar == nil {
+		t.Fatal("expected APP_ENV taskfile-vars")
+	}
+	if appEnvVar.ShadowsVar == nil {
+		t.Fatal("expected APP_ENV to shadow the env: version")
+	}
+	if appEnvVar.Value != "production" {
+		t.Errorf("expected production, got %v", appEnvVar.Value)
+	}
+}
+
+func TestIntegrationMatrixFor(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "14-matrix-for")
+	e := setupExecutor(t, dir)
+
+	err := e.RunTransparent(context.Background(), &task.Call{Task: "build-platforms"})
+	if err != nil {
+		t.Fatalf("RunTransparent failed: %v", err)
+	}
+
+	report := e.Compiler.Tracer.Report()
+	taskTrace := report.Tasks[0]
+
+	// Should have 3 expanded commands (linux, darwin, windows)
+	if len(taskTrace.Cmds) < 3 {
+		t.Fatalf("expected at least 3 for-loop expanded cmds, got %d", len(taskTrace.Cmds))
+	}
+}

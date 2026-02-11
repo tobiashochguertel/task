@@ -24,10 +24,10 @@ tasks:
       - for:
           matrix:
             PLATFORM:
-              ref: PLATFORMS
+              ref: .PLATFORMS
             ARCH:
-              ref: ARCHS
-        cmd: "echo 'Build: {{.PROJECT}}-{{.PLATFORM}}-{{.ARCH}}'"
+              ref: .ARCHS
+        cmd: "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'"
 
   build-inline:
     desc: Build with inline list

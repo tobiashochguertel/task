@@ -5,33 +5,47 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sync"
+
+	"github.com/fatih/color"
 )
 
-// ANSI color codes for terminal output
+// ANSI color code constants
+const (
+	ansiReset  = "\033[0m"
+	ansiBold   = "\033[1m"
+	ansiDim    = "\033[2m"
+	ansiRed    = "\033[31m"
+	ansiGreen  = "\033[32m"
+	ansiYellow = "\033[33m"
+	ansiBlue   = "\033[34m"
+	ansiCyan   = "\033[36m"
+	ansiWhite  = "\033[37m"
+)
+
+// Active color codes (resolved once at first render)
 var (
-	cReset  = "\033[0m"
-	cBold   = "\033[1m"
-	cDim    = "\033[2m"
-	cRed    = "\033[31m"
-	cGreen  = "\033[32m"
-	cYellow = "\033[33m"
-	cBlue   = "\033[34m"
-	cCyan   = "\033[36m"
-	cWhite  = "\033[37m"
+	cReset, cBold, cDim       string
+	cRed, cGreen, cYellow     string
+	cBlue, cCyan, cWhite      string
+	colorOnce                 sync.Once
 )
 
-func init() {
-	if os.Getenv("NO_COLOR") != "" {
-		cReset = ""
-		cBold = ""
-		cDim = ""
-		cRed = ""
-		cGreen = ""
-		cYellow = ""
-		cBlue = ""
-		cCyan = ""
-		cWhite = ""
-	}
+func resolveColors() {
+	colorOnce.Do(func() {
+		if color.NoColor || os.Getenv("NO_COLOR") != "" {
+			return // all vars stay empty strings
+		}
+		cReset = ansiReset
+		cBold = ansiBold
+		cDim = ansiDim
+		cRed = ansiRed
+		cGreen = ansiGreen
+		cYellow = ansiYellow
+		cBlue = ansiBlue
+		cCyan = ansiCyan
+		cWhite = ansiWhite
+	})
 }
 
 // RenderText writes a human-readable trace report to the given writer.
@@ -39,6 +53,7 @@ func RenderText(w io.Writer, report *TraceReport) {
 	if report == nil {
 		return
 	}
+	resolveColors()
 	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", cBold, cCyan, cReset)
 
 	for _, task := range report.Tasks {
