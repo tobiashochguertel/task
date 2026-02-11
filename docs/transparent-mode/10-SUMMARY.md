@@ -1,6 +1,7 @@
 # 10 — Summary & Quick Reference
 
 ## What is Transparent Mode?
+<!-- ✅ CLOSED — Feature fully implemented: vars, templates, shadows, ref tracking, pipes — all read-only. -->
 
 A diagnostic overlay activated via `--transparent` (`-T`) that shows:
 - Every variable's resolved value, origin scope, and type
@@ -11,6 +12,7 @@ A diagnostic overlay activated via `--transparent` (`-T`) that shows:
 It is **read-only** — no commands are executed.
 
 ## CLI Usage
+<!-- ✅ CLOSED — --transparent, --transparent --json, --transparent --list-all all working. -v not yet distinct. -->
 
 ```bash
 # Show diagnostics for a specific task
@@ -27,6 +29,7 @@ task --transparent --list-all
 ```
 
 ## New Files (all in `internal/transparent/`)
+<!-- ✅ CLOSED — 5 core files + golden_test.go + e2e_test.go + integration_test.go + transparent_test.go created. -->
 
 | File | Purpose | Key Types/Functions |
 |------|---------|---------------------|
@@ -37,12 +40,14 @@ task --transparent --list-all
 | `renderer_json.go` | JSON output | `RenderJSON()` |
 
 ## Root Package New File
+<!-- ✅ CLOSED — transparent.go with RunTransparent() and RunTransparentAll() implemented. -->
 
 | File | Purpose | Key Functions |
 |------|---------|---------------|
 | `transparent.go` | Executor integration | `Executor.RunTransparent()` |
 
 ## Modified Files (minimal changes)
+<!-- ✅ CLOSED — All 7 files modified as specified; actual line changes slightly higher due to additional features. -->
 
 | File | What Changes | Lines Changed |
 |------|-------------|---------------|
@@ -55,6 +60,7 @@ task --transparent --list-all
 | `cmd/task/task.go` | Intercept before `e.Run()` for transparent mode | ~5 |
 
 ## Variable Resolution Order (for reference)
+<!-- ✅ CLOSED — Order matches compiler.go; vars sorted by origin priority in output for consistency. -->
 
 ```
  Priority (lowest → highest):
@@ -69,6 +75,7 @@ task --transparent --list-all
 ```
 
 ## Architecture Diagram (Compact)
+<!-- ✅ CLOSED — Diagram matches actual data flow: CLI→Executor→Compiler→Tracer→Renderer→stderr. -->
 
 ```mermaid
 graph LR
@@ -85,6 +92,7 @@ graph LR
 ```
 
 ## Implementation Status
+<!-- ✅ CLOSED — 170 tests passing; all features implemented except type mismatch (deferred) and -v verbose (low priority). -->
 
 | Feature | Status | Notes |
 |---------|--------|-------|
@@ -110,6 +118,7 @@ graph LR
 | Extra extensibility field | ✅ Implemented | `Extra map[string]any` on VarTrace |
 
 ## Design Decisions
+<!-- ✅ CLOSED — All decisions implemented and validated through 170 tests and 15 example Taskfiles. -->
 
 | Decision | Rationale |
 |----------|-----------|

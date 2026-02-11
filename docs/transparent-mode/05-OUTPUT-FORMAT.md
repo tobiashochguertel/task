@@ -1,10 +1,12 @@
 # 05 — Output Format Specification
 
 ## Design Goal
+<!-- ✅ CLOSED — Output renders as an X-ray overlay with vars, origins, shadow warnings, and template eval steps. -->
 
 The output should feel like an **X-ray overlay** on the Taskfile — showing what the template engine sees, not what the user wrote.
 
 ## Output Modes
+<!-- ✅ CLOSED — Both text (renderer.go) and JSON (renderer_json.go) output modes implemented. -->
 
 | Flag | Format | Use Case |
 |------|--------|----------|
@@ -14,6 +16,7 @@ The output should feel like an **X-ray overlay** on the Taskfile — showing wha
 ---
 
 ## Human-Readable Output Example
+<!-- ✅ CLOSED — Text renderer outputs global/task vars table, template eval steps, shadow warnings, pipe tips. -->
 
 Given this Taskfile:
 
@@ -77,6 +80,7 @@ Running `task greet --transparent` outputs:
 ```
 
 ## JSON Output Example
+<!-- ✅ CLOSED — JSON output includes version:"1.0", global_vars, tasks with vars/cmds/templates/shadows/tips. -->
 
 ```json
 {
@@ -123,6 +127,7 @@ Running `task greet --transparent` outputs:
 ```
 
 ## Color Scheme
+<!-- ✅ CLOSED — fatih/color used: Cyan headers, Green names, Magenta origins, Yellow warnings. NO_COLOR respected. -->
 
 | Element | Color | Logger Constant |
 |---------|-------|-----------------|
@@ -135,6 +140,7 @@ Running `task greet --transparent` outputs:
 | Errors | Red | `logger.Red` |
 
 ## Verbosity Levels
+<!-- ⏳ OPEN — --transparent and --transparent --list-all implemented; -v verbose mode not yet distinct from default. -->
 
 | Flags | What's shown |
 |-------|-------------|

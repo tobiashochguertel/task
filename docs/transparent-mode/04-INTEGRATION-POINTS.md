@@ -1,10 +1,12 @@
 # 04 — Integration Points
 
 ## Overview
+<!-- ✅ CLOSED — All integration hooks implemented; minimal changes to existing files, optional Tracer pointer pattern. -->
 
 This document specifies **exactly where** in the existing codebase the transparent mode hooks in. Changes are minimal — primarily passing an optional `*Tracer` pointer through existing function signatures and adding a few recording calls.
 
 ## Integration Map
+<!-- ✅ CLOSED — All integration points wired: flags→executor→compiler→templater with Tracer pointer threading. -->
 
 ```mermaid
 graph TD
@@ -46,8 +48,10 @@ graph TD
 ---
 
 ## File-by-File Changes
+<!-- ✅ CLOSED — All 7 file modifications implemented as specified; line numbers differ slightly due to organic changes. -->
 
 ### 1. `internal/flags/flags.go`
+<!-- ✅ CLOSED — Transparent bool field, --transparent/-T pflag, passed to executor via e.Transparent field. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -56,6 +60,7 @@ graph TD
 | 286+ | Pass to executor | Add `task.WithTransparent(Transparent)` in `ApplyToExecutor()` |
 
 ### 2. `executor.go`
+<!-- ✅ CLOSED — Transparent bool field + Tracer pointer on Executor; set in setup.go. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -63,12 +68,14 @@ graph TD
 | new | Add option | `WithTransparent(bool) ExecutorOption` (follow existing pattern, e.g. `WithDry`) |
 
 ### 3. `setup.go` → `setupCompiler()`
+<!-- ✅ CLOSED — Creates transparent.NewTracer() when e.Transparent=true; assigns to compiler and templater cache. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
 | 223 | Conditional | If `e.Transparent`, create `transparent.NewTracer()` and assign to `e.Compiler.Tracer` |
 
 ### 4. `compiler.go`
+<!-- ✅ CLOSED — All 8 variable scope loops instrumented with RecordVar() calls for each origin type. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -83,6 +90,7 @@ graph TD
 | 187 | Instrument | After dynamic var resolution: `c.Tracer.RecordVar(k, VarTrace{IsDynamic: true, ShCmd: *v.Sh, ...})` |
 
 ### 5. `internal/templater/templater.go`
+<!-- ✅ CLOSED — Cache.Tracer field added; RecordTemplate() called with input/output/VarsUsed/PipeSteps/Tips. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -90,6 +98,7 @@ graph TD
 | 84-93 | Instrument | Inside `TraverseStringsFunc`: before/after `tpl.Execute()`, record `TemplateTrace{Input: v, Output: b.String()}` |
 
 ### 6. `variables.go` → `compiledTask()`
+<!-- ✅ CLOSED — Tracer passed to cache; CmdTrace/DepTrace recorded; SetTemplateContext() at each section. -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -97,6 +106,7 @@ graph TD
 | 204-251 | Instrument | Record `CmdTrace` for each command (raw vs resolved) |
 
 ### 7. `cmd/task/task.go`
+<!-- ✅ CLOSED — Transparent intercept before e.Run(); routes to RunTransparent() or RunTransparentAll(). -->
 
 | Line | Change | Detail |
 |------|--------|--------|
@@ -105,6 +115,7 @@ graph TD
 ---
 
 ## New Files
+<!-- ✅ CLOSED — All 4 new files created plus additional: pipe_analyzer.go, renderer_json.go, golden_test.go. -->
 
 | File | Purpose |
 |------|---------|
@@ -114,6 +125,7 @@ graph TD
 | `transparent.go` (root package) | `Executor.RunTransparent()` method — compiles tasks and calls renderer |
 
 ## Dependency Graph (packages)
+<!-- ✅ CLOSED — No circular dependencies; internal/transparent depends only on taskfile/ast and text/template/parse. -->
 
 ```mermaid
 graph BT

@@ -1,6 +1,7 @@
 # 07 — Variable Resolution Tracing
 
 ## Current Resolution Order
+<!-- ✅ CLOSED — All 8 scopes traced in order; diagram matches compiler.go getVariables() implementation. -->
 
 The variable resolution pipeline in `compiler.go:getVariables()` processes variables in this strict order (later wins):
 
@@ -25,8 +26,10 @@ graph TD
 ```
 
 ## Tracing Strategy
+<!-- ✅ CLOSED — Shadow detection, origin tagging, and dynamic var tracking all implemented in compiler.go. -->
 
 ### Shadow Detection
+<!-- ✅ CLOSED — RecordShadow() called when key exists before Set(); shadow info stored in VarTrace.ShadowsVar. -->
 
 When `result.Set(k, ...)` is called and the key already exists, that's a shadow event.
 
@@ -47,6 +50,7 @@ After:
 ```
 
 ### Origin Tagging
+<!-- ✅ CLOSED — All 7 loops + special vars + dotenv + for-loop instrumented with correct VarOrigin constants. -->
 
 The range function is called in 7 distinct loops. Each loop corresponds to a scope:
 
@@ -62,6 +66,7 @@ The range function is called in 7 distinct loops. Each loop corresponds to a sco
 Special vars (lines 53-55) use `OriginSpecial`.
 
 ### Dynamic Variable Tracking
+<!-- ✅ CLOSED — sh: commands traced; ShCmd stored in VarTrace; displayed as "(sh) value (sh: "cmd")" in output. -->
 
 In `HandleDynamicVar()` (line 148):
 
@@ -91,6 +96,7 @@ c.Tracer.RecordVar(k, VarTrace{
 ```
 
 ### Approach: Wrap getRangeFunc
+<!-- ✅ CLOSED — getRangeFunc receives origin param; each call site passes its VarOrigin constant. -->
 
 To avoid modifying `getRangeFunc`'s signature extensively, inject the origin as a parameter:
 
@@ -105,6 +111,7 @@ getRangeFunc := func(dir string, origin transparent.VarOrigin) func(k string, v 
 This is the **minimal change** — the origin is known at each call site.
 
 ## Var.Dir Field Usage
+<!-- ✅ CLOSED — Var.Dir reused from existing code; included-taskfile vars tracked with directory context. -->
 
 The existing `Var.Dir` field already tracks directory context for included variables (set in `vars.go:140`). Transparent mode reuses this information:
 

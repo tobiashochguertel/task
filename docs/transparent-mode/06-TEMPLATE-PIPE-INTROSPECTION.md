@@ -1,6 +1,7 @@
 # 06 — Template Pipe Introspection
 
 ## The Problem
+<!-- ✅ CLOSED — Pipe evaluation order, parenthesization pitfalls, and intermediate values all traced by AST analyzer. -->
 
 Go templates use Unix-style pipe chains: `{{.NAME | trim | upper}}`. Users struggle with:
 
@@ -9,6 +10,7 @@ Go templates use Unix-style pipe chains: `{{.NAME | trim | upper}}`. Users strug
 3. **Intermediate values** — no way to see what value flows between pipe stages
 
 ## How Go Templates Evaluate Pipes
+<!-- ✅ CLOSED — Evaluation order documented and tested; pipe_analyzer.go extracts AST pipe structure. -->
 
 ```
 {{printf "%s : %s" .GREETING .NAME | trim}}
@@ -36,8 +38,10 @@ Evaluation:
 ```
 
 ## Implementation Approach
+<!-- ✅ CLOSED — Option A (AST-level) chosen and implemented in pipe_analyzer.go using text/template/parse. -->
 
 ### Option A: AST-level introspection (Recommended)
+<!-- ✅ CLOSED — AnalyzePipes() walks PipeNode/CommandNode AST; extracts function names and args from real parser. -->
 
 Use `github.com/go-task/template` (forked `text/template`) which exposes `parse.PipeNode`, `parse.CommandNode`, and `parse.ActionNode`.
 
@@ -71,10 +75,12 @@ Parse the `{{ }}` delimiters and split on `|`. Simpler but less accurate for nes
 **Not recommended** — breaks on `{{ "hello|world" }}` and nested pipes.
 
 ### Chosen: Option A
+<!-- ✅ CLOSED — Using text/template/parse for correctness; handles nested pipes and complex expressions. -->
 
 Leverages the real template parser for correctness. The `github.com/go-task/template` package already exposes the `parse` package.
 
 ## Integration Point
+<!-- ✅ CLOSED — Wired in templater.go ReplaceWithExtra(); records TemplateTrace with PipeSteps + VarsUsed + Tips. -->
 
 **File:** `internal/templater/templater.go`
 
@@ -98,6 +104,7 @@ tpl.Execute(&b, data)
 ```
 
 ## Available Template Functions (for reference)
+<!-- ✅ CLOSED — Function list documented; AST analyzer auto-handles any registered function (no hardcoded list). -->
 
 Source: `internal/templater/funcs.go` + `slim-sprig`
 

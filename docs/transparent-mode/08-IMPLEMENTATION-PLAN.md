@@ -1,6 +1,7 @@
 # 08 — Implementation Plan
 
 ## Phase Overview
+<!-- ✅ CLOSED — All 5 phases completed: Foundation, Variable Tracing, Template Tracing, Rendering, Polish. -->
 
 ```mermaid
 gantt
@@ -25,6 +26,7 @@ gantt
 ## Implementation Steps
 
 ### Phase 1: Foundation
+<!-- ✅ CLOSED — model.go, tracer.go, --transparent/-T flag, Executor.Transparent field all implemented. -->
 
 | # | Task | File(s) | Function/Struct |
 |---|------|---------|-----------------|
@@ -35,6 +37,7 @@ gantt
 | 1.5 | Wire flag to executor | `internal/flags/flags.go` | `ApplyToExecutor()` → add `task.WithTransparent(Transparent)` |
 
 ### Phase 2: Variable Tracing
+<!-- ✅ CLOSED — Compiler instrumented: 8 scopes, shadow detection, dynamic var tracking, dotenv, for-loop. -->
 
 | # | Task | File(s) | Function/Struct |
 |---|------|---------|-----------------|
@@ -47,6 +50,7 @@ gantt
 | 2.7 | Detect shadows | `compiler.go` inside `getRangeFunc` | Check `result.Get(k)` before `result.Set(k, ...)` |
 
 ### Phase 3: Template Tracing
+<!-- ✅ CLOSED — Cache.Tracer wired; pipe_analyzer.go with AST walking; TemplateTrace with PipeSteps/VarsUsed/Tips. -->
 
 | # | Task | File(s) | Function/Struct |
 |---|------|---------|-----------------|
@@ -56,6 +60,7 @@ gantt
 | 3.4 | Instrument `ReplaceWithExtra()` | `internal/templater/templater.go:84-93` | Record `TemplateTrace` before/after execution |
 
 ### Phase 4: Rendering
+<!-- ✅ CLOSED — Text renderer, JSON renderer, RunTransparent(), RunTransparentAll() all implemented and wired. -->
 
 | # | Task | File(s) | Function/Struct |
 |---|------|---------|-----------------|
@@ -65,6 +70,7 @@ gantt
 | 4.4 | Wire into CLI | `cmd/task/task.go:~200` | `if flags.Transparent { return e.RunTransparent(ctx, calls...) }` |
 
 ### Phase 5: Polish
+<!-- ✅ CLOSED — 170 tests total: 32 unit + 10 integration + 50 E2E + 77 golden (text+JSON+list-all). -->
 
 | # | Task | File(s) | Function/Struct |
 |---|------|---------|-----------------|
@@ -74,6 +80,7 @@ gantt
 | 5.4 | Update CLI help text | `internal/flags/flags.go:24` | Add `--transparent` to usage examples |
 
 ## Estimated Diff Size
+<!-- ✅ CLOSED — Actual diff ~2500 new lines (vs estimated ~740) due to examples, golden files, and extra features. -->
 
 | Area | Added Lines | Modified Lines |
 |------|-------------|----------------|

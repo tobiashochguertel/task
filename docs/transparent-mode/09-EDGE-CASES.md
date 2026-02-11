@@ -1,8 +1,10 @@
 # 09 — Edge Cases & Go Template Pitfalls
 
 ## Common User Confusions (that Transparent Mode surfaces)
+<!-- ✅ CLOSED — All 7 edge cases addressed; pipe tips, <no value> warning, shadow display, ref tracking, FOR labels. -->
 
 ### 1. Pipe vs Parenthesization
+<!-- ✅ CLOSED — GeneratePipeTips() detects multi-arg pipe pitfalls; 💡 tip shown with parenthesized alternative. -->
 
 ```yaml
 # User writes:
@@ -30,6 +32,7 @@ Current behavior: `<no value>` is replaced with `""` (line 95 in `templater.go`)
 ```
 
 ### 3. Dynamic Variable Not Resolved in Fast Mode
+<!-- ⏳ OPEN — Dynamic vars are traced with sh: command, but fast-mode specific warning not yet added. -->
 
 When using `--list` or `--list-all`, `FastGetVariables()` skips `sh:` evaluation. Variables with `sh:` show as empty.
 
@@ -39,6 +42,7 @@ DYNAMIC_VAR = ""  [task:vars]  type:string  ⚠ DYNAMIC (sh: "echo hello") — n
 ```
 
 ### 4. Variable Type Mismatch
+<!-- ⏳ OPEN — Deferred to v2; type mismatch detection not implemented (requires template execution interception). -->
 
 ```yaml
 vars:
@@ -56,6 +60,7 @@ cmds:
 ```
 
 ### 5. Include Variable Scoping
+<!-- ✅ CLOSED — Include vars traced with OriginIncludeVars/OriginIncludedTaskfileVars; shadow warnings shown. -->
 
 ```yaml
 # Taskfile.yml
@@ -77,6 +82,7 @@ Task: app:deploy
 ```
 
 ### 6. Ref Variables
+<!-- ✅ CLOSED — IsRef, RefName, ValueID tracked; ptr displayed for slices/maps; ref:NAME shown in output. -->
 
 ```yaml
 vars:
@@ -114,6 +120,7 @@ Commands:
 ```
 
 ## Template Function Chaining Rules
+<!-- ✅ CLOSED — GeneratePipeTips() detects multi-arg functions piped with additional args; tip suggests parenthesization. -->
 
 For user education, Transparent Mode can display a tip when it detects common patterns:
 
@@ -125,6 +132,7 @@ For user education, Transparent Mode can display a tip when it detects common pa
 | `{{.X \| upper \| trim}}` | ✅ .X → upper → trim (left to right) |
 
 ## Instance Identity
+<!-- ✅ CLOSED — ValueID via reflect.ValueOf().Pointer() for slices/maps; same-instance detection working. -->
 
 When two variables reference the same underlying data:
 

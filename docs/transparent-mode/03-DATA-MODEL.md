@@ -1,10 +1,12 @@
 # 03 — Data Model
 
 ## Trace Structures
+<!-- ✅ CLOSED — All structures implemented in internal/transparent/model.go exactly as specified. -->
 
 All types live in `internal/transparent/model.go`.
 
 ### VarTrace
+<!-- ✅ CLOSED — All fields implemented including Extra, IsRef, RefName, ValueID, ShCmd. Sorted by origin in output. -->
 
 Captures one variable resolution event.
 
@@ -34,6 +36,7 @@ VarTrace {
 ```
 
 ### Copy vs Reference Semantics
+<!-- ✅ CLOSED — ValueID via reflect.ValueOf().Pointer(); ptr displayed in text and JSON; tested with ref examples. -->
 
 | Scenario | `IsRef` | `ValueID` | Display |
 |----------|---------|-----------|---------|
@@ -46,6 +49,7 @@ VarTrace {
 `ValueID` is obtained via `reflect.ValueOf(v.Value).Pointer()` for types that support it (slices, maps, pointers). For scalar types (string, int, bool) it is always 0 and identity is not applicable — scalars are always copies in Go.
 
 ### VarOrigin (enum)
+<!-- ✅ CLOSED — All 10 origins implemented: Environment, Special, TaskfileEnv/Vars, Include, Call, Task, ForLoop, Dotenv. -->
 
 ```
 OriginEnvironment          // os environment
@@ -61,6 +65,7 @@ OriginDotenv               // .env file
 ```
 
 ### TemplateTrace
+<!-- ✅ CLOSED — Input, Output, Context, PipeSteps, VarsUsed, Tips fields all implemented and populated. -->
 
 Captures one template evaluation.
 
@@ -76,6 +81,7 @@ TemplateTrace {
 ```
 
 ### PipeStep
+<!-- ✅ CLOSED — AST-based pipe analysis via pipe_analyzer.go; FuncName, Args extracted from template/parse nodes. -->
 
 Captures one step in a template pipe chain.
 
@@ -89,6 +95,7 @@ PipeStep {
 ```
 
 ### TaskTrace
+<!-- ✅ CLOSED — TaskName, Vars, Templates, Deps, Cmds fields all implemented. -->
 
 Groups all traces for a single task.
 
@@ -103,6 +110,7 @@ TaskTrace {
 ```
 
 ### CmdTrace
+<!-- ✅ CLOSED — Index, RawCmd, ResolvedCmd, IterationLabel fields implemented. Templates attached to cmds. -->
 
 ```
 CmdTrace {
@@ -114,6 +122,7 @@ CmdTrace {
 ```
 
 ## Relationships
+<!-- ✅ CLOSED — Class diagram matches actual implementation; Tracer→TraceReport→TaskTrace→VarTrace/TemplateTrace/CmdTrace. -->
 
 ```mermaid
 classDiagram
