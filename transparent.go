@@ -46,3 +46,13 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 	transparent.RenderText(os.Stderr, report)
 	return nil
 }
+
+// RunTransparentAll compiles ALL tasks in the Taskfile with tracing enabled.
+// Used with --transparent --list-all.
+func (e *Executor) RunTransparentAll(ctx context.Context) error {
+	var calls []*Call
+	for name := range e.Taskfile.Tasks.All(nil) {
+		calls = append(calls, &Call{Task: name})
+	}
+	return e.RunTransparent(ctx, calls...)
+}

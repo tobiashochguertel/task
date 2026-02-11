@@ -100,6 +100,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	}
 
 	cache := &templater.Cache{Vars: vars, Tracer: e.Compiler.Tracer}
+	e.Compiler.Tracer.SetTemplateContext("fields")
 	new := ast.Task{
 		Task:                 origTask.Task,
 		Label:                templater.Replace(origTask.Label, cache),
@@ -204,7 +205,8 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 
 	if len(origTask.Cmds) > 0 {
 		new.Cmds = make([]*ast.Cmd, 0, len(origTask.Cmds))
-		for _, cmd := range origTask.Cmds {
+		for i, cmd := range origTask.Cmds {
+			e.Compiler.Tracer.SetTemplateContext(fmt.Sprintf("cmds[%d]", i))
 			if cmd == nil {
 				continue
 			}
@@ -272,7 +274,8 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	}
 	if len(origTask.Deps) > 0 {
 		new.Deps = make([]*ast.Dep, 0, len(origTask.Deps))
-		for _, dep := range origTask.Deps {
+		for i, dep := range origTask.Deps {
+			e.Compiler.Tracer.SetTemplateContext(fmt.Sprintf("deps[%d]", i))
 			if dep == nil {
 				continue
 			}
@@ -311,6 +314,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	}
 
 	if len(origTask.Preconditions) > 0 {
+		e.Compiler.Tracer.SetTemplateContext("preconditions")
 		new.Preconditions = make([]*ast.Precondition, 0, len(origTask.Preconditions))
 		for _, precondition := range origTask.Preconditions {
 			if precondition == nil {
@@ -324,8 +328,11 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	}
 
 	if len(origTask.Status) > 0 {
+		e.Compiler.Tracer.SetTemplateContext("status")
 		new.Status = templater.Replace(origTask.Status, cache)
 	}
+
+	e.Compiler.Tracer.SetTemplateContext("")
 
 	// We only care about templater errors if we are evaluating shell variables
 	if evaluateShVars && cache.Err() != nil {

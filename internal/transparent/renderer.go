@@ -150,8 +150,12 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 	fmt.Fprintf(w, "  %s%sTemplate Evaluations:%s\n", cBold, cYellow, cReset)
 
 	for i, t := range templates {
-		fmt.Fprintf(w, "  %s[%d]%s Input:  %s%s%s\n",
-			cDim, i+1, cReset, cWhite, t.Input, cReset)
+		contextLabel := ""
+		if t.Context != "" {
+			contextLabel = fmt.Sprintf(" %s(%s)%s", cDim, t.Context, cReset)
+		}
+		fmt.Fprintf(w, "  %s[%d]%s%s Input:  %s%s%s\n",
+			cDim, i+1, cReset, contextLabel, cWhite, t.Input, cReset)
 		fmt.Fprintf(w, "       Output: %s%s%s\n",
 			cGreen, t.Output, cReset)
 		if len(t.VarsUsed) > 0 {

@@ -150,7 +150,7 @@ func run() error {
 		flags.NoStatus,
 		flags.Nested,
 	)
-	if listOptions.ShouldListTasks() {
+	if listOptions.ShouldListTasks() && !flags.Transparent {
 		if flags.Silent {
 			return e.ListTaskNames(flags.ListAll)
 		}
@@ -204,6 +204,10 @@ func run() error {
 	}
 
 	if flags.Transparent {
+		if flags.ListAll {
+			// --transparent --list-all: compile all tasks
+			return e.RunTransparentAll(ctx)
+		}
 		return e.RunTransparent(ctx, calls...)
 	}
 

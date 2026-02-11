@@ -583,3 +583,154 @@ func TestE2ENoWarningForDefinedVars(t *testing.T) {
 	assertNotContains(t, output, "warning")
 	assertNotContains(t, output, "<no value>")
 }
+
+// --- Round 2 gap-closure tests ---
+
+func TestE2EGlobalVarsSection(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	output := runTransparent(t, dir, "default")
+
+	// Should have a Global Variables section separate from task
+	assertContains(t, output, "Global Variables")
+	assertContains(t, output, "Task: default")
+
+	// Global vars should contain special + taskfile-level vars
+	assertContains(t, output, "TASK_VERSION")
+	assertContains(t, output, "special")
+	assertContains(t, output, "APP_NAME")
+	assertContains(t, output, "taskfile-vars")
+}
+
+func TestE2EGlobalVarsSeparation(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	output := runTransparent(t, dir, "default")
+
+	// Split output at "Task: default"
+	parts := strings.SplitN(output, "Task: default", 2)
+	if len(parts) < 2 {
+		t.Fatal("expected Task: default section")
+	}
+	globalSection := parts[0]
+	taskSection := parts[1]
+
+	// APP_NAME should be in global section (taskfile-vars), not task section
+	if !strings.Contains(globalSection, "APP_NAME") {
+		t.Error("expected APP_NAME in global section")
+	}
+	// APP_NAME should NOT appear in task-level vars
+	// (it may appear in template evaluations though)
+	taskVarsEnd := strings.Index(taskSection, "Template Evaluations:")
+	if taskVarsEnd > 0 {
+		taskVarsSection := taskSection[:taskVarsEnd]
+		lines := strings.Split(taskVarsSection, "\n")
+		for _, line := range lines {
+			if strings.Contains(line, "APP_NAME") && strings.Contains(line, "taskfile-vars") {
+				t.Error("APP_NAME should not be in task-level vars section")
+			}
+		}
+	}
+}
+
+func TestE2EShadowWarningFormat(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
+	output := runTransparent(t, dir, "override")
+
+	// New format: ⚠ SHADOWS NAME="value" [origin]
+	assertContains(t, output, "SHADOWS")
+	assertContains(t, output, "global-value")
+	assertContains(t, output, "taskfile-vars")
+}
+
+func TestE2EDynamicVarShellCommand(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "04-dynamic-variables")
+	output := runTransparent(t, dir, "default")
+
+	// Should show the shell command for dynamic vars
+	assertContains(t, output, "(sh)")
+	assertContains(t, output, "echo")
+}
+
+func TestE2EListAllTransparent(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "--list-all", "-d", dir)
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("--transparent --list-all failed: %v\nOutput: %s", err, string(out))
+	}
+	output := string(out)
+
+	// Should show ALL tasks, not just default
+	assertContains(t, output, "Task: default")
+	assertContains(t, output, "Task: with-task-vars")
+}
+
+func TestE2ETemplateContext(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	output := runTransparent(t, dir, "default")
+
+	// Template evaluations should show context labels
+	assertContains(t, output, "cmds[0]")
+	assertContains(t, output, "cmds[1]")
+}
+
+func TestE2EJSONGlobalVars(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("--transparent --json failed: %v\nOutput: %s", err, string(out))
+	}
+
+	var report map[string]any
+	if err := json.Unmarshal(out, &report); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+
+	// Check version field
+	if v, ok := report["version"]; !ok || v != "1.0" {
+		t.Errorf("expected version 1.0, got %v", v)
+	}
+
+	// Check global_vars array exists and has entries
+	gv, ok := report["global_vars"]
+	if !ok {
+		t.Fatal("expected global_vars in JSON output")
+	}
+	gvArr, ok := gv.([]any)
+	if !ok || len(gvArr) == 0 {
+		t.Fatal("expected non-empty global_vars array")
+	}
+}
+
+func TestE2EJSONTemplateContext(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("--transparent --json failed: %v\nOutput: %s", err, string(out))
+	}
+
+	var report map[string]any
+	if err := json.Unmarshal(out, &report); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+
+	// Check templates have context field
+	tasks := report["tasks"].([]any)
+	task := tasks[0].(map[string]any)
+	templates := task["templates"].([]any)
+	if len(templates) == 0 {
+		t.Fatal("expected templates")
+	}
+	tmpl := templates[0].(map[string]any)
+	ctx, ok := tmpl["context"]
+	if !ok || ctx == "" {
+		t.Error("expected non-empty context field in template trace")
+	}
+}

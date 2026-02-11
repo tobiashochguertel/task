@@ -6,11 +6,12 @@ import "sync"
 // All methods are nil-receiver safe — when the tracer is nil (transparent mode off),
 // every method is a no-op with zero overhead.
 type Tracer struct {
-	mu          sync.Mutex
-	currentTask string
-	globalVars  []VarTrace
-	tasks       map[string]*TaskTrace
-	taskOrder   []string // preserves insertion order
+	mu              sync.Mutex
+	currentTask     string
+	templateContext string // e.g. "cmds[0]", "label", "dir"
+	globalVars      []VarTrace
+	tasks           map[string]*TaskTrace
+	taskOrder       []string // preserves insertion order
 }
 
 // NewTracer creates a new Tracer instance.
@@ -35,6 +36,17 @@ func (t *Tracer) SetCurrentTask(taskName string) {
 			t.taskOrder = append(t.taskOrder, taskName)
 		}
 	}
+}
+
+// SetTemplateContext sets a label (e.g. "cmds[0]", "label", "dir") for
+// subsequent RecordTemplate calls. Reset with "".
+func (t *Tracer) SetTemplateContext(ctx string) {
+	if t == nil {
+		return
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	t.templateContext = ctx
 }
 
 // RecordVar records a variable resolution event.
@@ -92,6 +104,9 @@ func (t *Tracer) RecordTemplate(tt TemplateTrace) {
 
 	if t.currentTask == "" {
 		return
+	}
+	if tt.Context == "" && t.templateContext != "" {
+		tt.Context = t.templateContext
 	}
 	task := t.getOrCreateTask(t.currentTask)
 	task.Templates = append(task.Templates, tt)

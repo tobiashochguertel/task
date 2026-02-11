@@ -64,6 +64,7 @@ type VarTrace struct {
 	IsRef      bool      // True if defined via ref: keyword
 	RefName    string    // Source variable name for ref vars
 	ValueID    uintptr   // reflect pointer for slice/map identity; 0 for scalars
+	Extra      map[string]any // Extensibility field for IDE plugins and future use
 }
 
 // ComputeValueID sets the ValueID field based on the Value's reflect pointer.
