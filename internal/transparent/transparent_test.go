@@ -587,3 +587,42 @@ func TestAnalyzePipesResolveArgs(t *testing.T) {
 		t.Errorf("step[0] argsValues = %v, want empty", steps[0].ArgsValues)
 	}
 }
+
+func TestGeneratePipeTipsMultiArgPipe(t *testing.T) {
+	// printf with args piped to trim should generate a tip
+	steps := []PipeStep{
+		{FuncName: "printf", Args: []string{`"%s : %s"`, `"NAME"`, ".NAME"}},
+		{FuncName: "trim", Args: nil},
+	}
+	tips := GeneratePipeTips(steps)
+	if len(tips) == 0 {
+		t.Error("expected at least one tip for printf piped to trim")
+	}
+	if len(tips) > 0 && !strings.Contains(tips[0], "printf") {
+		t.Errorf("tip should mention printf, got: %s", tips[0])
+	}
+}
+
+func TestGeneratePipeTipsNoTipForSingleArgPipe(t *testing.T) {
+	// .NAME | trim should NOT generate a tip (no multi-arg function)
+	steps := []PipeStep{
+		{FuncName: ".NAME", Args: nil},
+		{FuncName: "trim", Args: nil},
+	}
+	tips := GeneratePipeTips(steps)
+	if len(tips) != 0 {
+		t.Errorf("expected no tips for simple field pipe, got: %v", tips)
+	}
+}
+
+func TestGeneratePipeTipsEmptySteps(t *testing.T) {
+	tips := GeneratePipeTips(nil)
+	if len(tips) != 0 {
+		t.Errorf("expected no tips for nil steps, got: %v", tips)
+	}
+
+	tips = GeneratePipeTips([]PipeStep{})
+	if len(tips) != 0 {
+		t.Errorf("expected no tips for empty steps, got: %v", tips)
+	}
+}

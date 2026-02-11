@@ -105,6 +105,7 @@ type TemplateTrace struct {
 	Output   string     // Resolved output
 	Context  string     // Where used: "task:build.cmds[0]"
 	Steps    []PipeStep // Pipe chain breakdown
+	Tips     []string   // User-friendly hints about potential pitfalls
 	VarsUsed []string   // Variable names referenced
 	Error    string     // Template error if any
 }

@@ -152,3 +152,44 @@ func lookupField(data map[string]any, ident []string) any {
 	}
 	return cur
 }
+
+// multiArgFuncs lists template functions that accept multiple positional
+// arguments. When these appear as the first command in a pipe followed by
+// more pipe stages, the evaluation order may surprise users.
+var multiArgFuncs = map[string]bool{
+	"printf":  true,
+	"print":   true,
+	"println": true,
+	"slice":   true,
+	"index":   true,
+	"eq":      true,
+	"ne":      true,
+	"lt":      true,
+	"le":      true,
+	"gt":      true,
+	"ge":      true,
+}
+
+// GeneratePipeTips analyzes pipe steps and returns user-friendly hints
+// about potential pitfalls (e.g. pipe evaluation order with multi-arg
+// functions).
+func GeneratePipeTips(steps []PipeStep) []string {
+	if len(steps) < 2 {
+		return nil
+	}
+
+	var tips []string
+
+	first := steps[0]
+	if multiArgFuncs[first.FuncName] && len(first.Args) > 0 {
+		// Multi-arg function piped: the pipe result goes to the LAST
+		// argument of the next function. Users sometimes expect it to
+		// modify one of the earlier arguments.
+		tips = append(tips, fmt.Sprintf(
+			"Tip: '%s' result is piped as last arg to '%s'. Use parentheses to change grouping: (func arg1 arg2) | next",
+			first.FuncName, steps[1].FuncName,
+		))
+	}
+
+	return tips
+}

@@ -171,6 +171,9 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 		if t.Error != "" {
 			fmt.Fprintf(w, "       %s⚠  %s%s\n", cRed, t.Error, cReset)
 		}
+		for _, tip := range t.Tips {
+			fmt.Fprintf(w, "       %s💡 %s%s\n", cCyan, tip, cReset)
+		}
 	}
 }
 

@@ -40,6 +40,7 @@ type jsonTemplateTrace struct {
 	Context  string         `json:"context,omitempty"`
 	VarsUsed []string       `json:"vars_used,omitempty"`
 	Steps    []jsonPipeStep `json:"pipe_steps,omitempty"`
+	Tips     []string       `json:"tips,omitempty"`
 	Error    string         `json:"error,omitempty"`
 }
 
@@ -92,6 +93,7 @@ func RenderJSON(w io.Writer, report *TraceReport) error {
 				Output:   tmpl.Output,
 				Context:  tmpl.Context,
 				VarsUsed: tmpl.VarsUsed,
+				Tips:     tmpl.Tips,
 				Error:    tmpl.Error,
 			}
 			for _, step := range tmpl.Steps {

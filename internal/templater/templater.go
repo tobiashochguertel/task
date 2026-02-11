@@ -96,11 +96,13 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 
 		// Record template trace if tracer is active and input contained template delimiters
 		if cache.Tracer != nil && strings.Contains(v, "{{") {
+			pipeSteps := transparent.AnalyzePipes(v, data, template.FuncMap(templateFuncs))
 			trace := transparent.TemplateTrace{
 				Input:    v,
 				Output:   result,
 				VarsUsed: extractVarNames(v),
-				Steps:    transparent.AnalyzePipes(v, data, template.FuncMap(templateFuncs)),
+				Steps:    pipeSteps,
+				Tips:     transparent.GeneratePipeTips(pipeSteps),
 			}
 			// Detect undefined variables (replaced <no value> → "")
 			if strings.Contains(b.String(), "<no value>") {
