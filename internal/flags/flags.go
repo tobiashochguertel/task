@@ -88,6 +88,7 @@ var (
 	Cert                string
 	CertKey             string
 	Interactive         bool
+	Transparent         bool
 )
 
 func init() {
@@ -139,6 +140,7 @@ func init() {
 	pflag.BoolVar(&DisableFuzzy, "disable-fuzzy", getConfig(config, func() *bool { return config.DisableFuzzy }, false), "Disables fuzzy matching for task names.")
 	pflag.BoolVarP(&AssumeYes, "yes", "y", false, "Assume \"yes\" as answer to all prompts.")
 	pflag.BoolVar(&Interactive, "interactive", getConfig(config, func() *bool { return config.Interactive }, false), "Prompt for missing required variables.")
+	pflag.BoolVarP(&Transparent, "transparent", "T", false, "Show template and variable diagnostic overlay (no execution).")
 	pflag.BoolVarP(&Parallel, "parallel", "p", false, "Executes tasks provided on command line in parallel.")
 	pflag.BoolVarP(&Dry, "dry", "n", false, "Compiles and prints tasks in the order that they would be run, without executing them.")
 	pflag.BoolVar(&Summary, "summary", false, "Show summary about a task.")
@@ -314,6 +316,7 @@ func (o *flagsOption) ApplyToExecutor(e *task.Executor) {
 		task.WithTaskSorter(sorter),
 		task.WithVersionCheck(true),
 		task.WithFailfast(Failfast),
+		task.WithTransparent(Transparent),
 	)
 }
 

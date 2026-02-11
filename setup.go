@@ -19,6 +19,7 @@ import (
 	"github.com/go-task/task/v3/internal/fsext"
 	"github.com/go-task/task/v3/internal/logger"
 	"github.com/go-task/task/v3/internal/output"
+	"github.com/go-task/task/v3/internal/transparent"
 	"github.com/go-task/task/v3/internal/version"
 	"github.com/go-task/task/v3/taskfile"
 	"github.com/go-task/task/v3/taskfile/ast"
@@ -227,6 +228,9 @@ func (e *Executor) setupCompiler() error {
 		TaskfileEnv:    e.Taskfile.Env,
 		TaskfileVars:   e.Taskfile.Vars,
 		Logger:         e.Logger,
+	}
+	if e.Transparent {
+		e.Compiler.Tracer = transparent.NewTracer()
 	}
 	return nil
 }

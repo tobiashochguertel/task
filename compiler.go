@@ -14,6 +14,7 @@ import (
 	"github.com/go-task/task/v3/internal/filepathext"
 	"github.com/go-task/task/v3/internal/logger"
 	"github.com/go-task/task/v3/internal/templater"
+	"github.com/go-task/task/v3/internal/transparent"
 	"github.com/go-task/task/v3/internal/version"
 	"github.com/go-task/task/v3/taskfile/ast"
 )
@@ -27,6 +28,7 @@ type Compiler struct {
 	TaskfileVars *ast.Vars
 
 	Logger *logger.Logger
+	Tracer *transparent.Tracer
 
 	dynamicCache   map[string]string
 	muDynamicCache sync.Mutex
@@ -52,9 +54,14 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 	}
 	for k, v := range specialVars {
 		result.Set(k, ast.Var{Value: v})
+		c.Tracer.RecordVar(transparent.VarTrace{
+			Name:   k,
+			Value:  v,
+			Origin: transparent.OriginSpecial,
+		})
 	}
 
-	getRangeFunc := func(dir string) func(k string, v ast.Var) error {
+	getRangeFunc := func(dir string, origin transparent.VarOrigin) func(k string, v ast.Var) error {
 		return func(k string, v ast.Var) error {
 			cache := &templater.Cache{Vars: result}
 			// Replace values
@@ -64,11 +71,25 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 			// Preserve the Sh field so it can be displayed in summary
 			if !evaluateShVars && newVar.Value == nil {
 				result.Set(k, ast.Var{Value: "", Sh: newVar.Sh})
+				c.Tracer.RecordVar(transparent.VarTrace{
+					Name:      k,
+					Value:     "",
+					Origin:    origin,
+					IsDynamic: newVar.Sh != nil,
+					ShCmd:     ptrStringVal(newVar.Sh),
+				})
 				return nil
 			}
 			// If the variable should not be evaluated and it is set, we can set it and return
 			if !evaluateShVars {
 				result.Set(k, ast.Var{Value: newVar.Value, Sh: newVar.Sh})
+				c.Tracer.RecordVar(transparent.VarTrace{
+					Name:      k,
+					Value:     newVar.Value,
+					Origin:    origin,
+					IsDynamic: newVar.Sh != nil,
+					ShCmd:     ptrStringVal(newVar.Sh),
+				})
 				return nil
 			}
 			// Now we can check for errors since we've handled all the cases when we don't want to evaluate
@@ -78,6 +99,13 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 			// If the variable is already set, we can set it and return
 			if newVar.Value != nil || newVar.Sh == nil {
 				result.Set(k, ast.Var{Value: newVar.Value})
+				c.Tracer.RecordVar(transparent.VarTrace{
+					Name:   k,
+					Value:  newVar.Value,
+					Origin: origin,
+					IsRef:  v.Ref != "",
+					RefName: v.Ref,
+				})
 				return nil
 			}
 			// If the variable is dynamic, we need to resolve it first
@@ -86,10 +114,18 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 				return err
 			}
 			result.Set(k, ast.Var{Value: static})
+			c.Tracer.RecordVar(transparent.VarTrace{
+				Name:      k,
+				Value:     static,
+				Origin:    origin,
+				IsDynamic: true,
+				ShCmd:     ptrStringVal(newVar.Sh),
+				Dir:       dir,
+			})
 			return nil
 		}
 	}
-	rangeFunc := getRangeFunc(c.Dir)
+	rangeFunc := getRangeFunc(c.Dir, transparent.OriginTaskfileVars)
 
 	var taskRangeFunc func(k string, v ast.Var) error
 	if t != nil {
@@ -101,11 +137,11 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 			return nil, err
 		}
 		dir = filepathext.SmartJoin(c.Dir, dir)
-		taskRangeFunc = getRangeFunc(dir)
+		taskRangeFunc = getRangeFunc(dir, transparent.OriginTaskVars)
 	}
 
 	for k, v := range c.TaskfileEnv.All() {
-		if err := rangeFunc(k, v); err != nil {
+		if err := getRangeFunc(c.Dir, transparent.OriginTaskfileEnv)(k, v); err != nil {
 			return nil, err
 		}
 	}
@@ -116,12 +152,12 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 	}
 	if t != nil {
 		for k, v := range t.IncludeVars.All() {
-			if err := rangeFunc(k, v); err != nil {
+			if err := getRangeFunc(c.Dir, transparent.OriginIncludeVars)(k, v); err != nil {
 				return nil, err
 			}
 		}
 		for k, v := range t.IncludedTaskfileVars.All() {
-			if err := taskRangeFunc(k, v); err != nil {
+			if err := getRangeFunc(c.Dir, transparent.OriginIncludedTaskfileVars)(k, v); err != nil {
 				return nil, err
 			}
 		}
@@ -132,7 +168,7 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 	}
 
 	for k, v := range call.Vars.All() {
-		if err := rangeFunc(k, v); err != nil {
+		if err := getRangeFunc(c.Dir, transparent.OriginCallVars)(k, v); err != nil {
 			return nil, err
 		}
 	}
@@ -143,6 +179,14 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 	}
 
 	return result, nil
+}
+
+// ptrStringVal returns the string value of a *string or "" if nil.
+func ptrStringVal(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 func (c *Compiler) HandleDynamicVar(v ast.Var, dir string, e []string) (string, error) {

@@ -55,6 +55,7 @@ type (
 		Concurrency         int
 		Interval            time.Duration
 		Failfast            bool
+	Transparent         bool
 
 		// I/O
 		Stdin  io.Reader
@@ -616,4 +617,18 @@ type failfastOption struct {
 
 func (o *failfastOption) ApplyToExecutor(e *Executor) {
 	e.Failfast = o.failfast
+}
+
+// WithTransparent tells the [Executor] to show template and variable diagnostic
+// information instead of executing tasks.
+func WithTransparent(transparent bool) ExecutorOption {
+	return &transparentOption{transparent}
+}
+
+type transparentOption struct {
+	transparent bool
+}
+
+func (o *transparentOption) ApplyToExecutor(e *Executor) {
+	e.Transparent = o.transparent
 }
