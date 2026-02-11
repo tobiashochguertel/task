@@ -1,6 +1,7 @@
 package transparent_test
 
 import (
+	"encoding/json"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -504,4 +505,63 @@ func TestE2EPipeStepsUpperLower(t *testing.T) {
 	// Should have pipe steps for upper and lower
 	assertContains(t, output, "pipe[0]")
 	assertContains(t, output, "pipe[1]")
+}
+
+// ── JSON Output E2E Tests ──
+
+func TestE2EJSONOutput(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("task --transparent --json failed: %v\n%s", err, out)
+	}
+
+	// Should be valid JSON
+	var result map[string]any
+	if err := json.Unmarshal(out, &result); err != nil {
+		t.Fatalf("invalid JSON: %v\nOutput: %s", err, out)
+	}
+	tasks, ok := result["tasks"].([]any)
+	if !ok || len(tasks) == 0 {
+		t.Fatal("expected 'tasks' array in JSON output")
+	}
+	task0, ok := tasks[0].(map[string]any)
+	if !ok {
+		t.Fatal("expected task to be an object")
+	}
+	if task0["name"] != "default" {
+		t.Errorf("expected task name 'default', got %v", task0["name"])
+	}
+}
+
+func TestE2EJSONPipeSteps(t *testing.T) {
+	bin := getTaskBinary(t)
+	dir := filepath.Join(examplesDir(), "03-template-pipes")
+	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "trim-pipe")
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		t.Fatalf("task --transparent --json failed: %v\n%s", err, out)
+	}
+
+	var result map[string]any
+	if err := json.Unmarshal(out, &result); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+	tasks := result["tasks"].([]any)
+	task0 := tasks[0].(map[string]any)
+	templates := task0["templates"].([]any)
+	// First template should have pipe_steps
+	tmpl0 := templates[0].(map[string]any)
+	steps, ok := tmpl0["pipe_steps"].([]any)
+	if !ok || len(steps) < 2 {
+		t.Fatalf("expected at least 2 pipe_steps, got %v", tmpl0["pipe_steps"])
+	}
+	step0 := steps[0].(map[string]any)
+	if step0["func"] != ".NAME" {
+		t.Errorf("expected pipe step func '.NAME', got %v", step0["func"])
+	}
 }

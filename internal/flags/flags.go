@@ -234,8 +234,8 @@ func Validate() error {
 		return errors.New("task: cannot use --list and --list-all at the same time")
 	}
 
-	if ListJson && !List && !ListAll && !ListVars {
-		return errors.New("task: --json only applies to --list, --list-all or --list-vars")
+	if ListJson && !List && !ListAll && !ListVars && !Transparent {
+		return errors.New("task: --json only applies to --list, --list-all, --list-vars or --transparent")
 	}
 
 	if NoStatus && !ListJson {
@@ -317,6 +317,7 @@ func (o *flagsOption) ApplyToExecutor(e *task.Executor) {
 		task.WithVersionCheck(true),
 		task.WithFailfast(Failfast),
 		task.WithTransparent(Transparent),
+		task.WithTransparentJSON(Transparent && ListJson),
 	)
 }
 

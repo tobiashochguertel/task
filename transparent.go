@@ -37,6 +37,9 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 
 	// Render the report
 	report := e.Compiler.Tracer.Report()
+	if e.TransparentJSON {
+		return transparent.RenderJSON(os.Stderr, report)
+	}
 	transparent.RenderText(os.Stderr, report)
 	return nil
 }

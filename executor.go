@@ -56,6 +56,7 @@ type (
 		Interval            time.Duration
 		Failfast            bool
 	Transparent         bool
+	TransparentJSON     bool
 
 		// I/O
 		Stdin  io.Reader
@@ -631,4 +632,18 @@ type transparentOption struct {
 
 func (o *transparentOption) ApplyToExecutor(e *Executor) {
 	e.Transparent = o.transparent
+}
+
+// WithTransparentJSON tells the [Executor] to output the transparent mode
+// report as JSON instead of human-readable text.
+func WithTransparentJSON(jsonOutput bool) ExecutorOption {
+	return &transparentJSONOption{jsonOutput}
+}
+
+type transparentJSONOption struct {
+	jsonOutput bool
+}
+
+func (o *transparentJSONOption) ApplyToExecutor(e *Executor) {
+	e.TransparentJSON = o.jsonOutput
 }
