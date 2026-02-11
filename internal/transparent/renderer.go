@@ -151,6 +151,9 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 					cDim, j, step.FuncName, step.Args, step.Output, cReset)
 			}
 		}
+		if t.Error != "" {
+			fmt.Fprintf(w, "       %s⚠  %s%s\n", cRed, t.Error, cReset)
+		}
 	}
 }
 
@@ -159,6 +162,9 @@ func renderCmds(w io.Writer, cmds []CmdTrace) {
 
 	for _, c := range cmds {
 		fmt.Fprintf(w, "  %s[%d]%s", cDim, c.Index, cReset)
+		if c.IterationLabel != "" {
+			fmt.Fprintf(w, " %s(%s)%s", cDim, c.IterationLabel, cReset)
+		}
 		if c.RawCmd == c.ResolvedCmd {
 			fmt.Fprintf(w, " %s\n", c.ResolvedCmd)
 		} else {

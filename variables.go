@@ -238,9 +238,10 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 					// Record for-loop expanded command trace
 					if e.Compiler.Tracer != nil && cmd.Cmd != "" {
 						e.Compiler.Tracer.RecordCmd(origTask.Task, transparent.CmdTrace{
-							Index:       len(new.Cmds) - 1,
-							RawCmd:      cmd.Cmd,
-							ResolvedCmd: newCmd.Cmd,
+							Index:          len(new.Cmds) - 1,
+							RawCmd:         cmd.Cmd,
+							ResolvedCmd:    newCmd.Cmd,
+							IterationLabel: fmt.Sprintf("%s=%v", as, loopValue),
 						})
 					}
 				}

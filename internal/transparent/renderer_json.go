@@ -47,9 +47,10 @@ type jsonPipeStep struct {
 }
 
 type jsonCmdTrace struct {
-	Index       int    `json:"index"`
-	RawCmd      string `json:"raw"`
-	ResolvedCmd string `json:"resolved"`
+	Index          int    `json:"index"`
+	RawCmd         string `json:"raw"`
+	ResolvedCmd    string `json:"resolved"`
+	IterationLabel string `json:"iteration,omitempty"`
 }
 
 // RenderJSON writes the trace report as JSON to the given writer.
@@ -110,9 +111,10 @@ func RenderJSON(w io.Writer, report *TraceReport) error {
 
 		for _, cmd := range task.Cmds {
 			jt.Commands = append(jt.Commands, jsonCmdTrace{
-				Index:       cmd.Index,
-				RawCmd:      cmd.RawCmd,
-				ResolvedCmd: cmd.ResolvedCmd,
+				Index:          cmd.Index,
+				RawCmd:         cmd.RawCmd,
+				ResolvedCmd:    cmd.ResolvedCmd,
+				IterationLabel: cmd.IterationLabel,
 			})
 		}
 

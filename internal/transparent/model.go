@@ -110,10 +110,11 @@ type TemplateTrace struct {
 
 // CmdTrace captures a single command before/after template substitution.
 type CmdTrace struct {
-	Index       int
-	RawCmd      string          // Before substitution
-	ResolvedCmd string          // After substitution
-	Templates   []TemplateTrace // Template evaluations within this command
+	Index          int
+	RawCmd         string          // Before substitution
+	ResolvedCmd    string          // After substitution
+	Templates      []TemplateTrace // Template evaluations within this command
+	IterationLabel string          // Non-empty for FOR-loop expanded commands
 }
 
 // TaskTrace groups all traces for a single task.

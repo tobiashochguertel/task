@@ -102,6 +102,10 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 				VarsUsed: extractVarNames(v),
 				Steps:    transparent.AnalyzePipes(v, data, template.FuncMap(templateFuncs)),
 			}
+			// Detect undefined variables (replaced <no value> → "")
+			if strings.Contains(b.String(), "<no value>") {
+				trace.Error = "warning: template produced <no value> for one or more variables (replaced with empty string)"
+			}
 			cache.Tracer.RecordTemplate(trace)
 		}
 

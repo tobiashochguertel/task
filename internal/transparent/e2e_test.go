@@ -565,3 +565,21 @@ func TestE2EJSONPipeSteps(t *testing.T) {
 		t.Errorf("expected pipe step func '.NAME', got %v", step0["func"])
 	}
 }
+
+// ── Undefined Variable Warning E2E Tests ──
+
+func TestE2EUndefinedVarWarning(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "15-undefined-vars")
+	output := runTransparent(t, dir, "test-undefined")
+
+	assertContains(t, output, "warning")
+	assertContains(t, output, "<no value>")
+}
+
+func TestE2ENoWarningForDefinedVars(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "15-undefined-vars")
+	output := runTransparent(t, dir, "test-all-defined")
+
+	assertNotContains(t, output, "warning")
+	assertNotContains(t, output, "<no value>")
+}

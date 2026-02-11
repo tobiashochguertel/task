@@ -1,0 +1,15 @@
+version: "3"
+
+vars:
+  DEFINED: hello
+
+tasks:
+  test-undefined:
+    desc: Uses an undefined variable to trigger warning
+    cmds:
+      - "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'"
+
+  test-all-defined:
+    desc: Uses only defined variables (no warning)
+    cmds:
+      - "echo '{{.DEFINED}}'"
