@@ -99,9 +99,15 @@ graph LR
 | FOR-loop iteration labels | ✅ Implemented | Shows `(ITEM=value)` per iteration |
 | Undefined variable warning | ✅ Implemented | Detects `<no value>` → `""` replacements |
 | Dynamic variable (`sh:`) tracking | ✅ Implemented | Shows `IsDynamic`, `ShCmd` |
-| Verbosity levels (`-v`, `--list-all`) | ⏳ Planned | Currently shows all vars by default |
-| Type mismatch warnings | ⏳ Planned | Low priority |
-| Pipe mistake tips/hints | ⏳ Planned | Low priority |
+| Verbosity levels (`-v`, `--list-all`) | ✅ Implemented | `--transparent --list-all` compiles all tasks |
+| Type mismatch warnings | ⏳ Planned | Low priority — scaffolding ready |
+| Pipe mistake tips/hints | ✅ Implemented | `GeneratePipeTips()` detects multi-arg pipe pitfalls |
+| Global vars separation | ✅ Implemented | `SeparateGlobalVars()` splits global from task scope |
+| Template context labels | ✅ Implemented | Shows `cmds[0]`, `fields`, `preconditions`, etc. |
+| Shadow warning format | ✅ Implemented | Shows `⚠ SHADOWS NAME="value" [origin]` |
+| Dynamic var shell command | ✅ Implemented | Shows `(sh) value (sh: "command")` |
+| JSON version + global_vars | ✅ Implemented | `version: "1.0"`, `global_vars: [...]` |
+| Extra extensibility field | ✅ Implemented | `Extra map[string]any` on VarTrace |
 
 ## Design Decisions
 
