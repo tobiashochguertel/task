@@ -1,6 +1,9 @@
 package transparent
 
-import "sync"
+import (
+	"sort"
+	"sync"
+)
 
 // Tracer collects variable resolution and template evaluation traces.
 // All methods are nil-receiver safe — when the tracer is nil (transparent mode off),
@@ -147,12 +150,52 @@ func (t *Tracer) Report() *TraceReport {
 	report := &TraceReport{
 		GlobalVars: t.globalVars,
 	}
+	sortVars(report.GlobalVars)
 	for _, name := range t.taskOrder {
 		if tt, ok := t.tasks[name]; ok {
+			sortVars(tt.Vars)
 			report.Tasks = append(report.Tasks, tt)
 		}
 	}
 	return report
+}
+
+// sortVars sorts variables by origin priority then by name for deterministic output.
+func sortVars(vars []VarTrace) {
+	sort.SliceStable(vars, func(i, j int) bool {
+		if vars[i].Origin != vars[j].Origin {
+			return originPriority(vars[i].Origin) < originPriority(vars[j].Origin)
+		}
+		return vars[i].Name < vars[j].Name
+	})
+}
+
+// originPriority returns a sort key for VarOrigin to group vars by scope.
+func originPriority(o VarOrigin) int {
+	switch o {
+	case OriginSpecial:
+		return 0
+	case OriginEnvironment:
+		return 1
+	case OriginTaskfileEnv:
+		return 2
+	case OriginDotenv:
+		return 3
+	case OriginTaskfileVars:
+		return 4
+	case OriginIncludeVars:
+		return 5
+	case OriginIncludedTaskfileVars:
+		return 6
+	case OriginCallVars:
+		return 7
+	case OriginTaskVars:
+		return 8
+	case OriginForLoop:
+		return 9
+	default:
+		return 99
+	}
 }
 
 func (t *Tracer) getOrCreateTask(name string) *TaskTrace {

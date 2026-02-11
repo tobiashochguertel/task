@@ -1,0 +1,51 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     task-dynamic
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     task-dynamic
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  DATE              taskfile-vars   string      ·     (sh) 2026-02-11 (sh: echo "2026-02-11")
+  HOSTNAME          taskfile-vars   string      ·     (sh) test-host (sh: echo "test-host")
+  STATIC_VAR        taskfile-vars   string      ·     static-value
+
+── Task: task-dynamic
+  Variables:
+  Name      Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────
+  MATCH     call-vars       []string    ·     []
+            ptr: <PTR>
+  COMBINED  task-vars       string      ·     test-host-task-123
+  TASK_ID   task-vars       string      ·     (sh) task-123 (sh: echo "task-123")
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Task ID: {{.TASK_ID}}'
+       Output: echo 'Task ID: task-123'
+       Vars used: TASK_ID
+  [2] (cmds[1]) Input:  echo 'Combined: {{.COMBINED}}'
+       Output: echo 'Combined: test-host-task-123'
+       Vars used: COMBINED
+  Commands:
+  [0] raw:      echo 'Task ID: {{.TASK_ID}}'
+       resolved: echo 'Task ID: task-123'
+  [1] raw:      echo 'Combined: {{.COMBINED}}'
+       resolved: echo 'Combined: test-host-task-123'
+
+══════ End Report ══════

@@ -1,0 +1,50 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     conditional
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     conditional
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  BUILD_DATE        taskfile-vars   string      ·     (sh) 2026-02-11 (sh: echo "2026-02-11")
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  PROJECT           taskfile-vars   string      ·     myproject
+  VERSION           taskfile-vars   string      ·     2.0.0
+
+── Task: conditional
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  DEBUG  task-vars       string      ·     true
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
+       Output: echo 'Debug mode ON'
+       Vars used: DEBUG
+  [2] (cmds[1]) Input:  echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
+       Output: echo 'myproject v2.0.0 built 2026-02-11'
+       Vars used: PROJECT, VERSION, BUILD_DATE
+  Commands:
+  [0] raw:      echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
+       resolved: echo 'Debug mode ON'
+  [1] raw:      echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
+       resolved: echo 'myproject v2.0.0 built 2026-02-11'
+
+══════ End Report ══════

@@ -1,0 +1,51 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     build-inline
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     build-inline
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  ARCHS             taskfile-vars   []interface {}    ·     [amd64 arm64]
+                    ptr: <PTR>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  PLATFORMS         taskfile-vars   []interface {}    ·     [linux darwin windows]
+                    ptr: <PTR>
+  PROJECT           taskfile-vars   string      ·     my-app
+
+── Task: build-inline
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+       Output: echo 'Mode: debug for my-app'
+       Vars used: ITEM, PROJECT
+  [2] (cmds[0]) Input:  echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+       Output: echo 'Mode: release for my-app'
+       Vars used: ITEM, PROJECT
+  Commands:
+  [0] (ITEM=debug) raw:      echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+       resolved: echo 'Mode: debug for my-app'
+  [1] (ITEM=release) raw:      echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+       resolved: echo 'Mode: release for my-app'
+
+══════ End Report ══════

@@ -1,0 +1,54 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     quote-pipe
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     quote-pipe
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  ITEMS             taskfile-vars   string      ·     apple,banana,cherry
+  NAME              taskfile-vars   string      ·       world  
+  TITLE             taskfile-vars   string      ·     hello world
+
+── Task: quote-pipe
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo {{.TITLE | quote}}
+       Output: echo "hello world"
+       Vars used: TITLE
+         pipe[0]: .TITLE([]) → "hello world"
+         pipe[1]: quote([]) → "\"hello world\""
+  [2] (cmds[1]) Input:  echo '{{.NAME | trim | quote}}'
+       Output: echo '"world"'
+       Vars used: NAME
+         pipe[0]: .NAME([]) → "  world  "
+         pipe[1]: trim([]) → "world"
+         pipe[2]: quote([]) → "\"world\""
+  Commands:
+  [0] raw:      echo {{.TITLE | quote}}
+       resolved: echo "hello world"
+  [1] raw:      echo '{{.NAME | trim | quote}}'
+       resolved: echo '"world"'
+
+══════ End Report ══════

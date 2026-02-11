@@ -1,0 +1,183 @@
+{
+  "version": "1.0",
+  "global_vars": [
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": "build-inline"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": "build-inline"
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ARCHS",
+      "origin": "taskfile:vars",
+      "type": "[]interface {}",
+      "value": [
+        "amd64",
+        "arm64"
+      ],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ARGS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "CLI_ARGS_LIST",
+      "origin": "taskfile:vars",
+      "type": "[]string",
+      "value": [],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ASSUME_YES",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_FORCE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_OFFLINE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_SILENT",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_VERBOSE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "PLATFORMS",
+      "origin": "taskfile:vars",
+      "type": "[]interface {}",
+      "value": [
+        "linux",
+        "darwin",
+        "windows"
+      ],
+      "value_id": 0
+    },
+    {
+      "name": "PROJECT",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "my-app"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "build-inline",
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
+      ],
+      "templates": [
+        {
+          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "output": "echo 'Mode: debug for my-app'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "ITEM",
+            "PROJECT"
+          ]
+        },
+        {
+          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "output": "echo 'Mode: release for my-app'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "ITEM",
+            "PROJECT"
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "resolved": "echo 'Mode: debug for my-app'",
+          "iteration": "ITEM=debug"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "resolved": "echo 'Mode: release for my-app'",
+          "iteration": "ITEM=release"
+        }
+      ]
+    }
+  ]
+}

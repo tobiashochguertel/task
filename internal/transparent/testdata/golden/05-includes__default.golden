@@ -1,0 +1,37 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     default
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     default
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  INCLUDED_VAR      taskfile-vars   string      ·     from-included
+  PARENT_VAR        taskfile-vars   string      ·     from-parent
+  SHARED            taskfile-vars   string      ·     included-shared
+
+── Task: default
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+
+══════ End Report ══════

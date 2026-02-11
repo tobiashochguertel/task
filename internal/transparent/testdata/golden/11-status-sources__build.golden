@@ -1,0 +1,53 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     build
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     build
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  APP_NAME          taskfile-vars   string      ·     my-app
+  BUILD_DIR         taskfile-vars   string      ·     ./build
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  VERSION           taskfile-vars   string      ·     1.0.0
+
+── Task: build
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (fields) Input:  {{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}
+       Output: ./build/my-app-1.0.0
+       Vars used: BUILD_DIR, APP_NAME, VERSION
+  [2] (fields) Input:  {{.BUILD_DIR}}
+       Output: ./build
+       Vars used: BUILD_DIR
+  [3] (cmds[0]) Input:  echo 'Building {{.APP_NAME}} v{{.VERSION}}'
+       Output: echo 'Building my-app v1.0.0'
+       Vars used: APP_NAME, VERSION
+  [4] (status) Input:  test -f "{{.APP_NAME}}-{{.VERSION}}"
+       Output: test -f "my-app-1.0.0"
+       Vars used: APP_NAME, VERSION
+  Commands:
+  [0] raw:      echo 'Building {{.APP_NAME}} v{{.VERSION}}'
+       resolved: echo 'Building my-app v1.0.0'
+
+══════ End Report ══════

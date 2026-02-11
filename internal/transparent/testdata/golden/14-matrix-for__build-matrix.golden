@@ -1,0 +1,71 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     build-matrix
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     build-matrix
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  ARCHS             taskfile-vars   []interface {}    ·     [amd64 arm64]
+                    ptr: <PTR>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  PLATFORMS         taskfile-vars   []interface {}    ·     [linux darwin windows]
+                    ptr: <PTR>
+  PROJECT           taskfile-vars   string      ·     my-app
+
+── Task: build-matrix
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-linux-amd64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  [2] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-linux-arm64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  [3] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-darwin-amd64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  [4] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-darwin-arm64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  [5] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-windows-amd64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  [6] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       Output: echo 'Build: my-app-windows-arm64'
+       Vars used: PROJECT, ITEM, PLATFORM, ARCH
+  Commands:
+  [0] (ITEM=map[ARCH:amd64 PLATFORM:linux]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-linux-amd64'
+  [1] (ITEM=map[ARCH:arm64 PLATFORM:linux]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-linux-arm64'
+  [2] (ITEM=map[ARCH:amd64 PLATFORM:darwin]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-darwin-amd64'
+  [3] (ITEM=map[ARCH:arm64 PLATFORM:darwin]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-darwin-arm64'
+  [4] (ITEM=map[ARCH:amd64 PLATFORM:windows]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-windows-amd64'
+  [5] (ITEM=map[ARCH:arm64 PLATFORM:windows]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+       resolved: echo 'Build: my-app-windows-arm64'
+
+══════ End Report ══════

@@ -1,0 +1,56 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     build
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     build
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  BUILD_DATE        taskfile-vars   string      ·     (sh) 2026-02-11 (sh: echo "2026-02-11")
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  PROJECT           taskfile-vars   string      ·     myproject
+  VERSION           taskfile-vars   string      ·     2.0.0
+
+── Task: build
+  Variables:
+  Name      Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────
+  MATCH     call-vars       []string    ·     []
+            ptr: <PTR>
+  ARTIFACT  task-vars       string      ·     myproject-2.0.0
+  TAG       task-vars       string      ·     myproject/2-0-0
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Building {{.ARTIFACT}}'
+       Output: echo 'Building myproject-2.0.0'
+       Vars used: ARTIFACT
+  [2] (cmds[1]) Input:  echo 'Tag: {{.TAG}}'
+       Output: echo 'Tag: myproject/2-0-0'
+       Vars used: TAG
+  [3] (cmds[2]) Input:  echo 'Date: {{.BUILD_DATE}}'
+       Output: echo 'Date: 2026-02-11'
+       Vars used: BUILD_DATE
+  Commands:
+  [0] raw:      echo 'Building {{.ARTIFACT}}'
+       resolved: echo 'Building myproject-2.0.0'
+  [1] raw:      echo 'Tag: {{.TAG}}'
+       resolved: echo 'Tag: myproject/2-0-0'
+  [2] raw:      echo 'Date: {{.BUILD_DATE}}'
+       resolved: echo 'Date: 2026-02-11'
+
+══════ End Report ══════

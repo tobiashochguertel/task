@@ -1,0 +1,58 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     sub:greet
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     sub:greet
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  INCLUDED_VAR      taskfile-vars   string      ·     from-included
+  PARENT_VAR        taskfile-vars   string      ·     from-parent
+  SHARED            taskfile-vars   string      ·     included-shared
+  PARENT_VAR        include-vars    string      ·     from-parent ⚠ SHADOWS PARENT_VAR="from-parent" [taskfile-vars]
+  INCLUDED_VAR      included-tf     string      ·     from-included ⚠ SHADOWS INCLUDED_VAR="from-included" [taskfile-vars]
+  PARENT_VAR        included-tf     string      ·     from-parent ⚠ SHADOWS PARENT_VAR="from-parent" [taskfile-vars]
+  SHARED            included-tf     string      ·     included-shared ⚠ SHADOWS SHARED="included-shared" [taskfile-vars]
+
+── Task: sub:greet
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Included var: {{.INCLUDED_VAR}}'
+       Output: echo 'Included var: from-included'
+       Vars used: INCLUDED_VAR
+  [2] (cmds[1]) Input:  echo 'Shared: {{.SHARED}}'
+       Output: echo 'Shared: included-shared'
+       Vars used: SHARED
+  [3] (cmds[2]) Input:  echo 'Parent var: {{.PARENT_VAR}}'
+       Output: echo 'Parent var: from-parent'
+       Vars used: PARENT_VAR
+  Commands:
+  [0] raw:      echo 'Included var: {{.INCLUDED_VAR}}'
+       resolved: echo 'Included var: from-included'
+  [1] raw:      echo 'Shared: {{.SHARED}}'
+       resolved: echo 'Shared: included-shared'
+  [2] raw:      echo 'Parent var: {{.PARENT_VAR}}'
+       resolved: echo 'Parent var: from-parent'
+
+══════ End Report ══════

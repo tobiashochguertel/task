@@ -1,0 +1,53 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     upper-lower
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     upper-lower
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  ITEMS             taskfile-vars   string      ·     apple,banana,cherry
+  NAME              taskfile-vars   string      ·       world  
+  TITLE             taskfile-vars   string      ·     hello world
+
+── Task: upper-lower
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo '{{.TITLE | upper}}'
+       Output: echo 'HELLO WORLD'
+       Vars used: TITLE
+         pipe[0]: .TITLE([]) → "hello world"
+         pipe[1]: upper([]) → "HELLO WORLD"
+  [2] (cmds[1]) Input:  echo '{{.TITLE | title}}'
+       Output: echo 'Hello World'
+       Vars used: TITLE
+         pipe[0]: .TITLE([]) → "hello world"
+         pipe[1]: title([]) → "Hello World"
+  Commands:
+  [0] raw:      echo '{{.TITLE | upper}}'
+       resolved: echo 'HELLO WORLD'
+  [1] raw:      echo '{{.TITLE | title}}'
+       resolved: echo 'Hello World'
+
+══════ End Report ══════

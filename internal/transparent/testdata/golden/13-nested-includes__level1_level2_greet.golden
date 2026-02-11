@@ -1,0 +1,59 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     level1:level2:greet
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     level1:level2:greet
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  LEVEL1_VAR        taskfile-vars   string      ·     from-level1
+  LEVEL2_VAR        taskfile-vars   string      ·     from-level2
+  ROOT_VAR          taskfile-vars   string      ·     from-root
+  L1_TO_L2          include-vars    string      ·     from-level1-include
+  PARENT_VAR        include-vars    string      ·     from-root-include
+  LEVEL1_VAR        included-tf     string      ·     from-level1 ⚠ SHADOWS LEVEL1_VAR="from-level1" [taskfile-vars]
+  LEVEL2_VAR        included-tf     string      ·     from-level2 ⚠ SHADOWS LEVEL2_VAR="from-level2" [taskfile-vars]
+  ROOT_VAR          included-tf     string      ·     from-root ⚠ SHADOWS ROOT_VAR="from-root" [taskfile-vars]
+
+── Task: level1:level2:greet
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Level2: {{.LEVEL2_VAR}}'
+       Output: echo 'Level2: from-level2'
+       Vars used: LEVEL2_VAR
+  [2] (cmds[1]) Input:  echo 'L1 to L2: {{.L1_TO_L2}}'
+       Output: echo 'L1 to L2: from-level1-include'
+       Vars used: L1_TO_L2
+  [3] (cmds[2]) Input:  echo 'Parent: {{.PARENT_VAR}}'
+       Output: echo 'Parent: from-root-include'
+       Vars used: PARENT_VAR
+  Commands:
+  [0] raw:      echo 'Level2: {{.LEVEL2_VAR}}'
+       resolved: echo 'Level2: from-level2'
+  [1] raw:      echo 'L1 to L2: {{.L1_TO_L2}}'
+       resolved: echo 'L1 to L2: from-level1-include'
+  [2] raw:      echo 'Parent: {{.PARENT_VAR}}'
+       resolved: echo 'Parent: from-root-include'
+
+══════ End Report ══════

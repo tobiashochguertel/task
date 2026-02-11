@@ -1,0 +1,151 @@
+{
+  "version": "1.0",
+  "global_vars": [
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": "check-binary"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": "check-binary"
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "APP_NAME",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "my-app"
+    },
+    {
+      "name": "CLI_ARGS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "CLI_ARGS_LIST",
+      "origin": "taskfile:vars",
+      "type": "[]string",
+      "value": [],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ASSUME_YES",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_FORCE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_OFFLINE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_SILENT",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_VERBOSE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "VERSION",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "1.0.0"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "check-binary",
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
+      ],
+      "templates": [
+        {
+          "input": "echo '{{.APP_NAME}} is ready'",
+          "output": "echo 'my-app is ready'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "APP_NAME"
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo '{{.APP_NAME}} is ready'",
+          "resolved": "echo 'my-app is ready'"
+        }
+      ]
+    }
+  ]
+}

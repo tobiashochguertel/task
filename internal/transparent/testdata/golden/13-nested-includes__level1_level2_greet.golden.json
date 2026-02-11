@@ -1,0 +1,216 @@
+{
+  "version": "1.0",
+  "global_vars": [
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": "level1:level2:greet"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": "level1:level2:greet"
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "CLI_ARGS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "CLI_ARGS_LIST",
+      "origin": "taskfile:vars",
+      "type": "[]string",
+      "value": [],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ASSUME_YES",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_FORCE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_OFFLINE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_SILENT",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_VERBOSE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "LEVEL1_VAR",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "from-level1"
+    },
+    {
+      "name": "LEVEL2_VAR",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "from-level2"
+    },
+    {
+      "name": "ROOT_VAR",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "from-root"
+    },
+    {
+      "name": "L1_TO_L2",
+      "origin": "include:vars",
+      "type": "string",
+      "value": "from-level1-include"
+    },
+    {
+      "name": "PARENT_VAR",
+      "origin": "include:vars",
+      "type": "string",
+      "value": "from-root-include"
+    },
+    {
+      "name": "LEVEL1_VAR",
+      "origin": "included:taskfile:vars",
+      "type": "string",
+      "value": "from-level1",
+      "shadows": "LEVEL1_VAR=\"from-level1\" [taskfile:vars]"
+    },
+    {
+      "name": "LEVEL2_VAR",
+      "origin": "included:taskfile:vars",
+      "type": "string",
+      "value": "from-level2",
+      "shadows": "LEVEL2_VAR=\"from-level2\" [taskfile:vars]"
+    },
+    {
+      "name": "ROOT_VAR",
+      "origin": "included:taskfile:vars",
+      "type": "string",
+      "value": "from-root",
+      "shadows": "ROOT_VAR=\"from-root\" [taskfile:vars]"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "level1:level2:greet",
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
+      ],
+      "templates": [
+        {
+          "input": "echo 'Level2: {{.LEVEL2_VAR}}'",
+          "output": "echo 'Level2: from-level2'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "LEVEL2_VAR"
+          ]
+        },
+        {
+          "input": "echo 'L1 to L2: {{.L1_TO_L2}}'",
+          "output": "echo 'L1 to L2: from-level1-include'",
+          "context": "cmds[1]",
+          "vars_used": [
+            "L1_TO_L2"
+          ]
+        },
+        {
+          "input": "echo 'Parent: {{.PARENT_VAR}}'",
+          "output": "echo 'Parent: from-root-include'",
+          "context": "cmds[2]",
+          "vars_used": [
+            "PARENT_VAR"
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Level2: {{.LEVEL2_VAR}}'",
+          "resolved": "echo 'Level2: from-level2'"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'L1 to L2: {{.L1_TO_L2}}'",
+          "resolved": "echo 'L1 to L2: from-level1-include'"
+        },
+        {
+          "index": 2,
+          "raw": "echo 'Parent: {{.PARENT_VAR}}'",
+          "resolved": "echo 'Parent: from-root-include'"
+        }
+      ]
+    }
+  ]
+}

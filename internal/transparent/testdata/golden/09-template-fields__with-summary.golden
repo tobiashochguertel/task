@@ -1,0 +1,51 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     with-summary
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     with-summary
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  APP_NAME          taskfile-vars   string      ·     my-app
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  ENV               taskfile-vars   string      ·     production
+  VERSION           taskfile-vars   string      ·     2.0.0
+
+── Task: with-summary
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (fields) Input:  Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.
+This task handles the full deployment pipeline.
+
+       Output: Deploy my-app version 2.0.0 to production.
+This task handles the full deployment pipeline.
+
+       Vars used: APP_NAME, VERSION, ENV
+  [2] (cmds[0]) Input:  echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
+       Output: echo 'Deploying my-app v2.0.0 to production'
+       Vars used: APP_NAME, VERSION, ENV
+  Commands:
+  [0] raw:      echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
+       resolved: echo 'Deploying my-app v2.0.0 to production'
+
+══════ End Report ══════

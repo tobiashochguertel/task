@@ -1,0 +1,56 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     build-platforms
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     build-platforms
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  ARCHS             taskfile-vars   []interface {}    ·     [amd64 arm64]
+                    ptr: <PTR>
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  PLATFORMS         taskfile-vars   []interface {}    ·     [linux darwin windows]
+                    ptr: <PTR>
+  PROJECT           taskfile-vars   string      ·     my-app
+
+── Task: build-platforms
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       Output: echo 'Building my-app for linux'
+       Vars used: PROJECT, ITEM
+  [2] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       Output: echo 'Building my-app for darwin'
+       Vars used: PROJECT, ITEM
+  [3] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       Output: echo 'Building my-app for windows'
+       Vars used: PROJECT, ITEM
+  Commands:
+  [0] (ITEM=linux) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       resolved: echo 'Building my-app for linux'
+  [1] (ITEM=darwin) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       resolved: echo 'Building my-app for darwin'
+  [2] (ITEM=windows) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
+       resolved: echo 'Building my-app for windows'
+
+══════ End Report ══════

@@ -1,0 +1,167 @@
+{
+  "version": "1.0",
+  "global_vars": [
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": "default"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": "default"
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ALIAS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "hello-world",
+      "is_ref": true,
+      "ref_name": ".GREETING",
+      "shadows": "ALIAS=\"default\" [special]"
+    },
+    {
+      "name": "CLI_ARGS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "CLI_ARGS_LIST",
+      "origin": "taskfile:vars",
+      "type": "[]string",
+      "value": [],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ASSUME_YES",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_FORCE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_OFFLINE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_SILENT",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_VERBOSE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "GREETING",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "hello-world"
+    }
+  ],
+  "tasks": [
+    {
+      "name": "default",
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
+      ],
+      "templates": [
+        {
+          "input": "echo 'Greeting: {{.GREETING}}'",
+          "output": "echo 'Greeting: hello-world'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "GREETING"
+          ]
+        },
+        {
+          "input": "echo 'Alias: {{.ALIAS}}'",
+          "output": "echo 'Alias: hello-world'",
+          "context": "cmds[1]",
+          "vars_used": [
+            "ALIAS"
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Greeting: {{.GREETING}}'",
+          "resolved": "echo 'Greeting: hello-world'"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'Alias: {{.ALIAS}}'",
+          "resolved": "echo 'Alias: hello-world'"
+        }
+      ]
+    }
+  ]
+}

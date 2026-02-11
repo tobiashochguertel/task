@@ -1,0 +1,252 @@
+{
+  "version": "1.0",
+  "global_vars": [
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "ALIAS",
+      "origin": "special",
+      "type": "string",
+      "value": "combined",
+      "shadows": "ALIAS=\"\" [special]"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "ROOT_DIR=\"<PATH> [special]"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "ROOT_TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "ROOT_TASKFILE=\"<PATH> [special]"
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "TASK",
+      "origin": "special",
+      "type": "string",
+      "value": "combined",
+      "shadows": "TASK=\"\" [special]"
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "TASKFILE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "TASKFILE=\"\" [special]"
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "TASKFILE_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "TASKFILE_DIR=\"\" [special]"
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "TASK_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "TASK_DIR=\"\" [special]"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "TASK_EXE",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "TASK_EXE=\"<PATH> [special]"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>"
+    },
+    {
+      "name": "TASK_VERSION",
+      "origin": "special",
+      "type": "string",
+      "value": "<TASK_VERSION>",
+      "shadows": "TASK_VERSION=\"<TASK_VERSION>\" [special]"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>"
+    },
+    {
+      "name": "USER_WORKING_DIR",
+      "origin": "special",
+      "type": "string",
+      "value": "<PATH>",
+      "shadows": "USER_WORKING_DIR=\"<PATH> [special]"
+    },
+    {
+      "name": "DB_HOST",
+      "origin": "taskfile:env",
+      "type": "string",
+      "value": "localhost"
+    },
+    {
+      "name": "DB_NAME",
+      "origin": "taskfile:env",
+      "type": "string",
+      "value": "mydb"
+    },
+    {
+      "name": "DB_PORT",
+      "origin": "taskfile:env",
+      "type": "string",
+      "value": "5432"
+    },
+    {
+      "name": "DB_USER",
+      "origin": "taskfile:env",
+      "type": "string",
+      "value": "admin"
+    },
+    {
+      "name": "APP_NAME",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "my-dotenv-app"
+    },
+    {
+      "name": "APP_NAME",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": "my-dotenv-app",
+      "shadows": "APP_NAME=\"my-dotenv-app\" [taskfile:vars]"
+    },
+    {
+      "name": "CLI_ARGS",
+      "origin": "taskfile:vars",
+      "type": "string",
+      "value": ""
+    },
+    {
+      "name": "CLI_ARGS_LIST",
+      "origin": "taskfile:vars",
+      "type": "[]string",
+      "value": [],
+      "value_id": 0
+    },
+    {
+      "name": "CLI_ASSUME_YES",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_FORCE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_OFFLINE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_SILENT",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    },
+    {
+      "name": "CLI_VERBOSE",
+      "origin": "taskfile:vars",
+      "type": "bool",
+      "value": false
+    }
+  ],
+  "tasks": [
+    {
+      "name": "combined",
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        },
+        {
+          "name": "CONNECTION",
+          "origin": "task:vars",
+          "type": "string",
+          "value": "localhost:5432/mydb"
+        }
+      ],
+      "templates": [
+        {
+          "input": "echo 'Connection: {{.CONNECTION}}'",
+          "output": "echo 'Connection: localhost:5432/mydb'",
+          "context": "cmds[0]",
+          "vars_used": [
+            "CONNECTION"
+          ]
+        }
+      ],
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Connection: {{.CONNECTION}}'",
+          "resolved": "echo 'Connection: localhost:5432/mydb'"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     check-version
+  ROOT_DIR          special         string      ·     <PATH>
+  ROOT_TASKFILE     special         string      ·     <PATH>
+  TASK              special         string      ·     check-version
+  TASKFILE          special         string      ·     <PATH>
+  TASKFILE_DIR      special         string      ·     <PATH>
+  TASK_DIR          special         string      ·     <PATH>
+  TASK_EXE          special         string      ·     <PATH>
+  TASK_VERSION      special         string      ·     <TASK_VERSION>
+  USER_WORKING_DIR  special         string      ·     <PATH>
+  APP_NAME          taskfile-vars   string      ·     my-app
+  CLI_ARGS          taskfile-vars   string      ·     
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: <PTR>
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  VERSION           taskfile-vars   string      ·     1.0.0
+
+── Task: check-version
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: <PTR>
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo 'Version {{.VERSION}} validated'
+       Output: echo 'Version 1.0.0 validated'
+       Vars used: VERSION
+  [2] (preconditions) Input:  test '{{.VERSION}}' != ''
+       Output: test '1.0.0' != ''
+       Vars used: VERSION
+  [3] (preconditions) Input:  VERSION must not be empty (got: '{{.VERSION}}')
+       Output: VERSION must not be empty (got: '1.0.0')
+       Vars used: VERSION
+  Commands:
+  [0] raw:      echo 'Version {{.VERSION}} validated'
+       resolved: echo 'Version 1.0.0 validated'
+
+══════ End Report ══════
