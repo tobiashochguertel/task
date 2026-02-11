@@ -20,9 +20,18 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 		e.Compiler.Tracer.SetCurrentTask(call.Task)
 
 		// Compile the task (resolves variables and templates) without executing
-		_, err := e.compiledTask(call, true)
+		compiled, err := e.compiledTask(call, true)
 		if err != nil {
 			return fmt.Errorf("transparent: error compiling task %q: %w", call.Task, err)
+		}
+
+		// Record dependencies
+		if compiled.Deps != nil {
+			for _, dep := range compiled.Deps {
+				if dep != nil {
+					e.Compiler.Tracer.RecordDep(call.Task, dep.Task)
+				}
+			}
 		}
 	}
 

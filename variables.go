@@ -234,6 +234,15 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 					newCmd.If = templater.ReplaceWithExtra(cmd.If, cache, extra)
 					newCmd.Vars = templater.ReplaceVarsWithExtra(cmd.Vars, cache, extra)
 					new.Cmds = append(new.Cmds, newCmd)
+
+					// Record for-loop expanded command trace
+					if e.Compiler.Tracer != nil && cmd.Cmd != "" {
+						e.Compiler.Tracer.RecordCmd(origTask.Task, transparent.CmdTrace{
+							Index:       len(new.Cmds) - 1,
+							RawCmd:      cmd.Cmd,
+							ResolvedCmd: newCmd.Cmd,
+						})
+					}
 				}
 				continue
 			}

@@ -3,38 +3,53 @@ package transparent
 import (
 	"fmt"
 	"io"
+	"os"
 	"strings"
 )
 
 // ANSI color codes for terminal output
-const (
-	colorReset  = "\033[0m"
-	colorBold   = "\033[1m"
-	colorDim    = "\033[2m"
-	colorRed    = "\033[31m"
-	colorGreen  = "\033[32m"
-	colorYellow = "\033[33m"
-	colorBlue   = "\033[34m"
-	colorCyan   = "\033[36m"
-	colorWhite  = "\033[37m"
+var (
+	cReset  = "\033[0m"
+	cBold   = "\033[1m"
+	cDim    = "\033[2m"
+	cRed    = "\033[31m"
+	cGreen  = "\033[32m"
+	cYellow = "\033[33m"
+	cBlue   = "\033[34m"
+	cCyan   = "\033[36m"
+	cWhite  = "\033[37m"
 )
+
+func init() {
+	if os.Getenv("NO_COLOR") != "" {
+		cReset = ""
+		cBold = ""
+		cDim = ""
+		cRed = ""
+		cGreen = ""
+		cYellow = ""
+		cBlue = ""
+		cCyan = ""
+		cWhite = ""
+	}
+}
 
 // RenderText writes a human-readable trace report to the given writer.
 func RenderText(w io.Writer, report *TraceReport) {
 	if report == nil {
 		return
 	}
-	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", colorBold, colorCyan, colorReset)
+	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", cBold, cCyan, cReset)
 
 	for _, task := range report.Tasks {
 		renderTask(w, *task)
 	}
 
-	fmt.Fprintf(w, "%s%s══════ End Report ══════%s\n", colorBold, colorCyan, colorReset)
+	fmt.Fprintf(w, "%s%s══════ End Report ══════%s\n", cBold, cCyan, cReset)
 }
 
 func renderTask(w io.Writer, task TaskTrace) {
-	fmt.Fprintf(w, "%s%s── Task: %s%s\n", colorBold, colorGreen, task.TaskName, colorReset)
+	fmt.Fprintf(w, "%s%s── Task: %s%s\n", cBold, cGreen, task.TaskName, cReset)
 
 	if len(task.Vars) > 0 {
 		renderVars(w, task.Vars)
@@ -52,7 +67,7 @@ func renderTask(w io.Writer, task TaskTrace) {
 }
 
 func renderVars(w io.Writer, vars []VarTrace) {
-	fmt.Fprintf(w, "  %s%sVariables:%s\n", colorBold, colorYellow, colorReset)
+	fmt.Fprintf(w, "  %s%sVariables:%s\n", cBold, cYellow, cReset)
 
 	// Compute column widths
 	maxName := 4 // "Name"
@@ -64,8 +79,8 @@ func renderVars(w io.Writer, vars []VarTrace) {
 
 	// Header
 	fmt.Fprintf(w, "  %s%-*s  %-14s  %-8s  %-6s  Value%s\n",
-		colorDim, maxName, "Name", "Origin", "Type", "Ref?", colorReset)
-	fmt.Fprintf(w, "  %s%s%s\n", colorDim, strings.Repeat("─", maxName+14+8+6+10), colorReset)
+		cDim, maxName, "Name", "Origin", "Type", "Ref?", cReset)
+	fmt.Fprintf(w, "  %s%s%s\n", cDim, strings.Repeat("─", maxName+14+8+6+10), cReset)
 
 	for _, v := range vars {
 		originStr := originLabel(v.Origin)
@@ -76,17 +91,17 @@ func renderVars(w io.Writer, vars []VarTrace) {
 
 		refStr := "  ·"
 		if v.IsRef {
-			refStr = fmt.Sprintf("%s ref%s", colorRed, colorReset)
+			refStr = fmt.Sprintf("%s ref%s", cRed, cReset)
 		}
 
 		valStr := truncate(fmt.Sprintf("%v", v.Value), 60)
 		if v.IsDynamic {
-			valStr = fmt.Sprintf("%s(sh)%s %s", colorBlue, colorReset, valStr)
+			valStr = fmt.Sprintf("%s(sh)%s %s", cBlue, cReset, valStr)
 		}
 
 		shadowFlag := ""
 		if v.ShadowsVar != nil {
-			shadowFlag = fmt.Sprintf(" %s⚠ shadows %s%s", colorRed, v.ShadowsVar.Name, colorReset)
+			shadowFlag = fmt.Sprintf(" %s⚠ shadows %s%s", cRed, v.ShadowsVar.Name, cReset)
 		}
 
 		fmt.Fprintf(w, "  %-*s  %-14s  %-8s  %-6s  %s%s\n",
@@ -94,54 +109,54 @@ func renderVars(w io.Writer, vars []VarTrace) {
 
 		if v.ValueID != 0 {
 			fmt.Fprintf(w, "  %s%*s  ptr: 0x%x%s\n",
-				colorDim, maxName, "", v.ValueID, colorReset)
+				cDim, maxName, "", v.ValueID, cReset)
 		}
 		if v.RefName != "" {
 			fmt.Fprintf(w, "  %s%*s  → aliases: %s%s\n",
-				colorDim, maxName, "", v.RefName, colorReset)
+				cDim, maxName, "", v.RefName, cReset)
 		}
 	}
 }
 
 func renderTemplates(w io.Writer, templates []TemplateTrace) {
-	fmt.Fprintf(w, "  %s%sTemplate Evaluations:%s\n", colorBold, colorYellow, colorReset)
+	fmt.Fprintf(w, "  %s%sTemplate Evaluations:%s\n", cBold, cYellow, cReset)
 
 	for i, t := range templates {
 		fmt.Fprintf(w, "  %s[%d]%s Input:  %s%s%s\n",
-			colorDim, i+1, colorReset, colorWhite, t.Input, colorReset)
+			cDim, i+1, cReset, cWhite, t.Input, cReset)
 		fmt.Fprintf(w, "       Output: %s%s%s\n",
-			colorGreen, t.Output, colorReset)
+			cGreen, t.Output, cReset)
 		if len(t.VarsUsed) > 0 {
 			fmt.Fprintf(w, "       %sVars used: %s%s\n",
-				colorDim, strings.Join(t.VarsUsed, ", "), colorReset)
+				cDim, strings.Join(t.VarsUsed, ", "), cReset)
 		}
 		if len(t.Steps) > 0 {
 			for j, step := range t.Steps {
 				fmt.Fprintf(w, "       %s  pipe[%d]: %s(%s) → %q%s\n",
-					colorDim, j, step.FuncName, step.Args, step.Output, colorReset)
+					cDim, j, step.FuncName, step.Args, step.Output, cReset)
 			}
 		}
 	}
 }
 
 func renderCmds(w io.Writer, cmds []CmdTrace) {
-	fmt.Fprintf(w, "  %s%sCommands:%s\n", colorBold, colorYellow, colorReset)
+	fmt.Fprintf(w, "  %s%sCommands:%s\n", cBold, cYellow, cReset)
 
 	for _, c := range cmds {
-		fmt.Fprintf(w, "  %s[%d]%s", colorDim, c.Index, colorReset)
+		fmt.Fprintf(w, "  %s[%d]%s", cDim, c.Index, cReset)
 		if c.RawCmd == c.ResolvedCmd {
 			fmt.Fprintf(w, " %s\n", c.ResolvedCmd)
 		} else {
-			fmt.Fprintf(w, " %sraw:%s      %s\n", colorDim, colorReset, c.RawCmd)
+			fmt.Fprintf(w, " %sraw:%s      %s\n", cDim, cReset, c.RawCmd)
 			fmt.Fprintf(w, "       %sresolved:%s %s%s%s\n",
-				colorDim, colorReset, colorGreen, c.ResolvedCmd, colorReset)
+				cDim, cReset, cGreen, c.ResolvedCmd, cReset)
 		}
 	}
 }
 
 func renderDeps(w io.Writer, deps []string) {
 	fmt.Fprintf(w, "  %s%sDependencies:%s %s\n",
-		colorBold, colorYellow, colorReset, strings.Join(deps, ", "))
+		cBold, cYellow, cReset, strings.Join(deps, ", "))
 }
 
 func originLabel(o VarOrigin) string {
