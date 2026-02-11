@@ -108,6 +108,9 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 			if strings.Contains(b.String(), "<no value>") {
 				trace.Error = "warning: template produced <no value> for one or more variables (replaced with empty string)"
 			}
+			// Detect type mismatches (e.g. add with string args)
+			typeWarnings := transparent.DetectTypeMismatches(v, data, template.FuncMap(templateFuncs))
+			trace.Tips = append(trace.Tips, typeWarnings...)
 			cache.Tracer.RecordTemplate(trace)
 		}
 

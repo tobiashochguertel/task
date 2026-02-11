@@ -32,7 +32,7 @@ Current behavior: `<no value>` is replaced with `""` (line 95 in `templater.go`)
 ```
 
 ### 3. Dynamic Variable Not Resolved in Fast Mode
-<!-- ⏳ OPEN — Dynamic vars are traced with sh: command, but fast-mode specific warning not yet added. -->
+<!-- ✅ CLOSED — Dynamic vars with empty value show ⚠ DYNAMIC — sh: not evaluated warning. -->
 
 When using `--list` or `--list-all`, `FastGetVariables()` skips `sh:` evaluation. Variables with `sh:` show as empty.
 
@@ -42,7 +42,7 @@ DYNAMIC_VAR = ""  [task:vars]  type:string  ⚠ DYNAMIC (sh: "echo hello") — n
 ```
 
 ### 4. Variable Type Mismatch
-<!-- ⏳ OPEN — Deferred to v2; type mismatch detection not implemented (requires template execution interception). -->
+<!-- ✅ CLOSED — DetectTypeMismatches() in pipe_analyzer.go checks numeric funcs (add/sub/mul/div/mod/max/min/ceil/floor/round) for string args. -->
 
 ```yaml
 vars:

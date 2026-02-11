@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "INCLUDED_VAR",
       "origin": "taskfile:vars",
       "type": "string",
@@ -136,5 +92,6 @@
         }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

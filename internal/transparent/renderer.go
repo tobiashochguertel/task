@@ -48,18 +48,31 @@ func resolveColors() {
 	})
 }
 
+// RenderOptions controls what the renderers display.
+type RenderOptions struct {
+	Verbose bool // When false, hide environment-origin global vars for cleaner output
+}
+
 // RenderText writes a human-readable trace report to the given writer.
-func RenderText(w io.Writer, report *TraceReport) {
+func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 	if report == nil {
 		return
+	}
+	if opts == nil {
+		opts = &RenderOptions{}
 	}
 	resolveColors()
 	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", cBold, cCyan, cReset)
 
 	// Render global variables section (if any)
-	if len(report.GlobalVars) > 0 {
+	globals := filterGlobals(report.GlobalVars, opts.Verbose)
+	if len(globals) > 0 {
 		fmt.Fprintf(w, "%s%s── Global Variables%s\n", cBold, cGreen, cReset)
-		renderVars(w, report.GlobalVars)
+		renderVars(w, globals)
+		if !opts.Verbose && len(globals) < len(report.GlobalVars) {
+			hidden := len(report.GlobalVars) - len(globals)
+			fmt.Fprintf(w, "  %s(%d environment variables hidden — use -v to show)%s\n", cDim, hidden, cReset)
+		}
 		fmt.Fprintln(w)
 	}
 
@@ -68,6 +81,36 @@ func RenderText(w io.Writer, report *TraceReport) {
 	}
 
 	fmt.Fprintf(w, "%s%s══════ End Report ══════%s\n", cBold, cCyan, cReset)
+}
+
+// filterGlobals returns global vars, optionally filtering out noisy vars.
+// In non-verbose mode, hides environment-origin vars and internal CLI_* vars.
+func filterGlobals(vars []VarTrace, verbose bool) []VarTrace {
+	if verbose {
+		return vars
+	}
+	filtered := make([]VarTrace, 0, len(vars))
+	for _, v := range vars {
+		if v.Origin == OriginEnvironment {
+			continue
+		}
+		if isInternalVar(v.Name) {
+			continue
+		}
+		filtered = append(filtered, v)
+	}
+	return filtered
+}
+
+// isInternalVar returns true for CLI_* and other internal variables that
+// clutter the default output. Shown with -v.
+func isInternalVar(name string) bool {
+	switch name {
+	case "CLI_ARGS", "CLI_ARGS_LIST", "CLI_FORCE", "CLI_SILENT",
+		"CLI_VERBOSE", "CLI_OFFLINE", "CLI_ASSUME_YES":
+		return true
+	}
+	return false
 }
 
 func renderTask(w io.Writer, task TaskTrace) {
@@ -123,6 +166,10 @@ func renderVars(w io.Writer, vars []VarTrace) {
 				shInfo = fmt.Sprintf(" %s(sh: %s)%s", cDim, truncate(v.ShCmd, 40), cReset)
 			}
 			valStr = fmt.Sprintf("%s(sh)%s %s%s", cBlue, cReset, valStr, shInfo)
+			// Feature 2: Warn when dynamic var is empty (likely not evaluated)
+			if fmt.Sprintf("%v", v.Value) == "" {
+				valStr += fmt.Sprintf(" %s⚠ DYNAMIC — sh: not evaluated (use task run to resolve)%s", cYellow, cReset)
+			}
 		}
 
 		shadowFlag := ""

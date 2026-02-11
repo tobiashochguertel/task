@@ -8,6 +8,18 @@ import (
 	"github.com/go-task/template"
 )
 
+// defaultFuncs returns a minimal FuncMap with numeric and string functions for testing.
+func defaultFuncs() template.FuncMap {
+	return template.FuncMap{
+		"add":   func(a, b any) any { return 0 },
+		"sub":   func(a, b any) any { return 0 },
+		"mul":   func(a, b any) any { return 0 },
+		"div":   func(a, b any) any { return 0 },
+		"mod":   func(a, b any) any { return 0 },
+		"upper": func(s string) string { return s },
+	}
+}
+
 func TestTracerNilSafe(t *testing.T) {
 	var tracer *Tracer
 	// All methods should be no-ops on nil receiver
@@ -313,7 +325,7 @@ func TestRenderText(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 
 	checks := []string{
@@ -338,7 +350,7 @@ func TestRenderText(t *testing.T) {
 
 func TestRenderTextNilReport(t *testing.T) {
 	var buf bytes.Buffer
-	RenderText(&buf, nil)
+	RenderText(&buf, nil, nil)
 	if buf.Len() != 0 {
 		t.Error("expected empty output for nil report")
 	}
@@ -358,7 +370,7 @@ func TestRenderTextWithShadow(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 	if !strings.Contains(output, "SHADOWS") {
 		t.Error("expected output to contain shadow warning")
@@ -375,7 +387,7 @@ func TestRenderTextWithDeps(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 	if !strings.Contains(output, "Dependencies:") {
 		t.Error("expected output to contain Dependencies section")
@@ -398,7 +410,7 @@ func TestRenderTextDynamicVar(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	if !strings.Contains(buf.String(), "(sh)") {
 		t.Error("expected (sh) marker for dynamic var")
 	}
@@ -417,7 +429,7 @@ func TestRenderTextRefVar(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 	if !strings.Contains(output, "ref") {
 		t.Error("expected ref marker")
@@ -439,7 +451,7 @@ func TestRenderTextUnchangedCmd(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 	// Unchanged cmd should show inline, not raw/resolved split
 	if strings.Contains(output, "raw:") {
@@ -466,7 +478,7 @@ func TestRenderTextPipeSteps(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	RenderText(&buf, report)
+	RenderText(&buf, report, nil)
 	output := buf.String()
 	if !strings.Contains(output, "pipe[0]") {
 		t.Error("expected pipe step output")
@@ -624,5 +636,190 @@ func TestGeneratePipeTipsEmptySteps(t *testing.T) {
 	tips = GeneratePipeTips([]PipeStep{})
 	if len(tips) != 0 {
 		t.Errorf("expected no tips for empty steps, got: %v", tips)
+	}
+}
+
+// --- Tests for Feature 1: Verbose mode (filterGlobals) ---
+
+func TestFilterGlobalsNonVerbose(t *testing.T) {
+	vars := []VarTrace{
+		{Name: "TASK", Origin: OriginSpecial, Value: "default"},
+		{Name: "MY_VAR", Origin: OriginTaskfileVars, Value: "hello"},
+		{Name: "CLI_ARGS", Origin: OriginTaskfileVars, Value: ""},
+		{Name: "CLI_FORCE", Origin: OriginTaskfileVars, Value: false},
+		{Name: "CLI_SILENT", Origin: OriginTaskfileVars, Value: false},
+		{Name: "CLI_VERBOSE", Origin: OriginTaskfileVars, Value: false},
+		{Name: "CLI_OFFLINE", Origin: OriginTaskfileVars, Value: false},
+		{Name: "CLI_ASSUME_YES", Origin: OriginTaskfileVars, Value: false},
+		{Name: "CLI_ARGS_LIST", Origin: OriginTaskfileVars, Value: []string{}},
+		{Name: "FROM_ENV", Origin: OriginEnvironment, Value: "val"},
+	}
+	filtered := filterGlobals(vars, false)
+	for _, v := range filtered {
+		if v.Origin == OriginEnvironment {
+			t.Errorf("non-verbose should hide env vars, got %s", v.Name)
+		}
+		if isInternalVar(v.Name) {
+			t.Errorf("non-verbose should hide internal var %s", v.Name)
+		}
+	}
+	if len(filtered) != 2 { // TASK + MY_VAR
+		t.Errorf("expected 2 vars after filter, got %d", len(filtered))
+	}
+}
+
+func TestFilterGlobalsVerbose(t *testing.T) {
+	vars := []VarTrace{
+		{Name: "TASK", Origin: OriginSpecial, Value: "default"},
+		{Name: "CLI_ARGS", Origin: OriginTaskfileVars, Value: ""},
+		{Name: "FROM_ENV", Origin: OriginEnvironment, Value: "val"},
+	}
+	filtered := filterGlobals(vars, true)
+	if len(filtered) != len(vars) {
+		t.Errorf("verbose should keep all vars: got %d, want %d", len(filtered), len(vars))
+	}
+}
+
+func TestRenderTextVerboseHidesInternalVars(t *testing.T) {
+	report := &TraceReport{
+		GlobalVars: []VarTrace{
+			{Name: "TASK", Origin: OriginSpecial, Value: "x"},
+			{Name: "MY_VAR", Origin: OriginTaskfileVars, Value: "hello"},
+			{Name: "CLI_ARGS", Origin: OriginTaskfileVars, Value: ""},
+			{Name: "CLI_FORCE", Origin: OriginTaskfileVars, Value: false},
+			{Name: "CLI_SILENT", Origin: OriginTaskfileVars, Value: false},
+			{Name: "CLI_VERBOSE", Origin: OriginTaskfileVars, Value: false},
+			{Name: "CLI_OFFLINE", Origin: OriginTaskfileVars, Value: false},
+			{Name: "CLI_ASSUME_YES", Origin: OriginTaskfileVars, Value: false},
+			{Name: "CLI_ARGS_LIST", Origin: OriginTaskfileVars, Value: []string{}},
+		},
+	}
+	var buf bytes.Buffer
+	RenderText(&buf, report, nil)
+	output := buf.String()
+	if !strings.Contains(output, "environment variables hidden") {
+		t.Error("non-verbose output should contain hidden vars message")
+	}
+	if strings.Contains(output, "CLI_ARGS ") {
+		t.Error("non-verbose output should not show CLI_ARGS")
+	}
+
+	buf.Reset()
+	RenderText(&buf, report, &RenderOptions{Verbose: true})
+	output = buf.String()
+	if strings.Contains(output, "hidden") {
+		t.Error("verbose output should not contain hidden message")
+	}
+	if !strings.Contains(output, "CLI_ARGS") {
+		t.Error("verbose output should show CLI_ARGS")
+	}
+}
+
+// --- Tests for Feature 2: Dynamic var warning ---
+
+func TestRenderTextDynamicVarEmptyWarning(t *testing.T) {
+	report := &TraceReport{
+		Tasks: []*TaskTrace{
+			{
+				TaskName: "test",
+				Vars: []VarTrace{
+					{Name: "DYN", Origin: OriginTaskfileVars, Value: "", IsDynamic: true, ShCmd: "echo hello"},
+				},
+			},
+		},
+	}
+	var buf bytes.Buffer
+	RenderText(&buf, report, nil)
+	output := buf.String()
+	if !strings.Contains(output, "DYNAMIC") || !strings.Contains(output, "not evaluated") {
+		t.Errorf("expected dynamic var warning, got:\n%s", output)
+	}
+}
+
+func TestRenderTextDynamicVarNoWarningWhenResolved(t *testing.T) {
+	report := &TraceReport{
+		Tasks: []*TaskTrace{
+			{
+				TaskName: "test",
+				Vars: []VarTrace{
+					{Name: "DYN", Origin: OriginTaskfileVars, Value: "resolved-val", IsDynamic: true, ShCmd: "echo hello"},
+				},
+			},
+		},
+	}
+	var buf bytes.Buffer
+	RenderText(&buf, report, nil)
+	output := buf.String()
+	if strings.Contains(output, "not evaluated") {
+		t.Errorf("should not show warning for resolved dynamic var, got:\n%s", output)
+	}
+}
+
+// --- Tests for Feature 3: Type mismatch detection ---
+
+func TestDetectTypeMismatchesStringInAdd(t *testing.T) {
+	data := map[string]any{
+		"COUNT": 42,
+		"NAME":  "hello",
+	}
+	warnings := DetectTypeMismatches("{{add .COUNT .NAME}}", data, defaultFuncs())
+	if len(warnings) != 1 {
+		t.Fatalf("expected 1 warning, got %d: %v", len(warnings), warnings)
+	}
+	if !strings.Contains(warnings[0], "add()") || !strings.Contains(warnings[0], "NAME") {
+		t.Errorf("warning should mention add() and NAME, got: %s", warnings[0])
+	}
+}
+
+func TestDetectTypeMismatchesValidNumeric(t *testing.T) {
+	data := map[string]any{
+		"A": 10,
+		"B": 20,
+	}
+	warnings := DetectTypeMismatches("{{add .A .B}}", data, defaultFuncs())
+	if len(warnings) != 0 {
+		t.Errorf("expected no warnings for valid numeric, got: %v", warnings)
+	}
+}
+
+func TestDetectTypeMismatchesNoTemplate(t *testing.T) {
+	warnings := DetectTypeMismatches("just plain text", nil, defaultFuncs())
+	if len(warnings) != 0 {
+		t.Errorf("expected no warnings for plain text, got: %v", warnings)
+	}
+}
+
+func TestDetectTypeMismatchesMulWithString(t *testing.T) {
+	data := map[string]any{
+		"NUM":   5,
+		"LABEL": "abc",
+	}
+	warnings := DetectTypeMismatches("{{mul .NUM .LABEL}}", data, defaultFuncs())
+	if len(warnings) != 1 {
+		t.Fatalf("expected 1 warning, got %d: %v", len(warnings), warnings)
+	}
+	if !strings.Contains(warnings[0], "mul()") {
+		t.Errorf("warning should mention mul(), got: %s", warnings[0])
+	}
+}
+
+func TestDetectTypeMismatchesFloat(t *testing.T) {
+	data := map[string]any{
+		"PRICE": 9.99,
+		"QTY":   3,
+	}
+	warnings := DetectTypeMismatches("{{mul .PRICE .QTY}}", data, defaultFuncs())
+	if len(warnings) != 0 {
+		t.Errorf("expected no warnings for float*int, got: %v", warnings)
+	}
+}
+
+func TestDetectTypeMismatchesNonNumericFunc(t *testing.T) {
+	data := map[string]any{
+		"NAME": "hello",
+	}
+	warnings := DetectTypeMismatches("{{upper .NAME}}", data, defaultFuncs())
+	if len(warnings) != 0 {
+		t.Errorf("expected no warnings for non-numeric func, got: %v", warnings)
 	}
 }

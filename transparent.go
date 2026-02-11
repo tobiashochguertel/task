@@ -40,10 +40,11 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 
 	// Render the report
 	report := e.Compiler.Tracer.Report()
+	opts := &transparent.RenderOptions{Verbose: e.Verbose}
 	if e.TransparentJSON {
-		return transparent.RenderJSON(os.Stderr, report)
+		return transparent.RenderJSON(os.Stderr, report, opts)
 	}
-	transparent.RenderText(os.Stderr, report)
+	transparent.RenderText(os.Stderr, report, opts)
 	return nil
 }
 

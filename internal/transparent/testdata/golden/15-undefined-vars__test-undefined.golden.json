@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "DEFINED",
       "origin": "taskfile:vars",
       "type": "string",
@@ -113,7 +69,26 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'",
+          "resolved": "echo 'hello '"
+        }
+      ],
       "name": "test-undefined",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "error": "warning: template produced <no value> for one or more variables (replaced with empty string)",
+          "input": "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'",
+          "output": "echo 'hello '",
+          "vars_used": [
+            "DEFINED",
+            "UNDEFINED_VAR"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -122,26 +97,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'",
-          "output": "echo 'hello '",
-          "context": "cmds[0]",
-          "vars_used": [
-            "DEFINED",
-            "UNDEFINED_VAR"
-          ],
-          "error": "warning: template produced <no value> for one or more variables (replaced with empty string)"
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'",
-          "resolved": "echo 'hello '"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

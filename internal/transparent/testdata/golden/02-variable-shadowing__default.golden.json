@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "GREETING",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,35 +81,6 @@
   ],
   "tasks": [
     {
-      "name": "default",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo '{{.GREETING}} {{.NAME}}'",
-          "output": "echo 'Hello global-value'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "GREETING",
-            "NAME"
-          ]
-        },
-        {
-          "input": "echo 'SHARED = {{.SHARED}}'",
-          "output": "echo 'SHARED = from-global'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "SHARED"
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -165,7 +92,37 @@
           "raw": "echo 'SHARED = {{.SHARED}}'",
           "resolved": "echo 'SHARED = from-global'"
         }
+      ],
+      "name": "default",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo '{{.GREETING}} {{.NAME}}'",
+          "output": "echo 'Hello global-value'",
+          "vars_used": [
+            "GREETING",
+            "NAME"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'SHARED = {{.SHARED}}'",
+          "output": "echo 'SHARED = from-global'",
+          "vars_used": [
+            "SHARED"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

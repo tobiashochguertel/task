@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -68,49 +67,6 @@
       "value": "my-app"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "ENV",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,7 +81,36 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
+          "resolved": "echo 'Deploying my-app v2.0.0 to production'"
+        }
+      ],
       "name": "with-summary",
+      "templates": [
+        {
+          "context": "fields",
+          "input": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.\nThis task handles the full deployment pipeline.\n",
+          "output": "Deploy my-app version 2.0.0 to production.\nThis task handles the full deployment pipeline.\n",
+          "vars_used": [
+            "APP_NAME",
+            "VERSION",
+            "ENV"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
+          "output": "echo 'Deploying my-app v2.0.0 to production'",
+          "vars_used": [
+            "APP_NAME",
+            "VERSION",
+            "ENV"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -134,36 +119,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.\nThis task handles the full deployment pipeline.\n",
-          "output": "Deploy my-app version 2.0.0 to production.\nThis task handles the full deployment pipeline.\n",
-          "context": "fields",
-          "vars_used": [
-            "APP_NAME",
-            "VERSION",
-            "ENV"
-          ]
-        },
-        {
-          "input": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
-          "output": "echo 'Deploying my-app v2.0.0 to production'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "APP_NAME",
-            "VERSION",
-            "ENV"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
-          "resolved": "echo 'Deploying my-app v2.0.0 to production'"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

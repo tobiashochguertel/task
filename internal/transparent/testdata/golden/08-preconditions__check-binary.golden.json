@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -68,49 +67,6 @@
       "value": "my-app"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "VERSION",
       "origin": "taskfile:vars",
       "type": "string",
@@ -119,7 +75,24 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo '{{.APP_NAME}} is ready'",
+          "resolved": "echo 'my-app is ready'"
+        }
+      ],
       "name": "check-binary",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo '{{.APP_NAME}} is ready'",
+          "output": "echo 'my-app is ready'",
+          "vars_used": [
+            "APP_NAME"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -128,24 +101,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "echo '{{.APP_NAME}} is ready'",
-          "output": "echo 'my-app is ready'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "APP_NAME"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo '{{.APP_NAME}} is ready'",
-          "resolved": "echo 'my-app is ready'"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

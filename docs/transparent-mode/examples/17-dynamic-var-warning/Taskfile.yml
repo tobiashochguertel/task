@@ -1,0 +1,13 @@
+version: '3'
+
+vars:
+  STATIC_VAR: hello
+  DYNAMIC_VAR:
+    sh: echo "dynamic-value"
+  GIT_BRANCH:
+    sh: git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown"
+
+tasks:
+  default:
+    cmds:
+      - "echo static={{.STATIC_VAR}} dynamic={{.DYNAMIC_VAR}} branch={{.GIT_BRANCH}}"

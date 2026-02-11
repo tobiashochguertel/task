@@ -734,3 +734,141 @@ func TestE2EJSONTemplateContext(t *testing.T) {
 		t.Error("expected non-empty context field in template trace")
 	}
 }
+
+// --- E2E tests for the 3 new features ---
+
+// runTaskArgs runs the task binary with custom arguments.
+func runTaskArgs(t *testing.T, dir string, args ...string) string {
+	t.Helper()
+	bin := getTaskBinary(t)
+	fullArgs := append([]string{"-d", dir}, args...)
+	cmd := exec.Command(bin, fullArgs...)
+	cmd.Env = append(os.Environ(), "NO_COLOR=1")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		// Some tasks may exit non-zero but still produce output
+		if len(out) == 0 {
+			t.Fatalf("task failed with no output: %v", err)
+		}
+	}
+	return string(out)
+}
+
+func TestE2EVerboseModeHidesInternalVars(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+
+	// Non-verbose: CLI_ARGS should be hidden
+	out := runTaskArgs(t, dir, "--transparent", "default")
+	if strings.Contains(out, "CLI_ARGS ") {
+		t.Error("non-verbose should hide CLI_ARGS")
+	}
+	if !strings.Contains(out, "hidden") {
+		t.Error("non-verbose should show hidden count")
+	}
+
+	// Verbose: CLI_ARGS should be visible
+	outV := runTaskArgs(t, dir, "--transparent", "-v", "default")
+	if !strings.Contains(outV, "CLI_ARGS") {
+		t.Error("verbose mode should show CLI_ARGS")
+	}
+	if strings.Contains(outV, "hidden") {
+		t.Error("verbose mode should not show hidden message")
+	}
+}
+
+func TestE2EVerboseModeJSON(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "01-basic-variables")
+
+	// Non-verbose JSON: should not include CLI_ARGS in global_vars
+	outDefault := runTaskArgs(t, dir, "--transparent", "--json", "default")
+	var reportDefault map[string]any
+	if err := json.Unmarshal([]byte(outDefault), &reportDefault); err != nil {
+		t.Fatalf("failed to parse JSON: %v", err)
+	}
+	globalVars := reportDefault["global_vars"].([]any)
+	for _, v := range globalVars {
+		vm := v.(map[string]any)
+		if vm["name"] == "CLI_ARGS" {
+			t.Error("non-verbose JSON should not include CLI_ARGS")
+		}
+	}
+
+	// Verbose JSON: should include CLI_ARGS
+	outVerbose := runTaskArgs(t, dir, "--transparent", "--json", "-v", "default")
+	var reportVerbose map[string]any
+	if err := json.Unmarshal([]byte(outVerbose), &reportVerbose); err != nil {
+		t.Fatalf("failed to parse verbose JSON: %v", err)
+	}
+	globalVarsV := reportVerbose["global_vars"].([]any)
+	found := false
+	for _, v := range globalVarsV {
+		vm := v.(map[string]any)
+		if vm["name"] == "CLI_ARGS" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Error("verbose JSON should include CLI_ARGS")
+	}
+}
+
+func TestE2ETypeMismatchDetection(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "16-type-mismatch")
+
+	// Text mode: should show type mismatch warning
+	out := runTaskArgs(t, dir, "--transparent", "test-mismatch")
+	if !strings.Contains(out, "Type mismatch") {
+		t.Errorf("expected type mismatch warning, got:\n%s", out)
+	}
+	if !strings.Contains(out, "add()") {
+		t.Error("warning should mention add()")
+	}
+	if !strings.Contains(out, "NAME") {
+		t.Error("warning should mention the variable NAME")
+	}
+
+	// Valid numeric: no warning
+	outValid := runTaskArgs(t, dir, "--transparent", "test-valid")
+	if strings.Contains(outValid, "Type mismatch") {
+		t.Error("valid numeric should not show type mismatch")
+	}
+
+	// JSON mode: check tips contain type mismatch
+	outJSON := runTaskArgs(t, dir, "--transparent", "--json", "test-mismatch")
+	var report map[string]any
+	if err := json.Unmarshal([]byte(outJSON), &report); err != nil {
+		t.Fatalf("failed to parse JSON: %v", err)
+	}
+	tasks := report["tasks"].([]any)
+	task := tasks[0].(map[string]any)
+	templates := task["templates"].([]any)
+	tmpl := templates[0].(map[string]any)
+	tips := tmpl["tips"].([]any)
+	foundMismatch := false
+	for _, tip := range tips {
+		if strings.Contains(tip.(string), "Type mismatch") {
+			foundMismatch = true
+		}
+	}
+	if !foundMismatch {
+		t.Error("JSON tips should contain type mismatch warning")
+	}
+}
+
+func TestE2EDynamicVarWarningInListAll(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "17-dynamic-var-warning")
+
+	// When running --transparent normally, dynamic vars are resolved (no warning)
+	out := runTaskArgs(t, dir, "--transparent", "default")
+	if strings.Contains(out, "not evaluated") {
+		t.Error("normal transparent mode should evaluate dynamic vars")
+	}
+	if !strings.Contains(out, "DYNAMIC_VAR") {
+		t.Error("should show DYNAMIC_VAR")
+	}
+	// Dynamic vars should show (sh) prefix
+	if !strings.Contains(out, "(sh)") {
+		t.Error("dynamic vars should show (sh) prefix")
+	}
+}

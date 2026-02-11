@@ -15,17 +15,10 @@
   TASK_EXE          special         string      ·     <PATH>
   TASK_VERSION      special         string      ·     <TASK_VERSION>
   USER_WORKING_DIR  special         string      ·     <PATH>
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
   DATE              taskfile-vars   string      ·     (sh) 2026-02-11 (sh: echo "2026-02-11")
   HOSTNAME          taskfile-vars   string      ·     (sh) test-host (sh: echo "test-host")
   STATIC_VAR        taskfile-vars   string      ·     static-value
+  (7 environment variables hidden — use -v to show)
 
 ── Task: task-dynamic
   Variables:

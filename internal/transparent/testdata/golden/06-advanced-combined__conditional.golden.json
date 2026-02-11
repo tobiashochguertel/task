@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,55 +61,12 @@
       "value": "<PATH>"
     },
     {
+      "is_dynamic": true,
       "name": "BUILD_DATE",
       "origin": "taskfile:vars",
+      "sh_cmd": "echo \"2026-02-11\"",
       "type": "string",
-      "value": "2026-02-11",
-      "is_dynamic": true,
-      "sh_cmd": "echo \"2026-02-11\""
-    },
-    {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
+      "value": "2026-02-11"
     },
     {
       "name": "PROJECT",
@@ -127,7 +83,39 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo '{{if eq .DEBUG \"true\"}}Debug mode ON{{else}}Debug mode OFF{{end}}'",
+          "resolved": "echo 'Debug mode ON'"
+        },
+        {
+          "index": 1,
+          "raw": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",
+          "resolved": "echo 'myproject v2.0.0 built 2026-02-11'"
+        }
+      ],
       "name": "conditional",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo '{{if eq .DEBUG \"true\"}}Debug mode ON{{else}}Debug mode OFF{{end}}'",
+          "output": "echo 'Debug mode ON'",
+          "vars_used": [
+            "DEBUG"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",
+          "output": "echo 'myproject v2.0.0 built 2026-02-11'",
+          "vars_used": [
+            "PROJECT",
+            "VERSION",
+            "BUILD_DATE"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -142,39 +130,8 @@
           "type": "string",
           "value": "true"
         }
-      ],
-      "templates": [
-        {
-          "input": "echo '{{if eq .DEBUG \"true\"}}Debug mode ON{{else}}Debug mode OFF{{end}}'",
-          "output": "echo 'Debug mode ON'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "DEBUG"
-          ]
-        },
-        {
-          "input": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",
-          "output": "echo 'myproject v2.0.0 built 2026-02-11'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "PROJECT",
-            "VERSION",
-            "BUILD_DATE"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo '{{if eq .DEBUG \"true\"}}Debug mode ON{{else}}Debug mode OFF{{end}}'",
-          "resolved": "echo 'Debug mode ON'"
-        },
-        {
-          "index": 1,
-          "raw": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",
-          "resolved": "echo 'myproject v2.0.0 built 2026-02-11'"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

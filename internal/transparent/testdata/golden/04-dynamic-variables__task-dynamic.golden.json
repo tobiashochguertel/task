@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,63 +61,20 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
+      "is_dynamic": true,
       "name": "DATE",
       "origin": "taskfile:vars",
+      "sh_cmd": "echo \"2026-02-11\"",
       "type": "string",
-      "value": "2026-02-11",
-      "is_dynamic": true,
-      "sh_cmd": "echo \"2026-02-11\""
+      "value": "2026-02-11"
     },
     {
+      "is_dynamic": true,
       "name": "HOSTNAME",
       "origin": "taskfile:vars",
+      "sh_cmd": "echo \"test-host\"",
       "type": "string",
-      "value": "test-host",
-      "is_dynamic": true,
-      "sh_cmd": "echo \"test-host\""
+      "value": "test-host"
     },
     {
       "name": "STATIC_VAR",
@@ -129,7 +85,37 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Task ID: {{.TASK_ID}}'",
+          "resolved": "echo 'Task ID: task-123'"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'Combined: {{.COMBINED}}'",
+          "resolved": "echo 'Combined: test-host-task-123'"
+        }
+      ],
       "name": "task-dynamic",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Task ID: {{.TASK_ID}}'",
+          "output": "echo 'Task ID: task-123'",
+          "vars_used": [
+            "TASK_ID"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'Combined: {{.COMBINED}}'",
+          "output": "echo 'Combined: test-host-task-123'",
+          "vars_used": [
+            "COMBINED"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -145,44 +131,15 @@
           "value": "test-host-task-123"
         },
         {
+          "is_dynamic": true,
           "name": "TASK_ID",
           "origin": "task:vars",
+          "sh_cmd": "echo \"task-123\"",
           "type": "string",
-          "value": "task-123",
-          "is_dynamic": true,
-          "sh_cmd": "echo \"task-123\""
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Task ID: {{.TASK_ID}}'",
-          "output": "echo 'Task ID: task-123'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "TASK_ID"
-          ]
-        },
-        {
-          "input": "echo 'Combined: {{.COMBINED}}'",
-          "output": "echo 'Combined: test-host-task-123'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "COMBINED"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Task ID: {{.TASK_ID}}'",
-          "resolved": "echo 'Task ID: task-123'"
-        },
-        {
-          "index": 1,
-          "raw": "echo 'Combined: {{.COMBINED}}'",
-          "resolved": "echo 'Combined: test-host-task-123'"
+          "value": "task-123"
         }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

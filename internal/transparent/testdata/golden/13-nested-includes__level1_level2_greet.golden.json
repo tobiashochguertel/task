@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "LEVEL1_VAR",
       "origin": "taskfile:vars",
       "type": "string",
@@ -137,63 +93,27 @@
     {
       "name": "LEVEL1_VAR",
       "origin": "included:taskfile:vars",
+      "shadows": "LEVEL1_VAR=\"from-level1\" [taskfile:vars]",
       "type": "string",
-      "value": "from-level1",
-      "shadows": "LEVEL1_VAR=\"from-level1\" [taskfile:vars]"
+      "value": "from-level1"
     },
     {
       "name": "LEVEL2_VAR",
       "origin": "included:taskfile:vars",
+      "shadows": "LEVEL2_VAR=\"from-level2\" [taskfile:vars]",
       "type": "string",
-      "value": "from-level2",
-      "shadows": "LEVEL2_VAR=\"from-level2\" [taskfile:vars]"
+      "value": "from-level2"
     },
     {
       "name": "ROOT_VAR",
       "origin": "included:taskfile:vars",
+      "shadows": "ROOT_VAR=\"from-root\" [taskfile:vars]",
       "type": "string",
-      "value": "from-root",
-      "shadows": "ROOT_VAR=\"from-root\" [taskfile:vars]"
+      "value": "from-root"
     }
   ],
   "tasks": [
     {
-      "name": "level1:level2:greet",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Level2: {{.LEVEL2_VAR}}'",
-          "output": "echo 'Level2: from-level2'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "LEVEL2_VAR"
-          ]
-        },
-        {
-          "input": "echo 'L1 to L2: {{.L1_TO_L2}}'",
-          "output": "echo 'L1 to L2: from-level1-include'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "L1_TO_L2"
-          ]
-        },
-        {
-          "input": "echo 'Parent: {{.PARENT_VAR}}'",
-          "output": "echo 'Parent: from-root-include'",
-          "context": "cmds[2]",
-          "vars_used": [
-            "PARENT_VAR"
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -210,7 +130,44 @@
           "raw": "echo 'Parent: {{.PARENT_VAR}}'",
           "resolved": "echo 'Parent: from-root-include'"
         }
+      ],
+      "name": "level1:level2:greet",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Level2: {{.LEVEL2_VAR}}'",
+          "output": "echo 'Level2: from-level2'",
+          "vars_used": [
+            "LEVEL2_VAR"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'L1 to L2: {{.L1_TO_L2}}'",
+          "output": "echo 'L1 to L2: from-level1-include'",
+          "vars_used": [
+            "L1_TO_L2"
+          ]
+        },
+        {
+          "context": "cmds[2]",
+          "input": "echo 'Parent: {{.PARENT_VAR}}'",
+          "output": "echo 'Parent: from-root-include'",
+          "vars_used": [
+            "PARENT_VAR"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

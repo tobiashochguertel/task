@@ -31,14 +31,7 @@
   DB_USER           taskfile-env    string      ·     admin
   APP_NAME          taskfile-vars   string      ·     my-dotenv-app
   APP_NAME          taskfile-vars   string      ·     my-dotenv-app ⚠ SHADOWS APP_NAME="my-dotenv-app" [taskfile-vars]
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  (7 environment variables hidden — use -v to show)
 
 ── Task: combined
   Variables:

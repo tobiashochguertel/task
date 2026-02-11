@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -72,49 +71,6 @@
       "value_id": 0
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "PLATFORMS",
       "origin": "taskfile:vars",
       "type": "[]interface {}",
@@ -134,7 +90,41 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "iteration": "ITEM=debug",
+          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "resolved": "echo 'Mode: debug for my-app'"
+        },
+        {
+          "index": 1,
+          "iteration": "ITEM=release",
+          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "resolved": "echo 'Mode: release for my-app'"
+        }
+      ],
       "name": "build-inline",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "output": "echo 'Mode: debug for my-app'",
+          "vars_used": [
+            "ITEM",
+            "PROJECT"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
+          "output": "echo 'Mode: release for my-app'",
+          "vars_used": [
+            "ITEM",
+            "PROJECT"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -143,41 +133,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
-          "output": "echo 'Mode: debug for my-app'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "ITEM",
-            "PROJECT"
-          ]
-        },
-        {
-          "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
-          "output": "echo 'Mode: release for my-app'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "ITEM",
-            "PROJECT"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
-          "resolved": "echo 'Mode: debug for my-app'",
-          "iteration": "ITEM=debug"
-        },
-        {
-          "index": 1,
-          "raw": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
-          "resolved": "echo 'Mode: release for my-app'",
-          "iteration": "ITEM=release"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

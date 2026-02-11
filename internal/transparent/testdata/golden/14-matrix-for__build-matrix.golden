@@ -17,17 +17,10 @@
   USER_WORKING_DIR  special         string      ·     <PATH>
   ARCHS             taskfile-vars   []interface {}    ·     [amd64 arm64]
                     ptr: <PTR>
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
   PLATFORMS         taskfile-vars   []interface {}    ·     [linux darwin windows]
                     ptr: <PTR>
   PROJECT           taskfile-vars   string      ·     my-app
+  (7 environment variables hidden — use -v to show)
 
 ── Task: build-matrix
   Variables:

@@ -15,14 +15,6 @@
   TASK_EXE          special         string      ·     <PATH>
   TASK_VERSION      special         string      ·     <TASK_VERSION>
   USER_WORKING_DIR  special         string      ·     <PATH>
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
   INCLUDED_VAR      taskfile-vars   string      ·     from-included
   PARENT_VAR        taskfile-vars   string      ·     from-parent
   SHARED            taskfile-vars   string      ·     included-shared
@@ -30,6 +22,7 @@
   INCLUDED_VAR      included-tf     string      ·     from-included ⚠ SHADOWS INCLUDED_VAR="from-included" [taskfile-vars]
   PARENT_VAR        included-tf     string      ·     from-parent ⚠ SHADOWS PARENT_VAR="from-parent" [taskfile-vars]
   SHARED            included-tf     string      ·     included-shared ⚠ SHADOWS SHARED="included-shared" [taskfile-vars]
+  (7 environment variables hidden — use -v to show)
 
 ── Task: sub:greet
   Variables:

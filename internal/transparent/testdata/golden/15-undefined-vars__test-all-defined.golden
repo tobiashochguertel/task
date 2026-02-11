@@ -15,15 +15,8 @@
   TASK_EXE          special         string      ·     <PATH>
   TASK_VERSION      special         string      ·     <TASK_VERSION>
   USER_WORKING_DIR  special         string      ·     <PATH>
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
   DEFINED           taskfile-vars   string      ·     hello
+  (7 environment variables hidden — use -v to show)
 
 ── Task: test-all-defined
   Variables:

@@ -140,7 +140,7 @@ Running `task greet --transparent` outputs:
 | Errors | Red | `logger.Red` |
 
 ## Verbosity Levels
-<!-- ⏳ OPEN — --transparent and --transparent --list-all implemented; -v verbose mode not yet distinct from default. -->
+<!-- ✅ CLOSED — -v verbose mode shows all CLI_* and env vars; default hides them with count. -->
 
 | Flags | What's shown |
 |-------|-------------|

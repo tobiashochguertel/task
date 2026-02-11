@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -74,49 +73,6 @@
       "value": "./build"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "VERSION",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,7 +81,52 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
+          "resolved": "echo 'Building my-app v1.0.0'"
+        }
+      ],
       "name": "build",
+      "templates": [
+        {
+          "context": "fields",
+          "input": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
+          "output": "./build/my-app-1.0.0",
+          "vars_used": [
+            "BUILD_DIR",
+            "APP_NAME",
+            "VERSION"
+          ]
+        },
+        {
+          "context": "fields",
+          "input": "{{.BUILD_DIR}}",
+          "output": "./build",
+          "vars_used": [
+            "BUILD_DIR"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
+          "output": "echo 'Building my-app v1.0.0'",
+          "vars_used": [
+            "APP_NAME",
+            "VERSION"
+          ]
+        },
+        {
+          "context": "status",
+          "input": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",
+          "output": "test -f \"my-app-1.0.0\"",
+          "vars_used": [
+            "APP_NAME",
+            "VERSION"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -134,52 +135,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
-          "output": "./build/my-app-1.0.0",
-          "context": "fields",
-          "vars_used": [
-            "BUILD_DIR",
-            "APP_NAME",
-            "VERSION"
-          ]
-        },
-        {
-          "input": "{{.BUILD_DIR}}",
-          "output": "./build",
-          "context": "fields",
-          "vars_used": [
-            "BUILD_DIR"
-          ]
-        },
-        {
-          "input": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
-          "output": "echo 'Building my-app v1.0.0'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "APP_NAME",
-            "VERSION"
-          ]
-        },
-        {
-          "input": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",
-          "output": "test -f \"my-app-1.0.0\"",
-          "context": "status",
-          "vars_used": [
-            "APP_NAME",
-            "VERSION"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
-          "resolved": "echo 'Building my-app v1.0.0'"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

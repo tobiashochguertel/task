@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "ITEMS",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,54 +81,6 @@
   ],
   "tasks": [
     {
-      "name": "upper-lower",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo '{{.TITLE | upper}}'",
-          "output": "echo 'HELLO WORLD'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "TITLE"
-          ],
-          "pipe_steps": [
-            {
-              "func": ".TITLE",
-              "output": "hello world"
-            },
-            {
-              "func": "upper",
-              "output": "HELLO WORLD"
-            }
-          ]
-        },
-        {
-          "input": "echo '{{.TITLE | title}}'",
-          "output": "echo 'Hello World'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "TITLE"
-          ],
-          "pipe_steps": [
-            {
-              "func": ".TITLE",
-              "output": "hello world"
-            },
-            {
-              "func": "title",
-              "output": "Hello World"
-            }
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -184,7 +92,56 @@
           "raw": "echo '{{.TITLE | title}}'",
           "resolved": "echo 'Hello World'"
         }
+      ],
+      "name": "upper-lower",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo '{{.TITLE | upper}}'",
+          "output": "echo 'HELLO WORLD'",
+          "pipe_steps": [
+            {
+              "func": ".TITLE",
+              "output": "hello world"
+            },
+            {
+              "func": "upper",
+              "output": "HELLO WORLD"
+            }
+          ],
+          "vars_used": [
+            "TITLE"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo '{{.TITLE | title}}'",
+          "output": "echo 'Hello World'",
+          "pipe_steps": [
+            {
+              "func": ".TITLE",
+              "output": "hello world"
+            },
+            {
+              "func": "title",
+              "output": "Hello World"
+            }
+          ],
+          "vars_used": [
+            "TITLE"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

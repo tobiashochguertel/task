@@ -1,0 +1,24 @@
+version: '3'
+
+vars:
+  COUNT: 42
+  NAME: hello
+  PRICE: 9.99
+
+tasks:
+  # Type mismatch: add with a string argument
+  test-mismatch:
+    cmds:
+      - "echo {{add .COUNT .NAME}}"
+
+  # Valid numeric operation
+  test-valid:
+    cmds:
+      - "echo {{add .COUNT 10}}"
+
+  # Mixed types in mul
+  test-mul-mismatch:
+    vars:
+      LABEL: world
+    cmds:
+      - "echo {{mul .COUNT .LABEL}}"

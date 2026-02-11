@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,56 +61,13 @@
       "value": "<PATH>"
     },
     {
+      "is_ref": true,
       "name": "ALIAS",
       "origin": "taskfile:vars",
-      "type": "string",
-      "value": "hello-world",
-      "is_ref": true,
       "ref_name": ".GREETING",
-      "shadows": "ALIAS=\"default\" [special]"
-    },
-    {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
+      "shadows": "ALIAS=\"default\" [special]",
       "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
+      "value": "hello-world"
     },
     {
       "name": "GREETING",
@@ -122,34 +78,6 @@
   ],
   "tasks": [
     {
-      "name": "default",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Greeting: {{.GREETING}}'",
-          "output": "echo 'Greeting: hello-world'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "GREETING"
-          ]
-        },
-        {
-          "input": "echo 'Alias: {{.ALIAS}}'",
-          "output": "echo 'Alias: hello-world'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "ALIAS"
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -161,7 +89,36 @@
           "raw": "echo 'Alias: {{.ALIAS}}'",
           "resolved": "echo 'Alias: hello-world'"
         }
+      ],
+      "name": "default",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Greeting: {{.GREETING}}'",
+          "output": "echo 'Greeting: hello-world'",
+          "vars_used": [
+            "GREETING"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'Alias: {{.ALIAS}}'",
+          "output": "echo 'Alias: hello-world'",
+          "vars_used": [
+            "ALIAS"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -68,49 +67,6 @@
       "value": "my-app"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "ENV",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,7 +81,41 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Building {{.APP_NAME}}'",
+          "resolved": "echo 'Building my-app'"
+        }
+      ],
       "name": "with-label",
+      "templates": [
+        {
+          "context": "fields",
+          "input": "build-{{.APP_NAME}}-{{.VERSION}}",
+          "output": "build-my-app-2.0.0",
+          "vars_used": [
+            "APP_NAME",
+            "VERSION"
+          ]
+        },
+        {
+          "context": "fields",
+          "input": "Build {{.APP_NAME}}",
+          "output": "Build my-app",
+          "vars_used": [
+            "APP_NAME"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Building {{.APP_NAME}}'",
+          "output": "echo 'Building my-app'",
+          "vars_used": [
+            "APP_NAME"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -134,41 +124,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "build-{{.APP_NAME}}-{{.VERSION}}",
-          "output": "build-my-app-2.0.0",
-          "context": "fields",
-          "vars_used": [
-            "APP_NAME",
-            "VERSION"
-          ]
-        },
-        {
-          "input": "Build {{.APP_NAME}}",
-          "output": "Build my-app",
-          "context": "fields",
-          "vars_used": [
-            "APP_NAME"
-          ]
-        },
-        {
-          "input": "echo 'Building {{.APP_NAME}}'",
-          "output": "echo 'Building my-app'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "APP_NAME"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Building {{.APP_NAME}}'",
-          "resolved": "echo 'Building my-app'"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

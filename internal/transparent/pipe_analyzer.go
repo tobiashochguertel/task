@@ -193,3 +193,78 @@ func GeneratePipeTips(steps []PipeStep) []string {
 
 	return tips
 }
+
+// numericFuncs lists template functions that require numeric arguments.
+var numericFuncs = map[string]bool{
+	"add": true, "sub": true, "mul": true, "div": true, "mod": true,
+	"max": true, "min": true, "ceil": true, "floor": true, "round": true,
+}
+
+// DetectTypeMismatches inspects a parsed template AST and the data context to
+// detect cases where a function receives arguments of the wrong type (e.g.
+// add with a string argument). Returns human-readable warning strings.
+func DetectTypeMismatches(input string, data map[string]any, funcs template.FuncMap) []string {
+	tpl, err := template.New("").Funcs(funcs).Parse(input)
+	if err != nil {
+		return nil
+	}
+	root := tpl.Tree.Root
+	if root == nil {
+		return nil
+	}
+
+	var warnings []string
+	for _, node := range root.Nodes {
+		action, ok := node.(*parse.ActionNode)
+		if !ok || action.Pipe == nil {
+			continue
+		}
+		for _, cmd := range action.Pipe.Cmds {
+			warnings = append(warnings, checkTypeMismatch(cmd, data)...)
+		}
+	}
+	return warnings
+}
+
+// checkTypeMismatch checks a single command node for type mismatches.
+func checkTypeMismatch(cmd *parse.CommandNode, data map[string]any) []string {
+	if len(cmd.Args) == 0 {
+		return nil
+	}
+
+	funcName := nodeString(cmd.Args[0])
+	if !numericFuncs[funcName] {
+		return nil
+	}
+
+	var warnings []string
+	for _, arg := range cmd.Args[1:] {
+		field, ok := arg.(*parse.FieldNode)
+		if !ok {
+			continue
+		}
+		val := lookupField(data, field.Ident)
+		if val == nil {
+			continue
+		}
+		if !isNumericType(val) {
+			warnings = append(warnings, fmt.Sprintf(
+				"⚠ Type mismatch: %s() expects numeric arguments, but .%s is %T (%q)",
+				funcName, strings.Join(field.Ident, "."), val, fmt.Sprintf("%v", val),
+			))
+		}
+	}
+	return warnings
+}
+
+// isNumericType returns true if the value is a numeric type that Go template
+// math functions can operate on.
+func isNumericType(v any) bool {
+	switch v.(type) {
+	case int, int8, int16, int32, int64,
+		uint, uint8, uint16, uint32, uint64,
+		float32, float64:
+		return true
+	}
+	return false
+}

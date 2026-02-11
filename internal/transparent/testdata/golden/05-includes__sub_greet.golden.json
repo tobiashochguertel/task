@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "INCLUDED_VAR",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,70 +81,34 @@
     {
       "name": "PARENT_VAR",
       "origin": "include:vars",
+      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]",
       "type": "string",
-      "value": "from-parent",
-      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]"
+      "value": "from-parent"
     },
     {
       "name": "INCLUDED_VAR",
       "origin": "included:taskfile:vars",
+      "shadows": "INCLUDED_VAR=\"from-included\" [taskfile:vars]",
       "type": "string",
-      "value": "from-included",
-      "shadows": "INCLUDED_VAR=\"from-included\" [taskfile:vars]"
+      "value": "from-included"
     },
     {
       "name": "PARENT_VAR",
       "origin": "included:taskfile:vars",
+      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]",
       "type": "string",
-      "value": "from-parent",
-      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]"
+      "value": "from-parent"
     },
     {
       "name": "SHARED",
       "origin": "included:taskfile:vars",
+      "shadows": "SHARED=\"included-shared\" [taskfile:vars]",
       "type": "string",
-      "value": "included-shared",
-      "shadows": "SHARED=\"included-shared\" [taskfile:vars]"
+      "value": "included-shared"
     }
   ],
   "tasks": [
     {
-      "name": "sub:greet",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Included var: {{.INCLUDED_VAR}}'",
-          "output": "echo 'Included var: from-included'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "INCLUDED_VAR"
-          ]
-        },
-        {
-          "input": "echo 'Shared: {{.SHARED}}'",
-          "output": "echo 'Shared: included-shared'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "SHARED"
-          ]
-        },
-        {
-          "input": "echo 'Parent var: {{.PARENT_VAR}}'",
-          "output": "echo 'Parent var: from-parent'",
-          "context": "cmds[2]",
-          "vars_used": [
-            "PARENT_VAR"
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -205,7 +125,44 @@
           "raw": "echo 'Parent var: {{.PARENT_VAR}}'",
           "resolved": "echo 'Parent var: from-parent'"
         }
+      ],
+      "name": "sub:greet",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Included var: {{.INCLUDED_VAR}}'",
+          "output": "echo 'Included var: from-included'",
+          "vars_used": [
+            "INCLUDED_VAR"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'Shared: {{.SHARED}}'",
+          "output": "echo 'Shared: included-shared'",
+          "vars_used": [
+            "SHARED"
+          ]
+        },
+        {
+          "context": "cmds[2]",
+          "input": "echo 'Parent var: {{.PARENT_VAR}}'",
+          "output": "echo 'Parent var: from-parent'",
+          "vars_used": [
+            "PARENT_VAR"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

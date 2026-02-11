@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -10,9 +9,9 @@
     {
       "name": "ALIAS",
       "origin": "special",
+      "shadows": "ALIAS=\"\" [special]",
       "type": "string",
-      "value": "default",
-      "shadows": "ALIAS=\"\" [special]"
+      "value": "default"
     },
     {
       "name": "ROOT_DIR",
@@ -23,9 +22,9 @@
     {
       "name": "ROOT_DIR",
       "origin": "special",
+      "shadows": "ROOT_DIR=\"<PATH> [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "ROOT_DIR=\"<PATH> [special]"
+      "value": "<PATH>"
     },
     {
       "name": "ROOT_TASKFILE",
@@ -36,9 +35,9 @@
     {
       "name": "ROOT_TASKFILE",
       "origin": "special",
+      "shadows": "ROOT_TASKFILE=\"<PATH> [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "ROOT_TASKFILE=\"<PATH> [special]"
+      "value": "<PATH>"
     },
     {
       "name": "TASK",
@@ -49,9 +48,9 @@
     {
       "name": "TASK",
       "origin": "special",
+      "shadows": "TASK=\"\" [special]",
       "type": "string",
-      "value": "default",
-      "shadows": "TASK=\"\" [special]"
+      "value": "default"
     },
     {
       "name": "TASKFILE",
@@ -62,9 +61,9 @@
     {
       "name": "TASKFILE",
       "origin": "special",
+      "shadows": "TASKFILE=\"\" [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "TASKFILE=\"\" [special]"
+      "value": "<PATH>"
     },
     {
       "name": "TASKFILE_DIR",
@@ -75,9 +74,9 @@
     {
       "name": "TASKFILE_DIR",
       "origin": "special",
+      "shadows": "TASKFILE_DIR=\"\" [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "TASKFILE_DIR=\"\" [special]"
+      "value": "<PATH>"
     },
     {
       "name": "TASK_DIR",
@@ -88,9 +87,9 @@
     {
       "name": "TASK_DIR",
       "origin": "special",
+      "shadows": "TASK_DIR=\"\" [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "TASK_DIR=\"\" [special]"
+      "value": "<PATH>"
     },
     {
       "name": "TASK_EXE",
@@ -101,9 +100,9 @@
     {
       "name": "TASK_EXE",
       "origin": "special",
+      "shadows": "TASK_EXE=\"<PATH> [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "TASK_EXE=\"<PATH> [special]"
+      "value": "<PATH>"
     },
     {
       "name": "TASK_VERSION",
@@ -114,9 +113,9 @@
     {
       "name": "TASK_VERSION",
       "origin": "special",
+      "shadows": "TASK_VERSION=\"<TASK_VERSION>\" [special]",
       "type": "string",
-      "value": "<TASK_VERSION>",
-      "shadows": "TASK_VERSION=\"<TASK_VERSION>\" [special]"
+      "value": "<TASK_VERSION>"
     },
     {
       "name": "USER_WORKING_DIR",
@@ -127,9 +126,9 @@
     {
       "name": "USER_WORKING_DIR",
       "origin": "special",
+      "shadows": "USER_WORKING_DIR=\"<PATH> [special]",
       "type": "string",
-      "value": "<PATH>",
-      "shadows": "USER_WORKING_DIR=\"<PATH> [special]"
+      "value": "<PATH>"
     },
     {
       "name": "DB_HOST",
@@ -164,92 +163,13 @@
     {
       "name": "APP_NAME",
       "origin": "taskfile:vars",
+      "shadows": "APP_NAME=\"my-dotenv-app\" [taskfile:vars]",
       "type": "string",
-      "value": "my-dotenv-app",
-      "shadows": "APP_NAME=\"my-dotenv-app\" [taskfile:vars]"
-    },
-    {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
+      "value": "my-dotenv-app"
     }
   ],
   "tasks": [
     {
-      "name": "default",
-      "variables": [
-        {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
-        }
-      ],
-      "templates": [
-        {
-          "input": "echo 'DB Host: {{.DB_HOST}}'",
-          "output": "echo 'DB Host: localhost'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "DB_HOST"
-          ]
-        },
-        {
-          "input": "echo 'DB Port: {{.DB_PORT}}'",
-          "output": "echo 'DB Port: 5432'",
-          "context": "cmds[1]",
-          "vars_used": [
-            "DB_PORT"
-          ]
-        },
-        {
-          "input": "echo 'App: {{.APP_NAME}}'",
-          "output": "echo 'App: my-dotenv-app'",
-          "context": "cmds[2]",
-          "vars_used": [
-            "APP_NAME"
-          ]
-        }
-      ],
       "commands": [
         {
           "index": 0,
@@ -266,7 +186,44 @@
           "raw": "echo 'App: {{.APP_NAME}}'",
           "resolved": "echo 'App: my-dotenv-app'"
         }
+      ],
+      "name": "default",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'DB Host: {{.DB_HOST}}'",
+          "output": "echo 'DB Host: localhost'",
+          "vars_used": [
+            "DB_HOST"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "input": "echo 'DB Port: {{.DB_PORT}}'",
+          "output": "echo 'DB Port: 5432'",
+          "vars_used": [
+            "DB_PORT"
+          ]
+        },
+        {
+          "context": "cmds[2]",
+          "input": "echo 'App: {{.APP_NAME}}'",
+          "output": "echo 'App: my-dotenv-app'",
+          "vars_used": [
+            "APP_NAME"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

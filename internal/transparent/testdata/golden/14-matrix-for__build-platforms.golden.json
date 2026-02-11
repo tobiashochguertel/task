@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -72,49 +71,6 @@
       "value_id": 0
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "PLATFORMS",
       "origin": "taskfile:vars",
       "type": "[]interface {}",
@@ -134,7 +90,56 @@
   ],
   "tasks": [
     {
+      "commands": [
+        {
+          "index": 0,
+          "iteration": "ITEM=linux",
+          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "resolved": "echo 'Building my-app for linux'"
+        },
+        {
+          "index": 1,
+          "iteration": "ITEM=darwin",
+          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "resolved": "echo 'Building my-app for darwin'"
+        },
+        {
+          "index": 2,
+          "iteration": "ITEM=windows",
+          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "resolved": "echo 'Building my-app for windows'"
+        }
+      ],
       "name": "build-platforms",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "output": "echo 'Building my-app for linux'",
+          "vars_used": [
+            "PROJECT",
+            "ITEM"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "output": "echo 'Building my-app for darwin'",
+          "vars_used": [
+            "PROJECT",
+            "ITEM"
+          ]
+        },
+        {
+          "context": "cmds[0]",
+          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+          "output": "echo 'Building my-app for windows'",
+          "vars_used": [
+            "PROJECT",
+            "ITEM"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",
@@ -143,56 +148,8 @@
           "value": [],
           "value_id": 0
         }
-      ],
-      "templates": [
-        {
-          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "output": "echo 'Building my-app for linux'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "PROJECT",
-            "ITEM"
-          ]
-        },
-        {
-          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "output": "echo 'Building my-app for darwin'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "PROJECT",
-            "ITEM"
-          ]
-        },
-        {
-          "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "output": "echo 'Building my-app for windows'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "PROJECT",
-            "ITEM"
-          ]
-        }
-      ],
-      "commands": [
-        {
-          "index": 0,
-          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "resolved": "echo 'Building my-app for linux'",
-          "iteration": "ITEM=linux"
-        },
-        {
-          "index": 1,
-          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "resolved": "echo 'Building my-app for darwin'",
-          "iteration": "ITEM=darwin"
-        },
-        {
-          "index": 2,
-          "raw": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
-          "resolved": "echo 'Building my-app for windows'",
-          "iteration": "ITEM=windows"
-        }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

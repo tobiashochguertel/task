@@ -1,5 +1,4 @@
 {
-  "version": "1.0",
   "global_vars": [
     {
       "name": "ALIAS",
@@ -62,49 +61,6 @@
       "value": "<PATH>"
     },
     {
-      "name": "CLI_ARGS",
-      "origin": "taskfile:vars",
-      "type": "string",
-      "value": ""
-    },
-    {
-      "name": "CLI_ARGS_LIST",
-      "origin": "taskfile:vars",
-      "type": "[]string",
-      "value": [],
-      "value_id": 0
-    },
-    {
-      "name": "CLI_ASSUME_YES",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_FORCE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_OFFLINE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_SILENT",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
-      "name": "CLI_VERBOSE",
-      "origin": "taskfile:vars",
-      "type": "bool",
-      "value": false
-    },
-    {
       "name": "ITEMS",
       "origin": "taskfile:vars",
       "type": "string",
@@ -125,24 +81,24 @@
   ],
   "tasks": [
     {
-      "name": "combined-pipes",
-      "variables": [
+      "commands": [
         {
-          "name": "MATCH",
-          "origin": "call:vars",
-          "type": "[]string",
-          "value": [],
-          "value_id": 0
+          "index": 0,
+          "raw": "echo '{{.NAME | trim | upper}}'",
+          "resolved": "echo 'WORLD'"
+        },
+        {
+          "index": 1,
+          "raw": "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'",
+          "resolved": "echo 'APP_WORLD'"
         }
       ],
+      "name": "combined-pipes",
       "templates": [
         {
+          "context": "cmds[0]",
           "input": "echo '{{.NAME | trim | upper}}'",
           "output": "echo 'WORLD'",
-          "context": "cmds[0]",
-          "vars_used": [
-            "NAME"
-          ],
           "pipe_steps": [
             {
               "func": ".NAME",
@@ -156,29 +112,30 @@
               "func": "upper",
               "output": "WORLD"
             }
+          ],
+          "vars_used": [
+            "NAME"
           ]
         },
         {
+          "context": "cmds[1]",
           "input": "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'",
           "output": "echo 'APP_WORLD'",
-          "context": "cmds[1]",
           "vars_used": [
             "NAME"
           ]
         }
       ],
-      "commands": [
+      "variables": [
         {
-          "index": 0,
-          "raw": "echo '{{.NAME | trim | upper}}'",
-          "resolved": "echo 'WORLD'"
-        },
-        {
-          "index": 1,
-          "raw": "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'",
-          "resolved": "echo 'APP_WORLD'"
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
         }
       ]
     }
-  ]
+  ],
+  "version": "1.0"
 }

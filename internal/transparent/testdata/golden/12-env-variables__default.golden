@@ -19,14 +19,7 @@
   LOG_LEVEL         taskfile-env    string      ·     info
   APP_ENV           taskfile-vars   string      ·     production ⚠ SHADOWS APP_ENV="staging" [taskfile-env]
   APP_NAME          taskfile-vars   string      ·     my-app
-  CLI_ARGS          taskfile-vars   string      ·     
-  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
-                    ptr: <PTR>
-  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
-  CLI_FORCE         taskfile-vars   bool        ·     false
-  CLI_OFFLINE       taskfile-vars   bool        ·     false
-  CLI_SILENT        taskfile-vars   bool        ·     false
-  CLI_VERBOSE       taskfile-vars   bool        ·     false
+  (7 environment variables hidden — use -v to show)
 
 ── Task: default
   Variables:

@@ -32,6 +32,7 @@ type jsonVarTrace struct {
 	IsDynamic bool   `json:"is_dynamic,omitempty"`
 	ShCmd     string `json:"sh_cmd,omitempty"`
 	Shadows   string `json:"shadows,omitempty"`
+	Warning   string `json:"warning,omitempty"`
 }
 
 type jsonTemplateTrace struct {
@@ -60,10 +61,13 @@ type jsonCmdTrace struct {
 
 // RenderJSON writes the trace report as JSON to the given writer.
 // Returns nil for a nil or empty report.
-func RenderJSON(w io.Writer, report *TraceReport) error {
+func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 	if report == nil {
 		_, err := w.Write([]byte("{\"version\":\"1.0\",\"tasks\":[]}\n"))
 		return err
+	}
+	if opts == nil {
+		opts = &RenderOptions{}
 	}
 
 	jr := jsonReport{
@@ -71,8 +75,9 @@ func RenderJSON(w io.Writer, report *TraceReport) error {
 		Tasks:   make([]jsonTaskTrace, 0, len(report.Tasks)),
 	}
 
-	// Global variables
-	for _, v := range report.GlobalVars {
+	// Global variables (apply verbose filter)
+	globals := filterGlobals(report.GlobalVars, opts.Verbose)
+	for _, v := range globals {
 		jr.GlobalVars = append(jr.GlobalVars, varToJSON(v))
 	}
 
@@ -141,6 +146,9 @@ func varToJSON(v VarTrace) jsonVarTrace {
 	}
 	if v.ShadowsVar != nil {
 		jv.Shadows = fmt.Sprintf("%s=%q [%s]", v.ShadowsVar.Name, v.ShadowsVar.Value, v.ShadowsVar.Origin)
+	}
+	if v.IsDynamic && fmt.Sprintf("%v", v.Value) == "" {
+		jv.Warning = "dynamic variable not evaluated (sh: command not executed in transparent mode)"
 	}
 	return jv
 }

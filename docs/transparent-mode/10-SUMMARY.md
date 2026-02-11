@@ -92,7 +92,7 @@ graph LR
 ```
 
 ## Implementation Status
-<!-- ✅ CLOSED — 170 tests passing; all features implemented except type mismatch (deferred) and -v verbose (low priority). -->
+<!-- ✅ CLOSED — 185 tests passing; all features implemented including type mismatch detection, verbose mode, and dynamic var warnings. -->
 
 | Feature | Status | Notes |
 |---------|--------|-------|
