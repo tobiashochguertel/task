@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+
+	"github.com/go-task/template"
 )
 
 func TestTracerNilSafe(t *testing.T) {
@@ -502,5 +504,86 @@ func TestVarOriginStringUnknown(t *testing.T) {
 	s := o.String()
 	if !strings.Contains(s, "unknown") {
 		t.Errorf("expected unknown for invalid origin, got %s", s)
+	}
+}
+
+// ── Pipe Analyzer Tests ──
+
+func TestAnalyzePipesSimple(t *testing.T) {
+	funcs := template.FuncMap{
+		"upper": strings.ToUpper,
+		"trim":  strings.TrimSpace,
+	}
+	data := map[string]any{"NAME": "  hello  "}
+	steps := AnalyzePipes("{{.NAME | trim}}", data, funcs)
+	if len(steps) != 2 {
+		t.Fatalf("expected 2 pipe steps, got %d", len(steps))
+	}
+	if steps[0].FuncName != ".NAME" {
+		t.Errorf("step[0] func = %q, want .NAME", steps[0].FuncName)
+	}
+	if steps[0].Output != "  hello  " {
+		t.Errorf("step[0] output = %q, want %q", steps[0].Output, "  hello  ")
+	}
+	if steps[1].FuncName != "trim" {
+		t.Errorf("step[1] func = %q, want trim", steps[1].FuncName)
+	}
+	if steps[1].Output != "hello" {
+		t.Errorf("step[1] output = %q, want hello", steps[1].Output)
+	}
+}
+
+func TestAnalyzePipesThreeSteps(t *testing.T) {
+	funcs := template.FuncMap{
+		"upper": strings.ToUpper,
+		"trim":  strings.TrimSpace,
+	}
+	data := map[string]any{"NAME": "  hello  "}
+	steps := AnalyzePipes("{{.NAME | trim | upper}}", data, funcs)
+	if len(steps) != 3 {
+		t.Fatalf("expected 3 pipe steps, got %d", len(steps))
+	}
+	if steps[2].FuncName != "upper" {
+		t.Errorf("step[2] func = %q, want upper", steps[2].FuncName)
+	}
+	if steps[2].Output != "HELLO" {
+		t.Errorf("step[2] output = %q, want HELLO", steps[2].Output)
+	}
+}
+
+func TestAnalyzePipesNoPipe(t *testing.T) {
+	funcs := template.FuncMap{}
+	data := map[string]any{"FOO": "bar"}
+	steps := AnalyzePipes("{{.FOO}}", data, funcs)
+	if len(steps) != 0 {
+		t.Fatalf("expected 0 pipe steps for single-command template, got %d", len(steps))
+	}
+}
+
+func TestAnalyzePipesPlainText(t *testing.T) {
+	funcs := template.FuncMap{}
+	data := map[string]any{}
+	steps := AnalyzePipes("no templates here", data, funcs)
+	if len(steps) != 0 {
+		t.Fatalf("expected 0 pipe steps for plain text, got %d", len(steps))
+	}
+}
+
+func TestAnalyzePipesResolveArgs(t *testing.T) {
+	funcs := template.FuncMap{
+		"trim": strings.TrimSpace,
+	}
+	data := map[string]any{"NAME": "  world  "}
+	steps := AnalyzePipes("{{.NAME | trim}}", data, funcs)
+	if len(steps) != 2 {
+		t.Fatalf("expected 2 steps, got %d", len(steps))
+	}
+	// First step (.NAME) has no extra args
+	if len(steps[0].Args) != 0 {
+		t.Errorf("step[0] args = %v, want empty", steps[0].Args)
+	}
+	// ArgsValues for .NAME should also be empty
+	if len(steps[0].ArgsValues) != 0 {
+		t.Errorf("step[0] argsValues = %v, want empty", steps[0].ArgsValues)
 	}
 }

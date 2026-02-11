@@ -100,6 +100,7 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 				Input:    v,
 				Output:   result,
 				VarsUsed: extractVarNames(v),
+				Steps:    transparent.AnalyzePipes(v, data, template.FuncMap(templateFuncs)),
 			}
 			cache.Tracer.RecordTemplate(trace)
 		}

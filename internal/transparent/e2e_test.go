@@ -471,3 +471,37 @@ func TestE2EOutputToStderr(t *testing.T) {
 		t.Error("expected report NOT on stdout")
 	}
 }
+
+// ── Pipe Analyzer E2E Tests ──
+
+func TestE2EPipeStepsTrim(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "03-template-pipes")
+	output := runTransparent(t, dir, "trim-pipe")
+
+	// Should show pipe step breakdown
+	assertContains(t, output, "pipe[0]")
+	assertContains(t, output, "pipe[1]")
+	assertContains(t, output, ".NAME")
+	assertContains(t, output, "trim")
+}
+
+func TestE2EPipeStepsCombined(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "03-template-pipes")
+	output := runTransparent(t, dir, "combined-pipes")
+
+	// Should show 3-step pipe: .NAME | trim | upper
+	assertContains(t, output, "pipe[0]")
+	assertContains(t, output, "pipe[1]")
+	assertContains(t, output, "pipe[2]")
+	assertContains(t, output, "upper")
+	assertContains(t, output, "WORLD")
+}
+
+func TestE2EPipeStepsUpperLower(t *testing.T) {
+	dir := filepath.Join(examplesDir(), "03-template-pipes")
+	output := runTransparent(t, dir, "upper-lower")
+
+	// Should have pipe steps for upper and lower
+	assertContains(t, output, "pipe[0]")
+	assertContains(t, output, "pipe[1]")
+}
