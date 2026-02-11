@@ -50,9 +50,9 @@ Use `github.com/go-task/template` (forked `text/template`) which exposes `parse.
 3. Execute the template normally for the final output
 4. Re-execute each pipe stage individually for intermediate values
 
-**File:** `internal/transparent/pipe_analyzer.go`
+**File:** `internal/transparent/pipe_analyzer.go` ✅ IMPLEMENTED
 
-**Key function:** `AnalyzePipe(templateStr string, data map[string]any) []PipeStep`
+**Key function:** `AnalyzePipes(input string, data map[string]any, funcs template.FuncMap) []PipeStep`
 
 ```mermaid
 graph LR

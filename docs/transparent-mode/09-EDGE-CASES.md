@@ -20,14 +20,13 @@ Step 2: trim "NAME :   hello  "             → "NAME :   hello"
 ⚠ Tip: To trim .NAME before printf, use: {{printf "%s : %s" "NAME" (.NAME | trim)}}
 ```
 
-### 2. `<no value>` Silently Eaten
+### 2. `<no value>` Silently Eaten — ✅ IMPLEMENTED
 
-Current behavior: `<no value>` is replaced with `""` (line 93 in `templater.go`). This silently hides undefined variables.
+Current behavior: `<no value>` is replaced with `""` (line 95 in `templater.go`). This silently hides undefined variables.
 
 **Transparent Mode output:**
 ```
-⚠ Variable .UNDEFINED_VAR resolved to <no value> (replaced with "")
-  This variable is not defined in any scope.
+⚠  warning: template produced <no value> for one or more variables (replaced with empty string)
 ```
 
 ### 3. Dynamic Variable Not Resolved in Fast Mode
@@ -94,7 +93,7 @@ LIST  = ["a", "b"]              [taskfile:vars]  type:[]any
 ITEMS = ["a", "b"]              [taskfile:vars]  type:[]any  ref:LIST  ← same instance
 ```
 
-### 7. FOR Loop Iterator Variables
+### 7. FOR Loop Iterator Variables — ✅ IMPLEMENTED
 
 ```yaml
 cmds:
@@ -105,13 +104,13 @@ cmds:
 
 **Transparent Mode output:**
 ```
-FOR loop over ITEMS (3 iterations):
-  Iteration 0: ITEM = "a"  [for:loop]
-    echo a
-  Iteration 1: ITEM = "b"  [for:loop]
-    echo b
-  Iteration 2: ITEM = "c"  [for:loop]
-    echo c
+Commands:
+  [0] (ITEM=a) raw:      echo {{.ITEM}}
+       resolved: echo a
+  [1] (ITEM=b) raw:      echo {{.ITEM}}
+       resolved: echo b
+  [2] (ITEM=c) raw:      echo {{.ITEM}}
+       resolved: echo c
 ```
 
 ## Template Function Chaining Rules

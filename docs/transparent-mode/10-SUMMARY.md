@@ -30,9 +30,9 @@ task --transparent --list-all
 
 | File | Purpose | Key Types/Functions |
 |------|---------|---------------------|
-| `model.go` | Data structures | `VarTrace`, `TemplateTrace`, `PipeStep`, `TaskTrace`, `TraceReport`, `VarOrigin` |
-| `tracer.go` | Event collection | `Tracer.RecordVar()`, `.RecordTemplate()`, `.SetCurrentTask()`, `.Traces()` |
-| `pipe_analyzer.go` | Template AST walking | `AnalyzePipe()` |
+| `model.go` | Data structures | `VarTrace`, `TemplateTrace`, `PipeStep`, `CmdTrace`, `TaskTrace`, `TraceReport`, `VarOrigin` |
+| `tracer.go` | Event collection | `Tracer.RecordVar()`, `.RecordTemplate()`, `.RecordCmd()`, `.SetCurrentTask()`, `.Report()` |
+| `pipe_analyzer.go` | Template AST walking | `AnalyzePipes()` |
 | `renderer.go` | Text output formatting | `RenderText()` |
 | `renderer_json.go` | JSON output | `RenderJSON()` |
 
@@ -46,8 +46,8 @@ task --transparent --list-all
 
 | File | What Changes | Lines Changed |
 |------|-------------|---------------|
-| `internal/flags/flags.go` | Add `Transparent` flag + pflag + wire | ~8 |
-| `executor.go` | Add `Transparent` field + `WithTransparent()` option | ~20 |
+| `internal/flags/flags.go` | Add `Transparent` flag + pflag + wire + validation | ~12 |
+| `executor.go` | Add `Transparent`/`TransparentJSON` fields + options | ~30 |
 | `setup.go` | Create tracer in `setupCompiler()` | ~5 |
 | `compiler.go` | Add `Tracer` field, instrument `getRangeFunc` + scope loops | ~40 |
 | `internal/templater/templater.go` | Add `Tracer` field to `Cache`, instrument `ReplaceWithExtra` | ~15 |
@@ -83,6 +83,25 @@ graph LR
     style Tracer fill:#2d5,stroke:#333,color:#000
     style Renderer fill:#2d5,stroke:#333,color:#000
 ```
+
+## Implementation Status
+
+| Feature | Status | Notes |
+|---------|--------|-------|
+| CLI flag `--transparent` / `-T` | ✅ Implemented | `internal/flags/flags.go` |
+| Variable tracing with origin scopes | ✅ Implemented | 8 origin scopes + dotenv + for-loop |
+| Variable shadow detection | ✅ Implemented | Cross-scope + within-scope |
+| Template pipe introspection (AST) | ✅ Implemented | `pipe_analyzer.go` |
+| Text renderer with colors | ✅ Implemented | `renderer.go`, respects `NO_COLOR` and `--color=false` |
+| JSON renderer | ✅ Implemented | `renderer_json.go`, via `--transparent --json` |
+| Report to stderr | ✅ Implemented | Does not interfere with stdout |
+| Ref variable tracking | ✅ Implemented | `IsRef`, `RefName`, `ValueID` fields |
+| FOR-loop iteration labels | ✅ Implemented | Shows `(ITEM=value)` per iteration |
+| Undefined variable warning | ✅ Implemented | Detects `<no value>` → `""` replacements |
+| Dynamic variable (`sh:`) tracking | ✅ Implemented | Shows `IsDynamic`, `ShCmd` |
+| Verbosity levels (`-v`, `--list-all`) | ⏳ Planned | Currently shows all vars by default |
+| Type mismatch warnings | ⏳ Planned | Low priority |
+| Pipe mistake tips/hints | ⏳ Planned | Low priority |
 
 ## Design Decisions
 
