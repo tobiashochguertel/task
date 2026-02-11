@@ -203,5 +203,9 @@ func run() error {
 		return e.Status(ctx, calls...)
 	}
 
+	if flags.Transparent {
+		return e.RunTransparent(ctx, calls...)
+	}
+
 	return e.Run(ctx, calls...)
 }

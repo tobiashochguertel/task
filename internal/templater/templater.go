@@ -9,6 +9,7 @@ import (
 	"github.com/go-task/template"
 
 	"github.com/go-task/task/v3/internal/deepcopy"
+	"github.com/go-task/task/v3/internal/transparent"
 	"github.com/go-task/task/v3/taskfile/ast"
 )
 
@@ -17,7 +18,8 @@ import (
 // happen will be assigned to r.err, and consecutive calls to funcs will just
 // return the zero value.
 type Cache struct {
-	Vars *ast.Vars
+	Vars   *ast.Vars
+	Tracer *transparent.Tracer
 
 	cacheMap map[string]any
 	err      error
@@ -90,7 +92,19 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 		if err := tpl.Execute(&b, data); err != nil {
 			return v, err
 		}
-		return strings.ReplaceAll(b.String(), "<no value>", ""), nil
+		result := strings.ReplaceAll(b.String(), "<no value>", "")
+
+		// Record template trace if tracer is active and input contained template delimiters
+		if cache.Tracer != nil && strings.Contains(v, "{{") {
+			trace := transparent.TemplateTrace{
+				Input:    v,
+				Output:   result,
+				VarsUsed: extractVarNames(v),
+			}
+			cache.Tracer.RecordTemplate(trace)
+		}
+
+		return result, nil
 	})
 	if err != nil {
 		cache.err = err
@@ -147,4 +161,37 @@ func ReplaceVarsWithExtra(vars *ast.Vars, cache *Cache, extra map[string]any) *a
 	}
 
 	return newVars
+}
+
+// extractVarNames extracts variable names like .FOO from a template string.
+func extractVarNames(tmpl string) []string {
+	var names []string
+	seen := make(map[string]bool)
+	i := 0
+	for i < len(tmpl) {
+		// Find .VARNAME patterns (preceded by space, paren, or start of action)
+		if tmpl[i] == '.' && i+1 < len(tmpl) && isUpperOrUnderscore(tmpl[i+1]) {
+			j := i + 1
+			for j < len(tmpl) && isVarChar(tmpl[j]) {
+				j++
+			}
+			name := tmpl[i+1 : j]
+			if !seen[name] {
+				seen[name] = true
+				names = append(names, name)
+			}
+			i = j
+		} else {
+			i++
+		}
+	}
+	return names
+}
+
+func isUpperOrUnderscore(b byte) bool {
+	return (b >= 'A' && b <= 'Z') || b == '_'
+}
+
+func isVarChar(b byte) bool {
+	return (b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || (b >= '0' && b <= '9') || b == '_'
 }

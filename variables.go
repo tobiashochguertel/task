@@ -16,6 +16,7 @@ import (
 	"github.com/go-task/task/v3/internal/filepathext"
 	"github.com/go-task/task/v3/internal/fingerprint"
 	"github.com/go-task/task/v3/internal/templater"
+	"github.com/go-task/task/v3/internal/transparent"
 	"github.com/go-task/task/v3/taskfile/ast"
 )
 
@@ -41,7 +42,7 @@ func (e *Executor) CompiledTaskForTaskList(call *Call) (*ast.Task, error) {
 		return nil, err
 	}
 
-	cache := &templater.Cache{Vars: vars}
+	cache := &templater.Cache{Vars: vars, Tracer: e.Compiler.Tracer}
 
 	return &ast.Task{
 		Task:                 origTask.Task,
@@ -98,7 +99,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 		}
 	}
 
-	cache := &templater.Cache{Vars: vars}
+	cache := &templater.Cache{Vars: vars, Tracer: e.Compiler.Tracer}
 	new := ast.Task{
 		Task:                 origTask.Task,
 		Label:                templater.Replace(origTask.Label, cache),
@@ -248,6 +249,15 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 			newCmd.If = templater.Replace(cmd.If, cache)
 			newCmd.Vars = templater.ReplaceVars(cmd.Vars, cache)
 			new.Cmds = append(new.Cmds, newCmd)
+
+			// Record command trace
+			if e.Compiler.Tracer != nil && cmd.Cmd != "" {
+				e.Compiler.Tracer.RecordCmd(origTask.Task, transparent.CmdTrace{
+					Index:       len(new.Cmds) - 1,
+					RawCmd:      cmd.Cmd,
+					ResolvedCmd: newCmd.Cmd,
+				})
+			}
 		}
 	}
 	if len(origTask.Deps) > 0 {
