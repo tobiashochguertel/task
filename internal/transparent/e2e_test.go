@@ -75,7 +75,7 @@ func TestE2EVariableShadowing(t *testing.T) {
 	output := runTransparent(t, dir, "override")
 
 	// Should show shadow warning
-	assertContains(t, output, "shadows")
+	assertContains(t, output, "SHADOWS")
 	assertContains(t, output, "task-override")
 
 	// Verify the global var is still visible
@@ -364,7 +364,7 @@ func TestE2EEnvVariablesShadowing(t *testing.T) {
 	output := runTransparent(t, dir, "default")
 
 	// APP_ENV is defined in both env: and vars: — should show shadow
-	assertContains(t, output, "shadows")
+	assertContains(t, output, "SHADOWS")
 }
 
 func TestE2ENestedIncludesLevel1(t *testing.T) {
@@ -431,7 +431,7 @@ func TestE2EMultiLevelShadowChain(t *testing.T) {
 
 	// APP_ENV defined in env: then overridden in vars:
 	assertContains(t, output, "APP_ENV")
-	assertContains(t, output, "shadows")
+	assertContains(t, output, "SHADOWS")
 }
 
 func TestE2EColorFlagFalse(t *testing.T) {

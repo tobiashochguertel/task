@@ -360,7 +360,7 @@ func TestRenderTextWithShadow(t *testing.T) {
 	var buf bytes.Buffer
 	RenderText(&buf, report)
 	output := buf.String()
-	if !strings.Contains(output, "shadows") {
+	if !strings.Contains(output, "SHADOWS") {
 		t.Error("expected output to contain shadow warning")
 	}
 }

@@ -35,6 +35,9 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 		}
 	}
 
+	// Post-process: separate global vars from task-specific vars
+	e.Compiler.Tracer.SeparateGlobalVars()
+
 	// Render the report
 	report := e.Compiler.Tracer.Report()
 	if e.TransparentJSON {

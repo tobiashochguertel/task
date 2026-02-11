@@ -8,7 +8,9 @@ import (
 
 // jsonReport mirrors TraceReport with JSON-friendly struct tags.
 type jsonReport struct {
-	Tasks []jsonTaskTrace `json:"tasks"`
+	Version    string          `json:"version"`
+	GlobalVars []jsonVarTrace  `json:"global_vars,omitempty"`
+	Tasks      []jsonTaskTrace `json:"tasks"`
 }
 
 type jsonTaskTrace struct {
@@ -28,6 +30,7 @@ type jsonVarTrace struct {
 	IsRef     bool   `json:"is_ref,omitempty"`
 	RefName   string `json:"ref_name,omitempty"`
 	IsDynamic bool   `json:"is_dynamic,omitempty"`
+	ShCmd     string `json:"sh_cmd,omitempty"`
 	Shadows   string `json:"shadows,omitempty"`
 }
 
@@ -57,12 +60,18 @@ type jsonCmdTrace struct {
 // Returns nil for a nil or empty report.
 func RenderJSON(w io.Writer, report *TraceReport) error {
 	if report == nil {
-		_, err := w.Write([]byte("{\"tasks\":[]}\n"))
+		_, err := w.Write([]byte("{\"version\":\"1.0\",\"tasks\":[]}\n"))
 		return err
 	}
 
 	jr := jsonReport{
-		Tasks: make([]jsonTaskTrace, 0, len(report.Tasks)),
+		Version: "1.0",
+		Tasks:   make([]jsonTaskTrace, 0, len(report.Tasks)),
+	}
+
+	// Global variables
+	for _, v := range report.GlobalVars {
+		jr.GlobalVars = append(jr.GlobalVars, varToJSON(v))
 	}
 
 	for _, task := range report.Tasks {
@@ -73,22 +82,7 @@ func RenderJSON(w io.Writer, report *TraceReport) error {
 		}
 
 		for _, v := range task.Vars {
-			jv := jsonVarTrace{
-				Name:      v.Name,
-				Origin:    v.Origin.String(),
-				Type:      v.Type,
-				Value:     v.Value,
-				IsRef:     v.IsRef,
-				RefName:   v.RefName,
-				IsDynamic: v.IsDynamic,
-			}
-			if v.ValueID != 0 {
-				jv.ValueID = fmt.Sprintf("0x%x", v.ValueID)
-			}
-			if v.ShadowsVar != nil {
-				jv.Shadows = fmt.Sprintf("%s (origin: %s)", v.ShadowsVar.Name, v.ShadowsVar.Origin)
-			}
-			jt.Variables = append(jt.Variables, jv)
+			jt.Variables = append(jt.Variables, varToJSON(v))
 		}
 
 		for _, tmpl := range task.Templates {
@@ -124,4 +118,25 @@ func RenderJSON(w io.Writer, report *TraceReport) error {
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "  ")
 	return enc.Encode(jr)
+}
+
+// varToJSON converts a VarTrace to its JSON representation.
+func varToJSON(v VarTrace) jsonVarTrace {
+	jv := jsonVarTrace{
+		Name:      v.Name,
+		Origin:    v.Origin.String(),
+		Type:      v.Type,
+		Value:     v.Value,
+		IsRef:     v.IsRef,
+		RefName:   v.RefName,
+		IsDynamic: v.IsDynamic,
+		ShCmd:     v.ShCmd,
+	}
+	if v.ValueID != 0 {
+		jv.ValueID = fmt.Sprintf("0x%x", v.ValueID)
+	}
+	if v.ShadowsVar != nil {
+		jv.Shadows = fmt.Sprintf("%s=%q [%s]", v.ShadowsVar.Name, v.ShadowsVar.Value, v.ShadowsVar.Origin)
+	}
+	return jv
 }

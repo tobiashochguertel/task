@@ -149,3 +149,68 @@ func (t *Tracer) getOrCreateTask(name string) *TaskTrace {
 	t.taskOrder = append(t.taskOrder, name)
 	return tt
 }
+
+// isGlobalOrigin returns true for variable origins that belong to the
+// Taskfile/global scope rather than a specific task.
+func isGlobalOrigin(o VarOrigin) bool {
+	switch o {
+	case OriginSpecial, OriginEnvironment, OriginTaskfileEnv,
+		OriginTaskfileVars, OriginIncludeVars,
+		OriginIncludedTaskfileVars, OriginDotenv:
+		return true
+	}
+	return false
+}
+
+// SeparateGlobalVars moves global-scope variables from task traces into the
+// globalVars collection. Variables with global origins (special, taskfile:vars,
+// taskfile:env, include:vars, dotenv) are extracted from the first task trace
+// and stored once in globalVars, then removed from all task traces to avoid
+// duplication.
+func (t *Tracer) SeparateGlobalVars() {
+	if t == nil {
+		return
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	if len(t.taskOrder) == 0 {
+		return
+	}
+
+	// Collect global vars from the first task
+	firstTask := t.tasks[t.taskOrder[0]]
+	if firstTask == nil {
+		return
+	}
+
+	globalNames := make(map[string]bool)
+	var globals []VarTrace
+	var taskOnly []VarTrace
+
+	for _, v := range firstTask.Vars {
+		if isGlobalOrigin(v.Origin) {
+			globals = append(globals, v)
+			globalNames[v.Name] = true
+		} else {
+			taskOnly = append(taskOnly, v)
+		}
+	}
+	firstTask.Vars = taskOnly
+	t.globalVars = append(t.globalVars, globals...)
+
+	// Remove duplicated global vars from remaining tasks
+	for i := 1; i < len(t.taskOrder); i++ {
+		tt := t.tasks[t.taskOrder[i]]
+		if tt == nil {
+			continue
+		}
+		var filtered []VarTrace
+		for _, v := range tt.Vars {
+			if !globalNames[v.Name] || !isGlobalOrigin(v.Origin) {
+				filtered = append(filtered, v)
+			}
+		}
+		tt.Vars = filtered
+	}
+}

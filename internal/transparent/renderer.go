@@ -56,6 +56,13 @@ func RenderText(w io.Writer, report *TraceReport) {
 	resolveColors()
 	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", cBold, cCyan, cReset)
 
+	// Render global variables section (if any)
+	if len(report.GlobalVars) > 0 {
+		fmt.Fprintf(w, "%s%s── Global Variables%s\n", cBold, cGreen, cReset)
+		renderVars(w, report.GlobalVars)
+		fmt.Fprintln(w)
+	}
+
 	for _, task := range report.Tasks {
 		renderTask(w, *task)
 	}
@@ -111,12 +118,18 @@ func renderVars(w io.Writer, vars []VarTrace) {
 
 		valStr := truncate(fmt.Sprintf("%v", v.Value), 60)
 		if v.IsDynamic {
-			valStr = fmt.Sprintf("%s(sh)%s %s", cBlue, cReset, valStr)
+			shInfo := ""
+			if v.ShCmd != "" {
+				shInfo = fmt.Sprintf(" %s(sh: %s)%s", cDim, truncate(v.ShCmd, 40), cReset)
+			}
+			valStr = fmt.Sprintf("%s(sh)%s %s%s", cBlue, cReset, valStr, shInfo)
 		}
 
 		shadowFlag := ""
 		if v.ShadowsVar != nil {
-			shadowFlag = fmt.Sprintf(" %s⚠ shadows %s%s", cRed, v.ShadowsVar.Name, cReset)
+			shadowFlag = fmt.Sprintf(" %s⚠ SHADOWS %s=%q [%s]%s",
+				cRed, v.ShadowsVar.Name, truncate(fmt.Sprintf("%v", v.ShadowsVar.Value), 30),
+				originLabel(v.ShadowsVar.Origin), cReset)
 		}
 
 		fmt.Fprintf(w, "  %-*s  %-14s  %-8s  %-6s  %s%s\n",

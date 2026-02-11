@@ -27,6 +27,16 @@ func setupExecutor(t *testing.T, dir string) *task.Executor {
 	return e
 }
 
+// allVars returns all vars from both global and task scope for searching.
+func allVars(report *transparent.TraceReport, taskIdx int) []transparent.VarTrace {
+	var all []transparent.VarTrace
+	all = append(all, report.GlobalVars...)
+	if taskIdx < len(report.Tasks) {
+		all = append(all, report.Tasks[taskIdx].Vars...)
+	}
+	return all
+}
+
 func TestIntegrationBasicVariables(t *testing.T) {
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	e := setupExecutor(t, dir)
@@ -46,9 +56,10 @@ func TestIntegrationBasicVariables(t *testing.T) {
 		t.Errorf("expected task name default, got %s", task.TaskName)
 	}
 
-	// Check that APP_NAME, VERSION, ENV are present
+	// Check that APP_NAME, VERSION, ENV are present (in global or task vars)
+	vars := allVars(report, 0)
 	found := map[string]bool{}
-	for _, v := range task.Vars {
+	for _, v := range vars {
 		if v.Name == "APP_NAME" || v.Name == "VERSION" || v.Name == "ENV" {
 			found[v.Name] = true
 		}
@@ -145,13 +156,13 @@ func TestIntegrationDynamicVariables(t *testing.T) {
 	}
 
 	report := e.Compiler.Tracer.Report()
-	taskTrace := report.Tasks[0]
 
-	// Find HOSTNAME and verify it's marked dynamic
+	// Find HOSTNAME in both global and task vars
+	vars := allVars(report, 0)
 	var hostVar *transparent.VarTrace
-	for i := range taskTrace.Vars {
-		if taskTrace.Vars[i].Name == "HOSTNAME" {
-			hostVar = &taskTrace.Vars[i]
+	for i := range vars {
+		if vars[i].Name == "HOSTNAME" {
+			hostVar = &vars[i]
 			break
 		}
 	}
@@ -194,11 +205,11 @@ func TestIntegrationDotenv(t *testing.T) {
 	}
 
 	report := e.Compiler.Tracer.Report()
-	taskTrace := report.Tasks[0]
 
-	// Check dotenv vars are present
+	// Check dotenv vars are present (may be in global or task vars)
+	vars := allVars(report, 0)
 	found := map[string]bool{}
-	for _, v := range taskTrace.Vars {
+	for _, v := range vars {
 		if v.Name == "DB_HOST" || v.Name == "DB_PORT" || v.Name == "DB_NAME" {
 			found[v.Name] = true
 		}
@@ -220,13 +231,13 @@ func TestIntegrationRefVariables(t *testing.T) {
 	}
 
 	report := e.Compiler.Tracer.Report()
-	taskTrace := report.Tasks[0]
 
-	// Find ALIAS and verify it has IsRef set
+	// Find ALIAS in both global and task vars
+	vars := allVars(report, 0)
 	var aliasVar *transparent.VarTrace
-	for i := range taskTrace.Vars {
-		if taskTrace.Vars[i].Name == "ALIAS" && taskTrace.Vars[i].IsRef {
-			aliasVar = &taskTrace.Vars[i]
+	for i := range vars {
+		if vars[i].Name == "ALIAS" && vars[i].IsRef {
+			aliasVar = &vars[i]
 			break
 		}
 	}
@@ -248,20 +259,20 @@ func TestIntegrationNestedIncludes(t *testing.T) {
 	}
 
 	report := e.Compiler.Tracer.Report()
-	taskTrace := report.Tasks[0]
 
-	// Verify include-vars from multiple levels
+	// Verify include-vars from multiple levels (may be in global or task vars)
+	vars := allVars(report, 0)
 	var l1ToL2 *transparent.VarTrace
 	var parentVar *transparent.VarTrace
-	for i := range taskTrace.Vars {
-		switch taskTrace.Vars[i].Name {
+	for i := range vars {
+		switch vars[i].Name {
 		case "L1_TO_L2":
-			if taskTrace.Vars[i].Origin == transparent.OriginIncludeVars {
-				l1ToL2 = &taskTrace.Vars[i]
+			if vars[i].Origin == transparent.OriginIncludeVars {
+				l1ToL2 = &vars[i]
 			}
 		case "PARENT_VAR":
-			if taskTrace.Vars[i].Origin == transparent.OriginIncludeVars {
-				parentVar = &taskTrace.Vars[i]
+			if vars[i].Origin == transparent.OriginIncludeVars {
+				parentVar = &vars[i]
 			}
 		}
 	}
@@ -289,13 +300,14 @@ func TestIntegrationEnvVarsShadow(t *testing.T) {
 	}
 
 	report := e.Compiler.Tracer.Report()
-	taskTrace := report.Tasks[0]
 
 	// APP_ENV is in both env: and vars: — vars wins, should shadow
+	// After separation, global vars include taskfile-vars
+	vars := allVars(report, 0)
 	var appEnvVar *transparent.VarTrace
-	for i := range taskTrace.Vars {
-		if taskTrace.Vars[i].Name == "APP_ENV" && taskTrace.Vars[i].Origin == transparent.OriginTaskfileVars {
-			appEnvVar = &taskTrace.Vars[i]
+	for i := range vars {
+		if vars[i].Name == "APP_ENV" && vars[i].Origin == transparent.OriginTaskfileVars {
+			appEnvVar = &vars[i]
 			break
 		}
 	}
