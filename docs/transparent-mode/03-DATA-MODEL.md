@@ -20,8 +20,30 @@ VarTrace {
     Dir        string       // directory context for resolution
     ShadowsVar *VarTrace    // non-nil if this var shadows another from outer scope
     TaskName   string       // "" for global scope
+
+    // Copy-vs-reference identity tracking
+    IsRef      bool         // true if defined via `ref:` keyword
+    RefName    string       // source variable name (e.g. "LIST" when `ref: LIST`)
+    ValueID    uintptr      // reflect pointer for slice/map — 0 for scalars
+                            // Two vars with same non-zero ValueID share the same instance.
+                            // A copied value (e.g. re-assigned string) gets ValueID=0.
+
+    // Extensibility (future features can attach metadata without changing the struct)
+    Extra      map[string]any // nil by default; reserved for plugins/extensions
 }
 ```
+
+### Copy vs Reference Semantics
+
+| Scenario | `IsRef` | `ValueID` | Display |
+|----------|---------|-----------|---------|
+| Static scalar: `NAME: "hello"` | false | 0 | `NAME = "hello"` |
+| Ref to scalar: `ALIAS: { ref: NAME }` | true | 0 | `ALIAS = "hello"  ref:NAME  (copy — scalar)` |
+| List value: `ITEMS: [a, b]` | false | 0xc000… | `ITEMS = ["a","b"]  ptr:0xc000…` |
+| Ref to list: `COPY: { ref: ITEMS }` | true | 0xc000… (same) | `COPY = ["a","b"]  ref:ITEMS  ← same instance` |
+| Re-assigned list: `OTHER: [a, b]` | false | 0xc001… (different) | `OTHER = ["a","b"]  ptr:0xc001…` |
+
+`ValueID` is obtained via `reflect.ValueOf(v.Value).Pointer()` for types that support it (slices, maps, pointers). For scalar types (string, int, bool) it is always 0 and identity is not applicable — scalars are always copies in Go.
 
 ### VarOrigin (enum)
 
