@@ -41,3 +41,4 @@ go.work
 go.work.sum
 task.code-workspace
 testdata/var-desc-e2e/build/version.txt
+docs/transparent-mode/reference
