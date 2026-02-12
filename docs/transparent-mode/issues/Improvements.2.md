@@ -1,5 +1,7 @@
 # Improvements - 2
 
+**the output is not yet correct:**
+
 ```shell
 ❯ task-dev --show-whitespaces -v debug
 
@@ -138,4 +140,27 @@ echo "ENGINE:                 node %!s(MISSING)'
   └─
 
 ╚══ End of Transparent Mode Report ══╝
+```
+
+**Example how the output should be:**
+
+```
+  ┌─ Evaluation Steps:
+  │ Step 1: Apply a Function — spew
+  │   I     spew·.ENGINE·|·trim
+  │   O     (string)·(len=4)·"node"
+  |         ·
+  │ Step 2: Resolve a Variable — .SPACE
+  │   I     20
+  │   E     echo·"::·Global·Taskfile·variables·::"
+  |         echo·""
+  |         echo·"{{spew·(.ENGINE·|·trim)}}"
+  |         echo·'{{printf·"%s:·%*s·%s"·"ENGINE"·"20"·(.ENGINE·|·trim)}}'
+  │ Step 3: Apply a Function — printf
+  │   I     printf·"%s:·%*s·%s"·"ENGINE"·20·.ENGINE·|·trim
+  │   O     ENGINE:·················node·%!s(MISSING)
+  │   E     echo·"::·Global·Taskfile·variables·::"
+  |         echo·""
+  |         echo·"ENGINE:·················node·%!s(MISSING)'
+  └─
 ```
