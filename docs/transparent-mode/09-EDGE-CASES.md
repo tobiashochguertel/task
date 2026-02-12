@@ -1,22 +1,25 @@
 # 09 — Edge Cases & Go Template Pitfalls
 
 ## Common User Confusions (that Transparent Mode surfaces)
+
 <!-- ✅ CLOSED — All 7 edge cases addressed; pipe tips, <no value> warning, shadow display, ref tracking, FOR labels. -->
 
 ### 1. Pipe vs Parenthesization
+
 <!-- ✅ CLOSED — GeneratePipeTips() detects multi-arg pipe pitfalls; 💡 tip shown with parenthesized alternative. -->
 
 ```yaml
 # User writes:
 cmds:
-  - echo {{printf "%s : %s" "NAME" .NAME | trim}}
+  - echo {{printf "%s: %s" "NAME" .NAME | trim}}
 
 # User expects: .NAME is trimmed, then passed to printf
 # Actual: printf runs first, trim is applied to printf's full output
 ```
 
 **Transparent Mode output:**
-```
+
+```Go
 Step 1: printf "%s : %s" "NAME" "  hello  " → "NAME :   hello  "
 Step 2: trim "NAME :   hello  "             → "NAME :   hello"
 ⚠ Tip: To trim .NAME before printf, use: {{printf "%s : %s" "NAME" (.NAME | trim)}}
@@ -27,39 +30,45 @@ Step 2: trim "NAME :   hello  "             → "NAME :   hello"
 Current behavior: `<no value>` is replaced with `""` (line 95 in `templater.go`). This silently hides undefined variables.
 
 **Transparent Mode output:**
-```
+
+```Go
 ⚠  warning: template produced <no value> for one or more variables (replaced with empty string)
 ```
 
 ### 3. Dynamic Variable Not Resolved in Fast Mode
+
 <!-- ✅ CLOSED — Dynamic vars with empty value show ⚠ DYNAMIC — sh: not evaluated warning. -->
 
 When using `--list` or `--list-all`, `FastGetVariables()` skips `sh:` evaluation. Variables with `sh:` show as empty.
 
 **Transparent Mode output:**
-```
+
+```Go
 DYNAMIC_VAR = ""  [task:vars]  type:string  ⚠ DYNAMIC (sh: "echo hello") — not evaluated in list mode
 ```
 
 ### 4. Variable Type Mismatch
+
 <!-- ✅ CLOSED — DetectTypeMismatches() in pipe_analyzer.go checks numeric funcs (add/sub/mul/div/mod/max/min/ceil/floor/round) for string args. -->
 
 ```yaml
 vars:
-  COUNT: 42       # int
-  NAME: "hello"   # string
+  COUNT: 42 # int
+  NAME: 'hello' # string
 cmds:
-  - echo {{add .COUNT .NAME}}  # runtime error
+  - echo {{add .COUNT .NAME}} # runtime error
 ```
 
 **Transparent Mode output:**
-```
+
+```Go
 ⚠ Type mismatch in template expression:
   add(.COUNT=42 [int], .NAME="hello" [string])
   Expected: numeric arguments
 ```
 
 ### 5. Include Variable Scoping
+
 <!-- ✅ CLOSED — Include vars traced with OriginIncludeVars/OriginIncludedTaskfileVars; shadow warnings shown. -->
 
 ```yaml
@@ -76,12 +85,14 @@ vars:
 ```
 
 **Transparent Mode output:**
-```
+
+```Go
 Task: app:deploy
   ENV = "production"  [include:vars]  ⚠ SHADOWS app/Taskfile.yml ENV="development" [included:taskfile:vars]
 ```
 
 ### 6. Ref Variables
+
 <!-- ✅ CLOSED — IsRef, RefName, ValueID tracked; ptr displayed for slices/maps; ref:NAME shown in output. -->
 
 ```yaml
@@ -94,7 +105,8 @@ vars:
 ```
 
 **Transparent Mode output:**
-```
+
+```Go
 LIST  = ["a", "b"]              [taskfile:vars]  type:[]any
 ITEMS = ["a", "b"]              [taskfile:vars]  type:[]any  ref:LIST  ← same instance
 ```
@@ -109,7 +121,8 @@ cmds:
 ```
 
 **Transparent Mode output:**
-```
+
+```Go
 Commands:
   [0] (ITEM=a) raw:      echo {{.ITEM}}
        resolved: echo a
@@ -120,18 +133,20 @@ Commands:
 ```
 
 ## Template Function Chaining Rules
+
 <!-- ✅ CLOSED — GeneratePipeTips() detects multi-arg functions piped with additional args; tip suggests parenthesization. -->
 
 For user education, Transparent Mode can display a tip when it detects common patterns:
 
-| Pattern | Tip |
-|---------|-----|
-| `{{.X \| trim}}` | ✅ Correct — trims .X |
-| `{{printf "%s" .X \| trim}}` | ⚠ Trims printf output, not .X |
-| `{{.X \| printf "%s"}}` | ✅ .X is piped as last arg to printf |
-| `{{.X \| upper \| trim}}` | ✅ .X → upper → trim (left to right) |
+| Pattern                      | Tip                                  |
+| ---------------------------- | ------------------------------------ |
+| `{{.X \| trim}}`             | ✅ Correct — trims .X                |
+| `{{printf "%s" .X \| trim}}` | ⚠ Trims printf output, not .X        |
+| `{{.X \| printf "%s"}}`      | ✅ .X is piped as last arg to printf |
+| `{{.X \| upper \| trim}}`    | ✅ .X → upper → trim (left to right) |
 
 ## Instance Identity
+
 <!-- ✅ CLOSED — ValueID via reflect.ValueOf().Pointer() for slices/maps; same-instance detection working. -->
 
 When two variables reference the same underlying data:
@@ -144,7 +159,8 @@ vars:
 ```
 
 Transparent Mode shows:
-```
+
+```Go
 ITEMS = ["a","b","c"]  [taskfile:vars]  ptr:0xc0001a2000
 COPY  = ["a","b","c"]  [taskfile:vars]  ptr:0xc0001a2000  ← same instance as ITEMS
 ```

@@ -1,11 +1,13 @@
 # 02 — Architecture Overview
 
 ## High-Level Design
+
 <!-- ✅ CLOSED — Compile-time diagnostic layer implemented in internal/transparent/ package. -->
 
 Transparent Mode is a **compile-time-only diagnostic layer** that intercepts the variable resolution and template rendering pipeline, collects trace data, and renders a structured report. It does **not** execute any commands.
 
 ## Architecture Diagram
+
 <!-- ✅ CLOSED — All components in diagram exist and are wired: flags → executor → compiler → tracer → renderer. -->
 
 ```mermaid
@@ -16,20 +18,20 @@ graph TD
     SETUP["Setup (setup.go)"]
     COMP["Compiler (compiler.go)"]
     TMPL["Templater (internal/templater/)"]
-    
+
     TRACER["NEW: internal/transparent/tracer.go"]
     RENDERER["NEW: internal/transparent/renderer.go"]
     REPORT["Diagnostic Report (stderr)"]
-    
+
     CLI --> FLAGS
     FLAGS --> EXEC
     EXEC --> SETUP
     SETUP --> COMP
     COMP --> TMPL
-    
+
     COMP -.->|"hook: OnVarResolved()"| TRACER
     TMPL -.->|"hook: OnTemplateEval()"| TRACER
-    
+
     TRACER --> RENDERER
     RENDERER --> REPORT
 
@@ -39,6 +41,7 @@ graph TD
 ```
 
 ## Component Diagram
+
 <!-- ✅ CLOSED — Package structure matches: flags.go, executor.go, compiler.go, templater.go → tracer → model → renderer. -->
 
 ```mermaid
@@ -64,6 +67,7 @@ graph LR
 ```
 
 ## Data Flow
+
 <!-- ✅ CLOSED — Sequence matches: CLI→Executor→Compiler→Tracer→Renderer→stderr, with early exit before task execution. -->
 
 ```mermaid
@@ -78,13 +82,13 @@ sequenceDiagram
     CLI->>Executor: --transparent flag
     Executor->>Executor: Setup() (normal)
     Executor->>Compiler: getVariables(task, call)
-    
+
     loop For each variable scope
         Compiler->>Tracer: RecordVar(name, value, origin, scope)
     end
 
     Compiler->>Templater: Replace(template, cache)
-    
+
     loop For each template string
         Templater->>Tracer: RecordTemplate(input, output, funcCalls)
     end
@@ -95,17 +99,19 @@ sequenceDiagram
 ```
 
 ## Design Principles
+
 <!-- ✅ CLOSED — SOLID principles applied: Tracer=collect, Renderer=format, nil-safe=zero overhead, new package=no core changes. -->
 
-| Principle | How Applied |
-|-----------|-------------|
-| **S** — Single Responsibility | `Tracer` only collects; `Renderer` only formats; existing code only emits events |
-| **O** — Open/Closed | New package `internal/transparent/` — no modification of core data structures |
-| **L** — Liskov Substitution | Tracer is nil-safe (no-op when transparent mode off) |
-| **I** — Interface Segregation | Small `Trace` interface, not a monolithic debugger |
-| **D** — Dependency Inversion | Compiler/Templater depend on a `TraceCollector` interface, not the concrete tracer |
+| Principle                     | How Applied                                                                        |
+| ----------------------------- | ---------------------------------------------------------------------------------- |
+| **S** — Single Responsibility | `Tracer` only collects; `Renderer` only formats; existing code only emits events   |
+| **O** — Open/Closed           | New package `internal/transparent/` — no modification of core data structures      |
+| **L** — Liskov Substitution   | Tracer is nil-safe (no-op when transparent mode off)                               |
+| **I** — Interface Segregation | Small `Trace` interface, not a monolithic debugger                                 |
+| **D** — Dependency Inversion  | Compiler/Templater depend on a `TraceCollector` interface, not the concrete tracer |
 
 ## Key Decision: Nil-Safe Tracer Pattern
+
 <!-- ✅ CLOSED — All Tracer methods check `if t == nil { return }`. Zero overhead when transparent mode off. -->
 
 The tracer is injected into `Compiler` and `templater.Cache` as an **optional pointer**. All methods on the tracer are nil-receiver safe:
@@ -121,11 +127,13 @@ func (t *Tracer) RecordVar(name string, v VarTrace) {
 This means **zero performance impact** when transparent mode is off — no interface dispatch, no allocation, just a nil pointer check.
 
 ## Extensibility Design
+
 <!-- ✅ CLOSED — All 6 extensibility patterns implemented: new origins, auto AST pipe analysis, Extra field, JSON format, ValueID. -->
 
 Transparent Mode is designed to survive future changes to Task:
 
 ### 1. New Variable Sources
+
 <!-- ✅ CLOSED — VarOrigin enum in model.go; add constant + one RecordVar call for new origins. -->
 
 When a new variable origin is added (e.g. a future `remote:` vars, `plugin:` vars, or `matrix:` vars):
@@ -135,6 +143,7 @@ When a new variable origin is added (e.g. a future `remote:` vars, `plugin:` var
 - The renderer automatically picks up new origins — no renderer changes needed
 
 ### 2. New Template Functions
+
 <!-- ✅ CLOSED — AST-based pipe_analyzer.go auto-traces any function; no hardcoded function list needed. -->
 
 When new functions are added to `internal/templater/funcs.go`:
@@ -142,6 +151,7 @@ When new functions are added to `internal/templater/funcs.go`:
 - **No changes required.** Pipe analysis works from the template AST, not a hardcoded function list. Any function registered in `templateFuncs` is automatically traced.
 
 ### 3. New Task Features (e.g. new field on `ast.Task`)
+
 <!-- ✅ CLOSED — Template fields auto-traced via templater.Replace(); SetTemplateContext labels new sections. -->
 
 When a new field is added to tasks (like `if:`, `for:`, `prompt:` were added):
@@ -150,21 +160,26 @@ When a new field is added to tasks (like `if:`, `for:`, `prompt:` were added):
 - If it introduces new variable scoping → add a `RecordVar()` call with a new origin
 
 ### 4. Plugin/Extension Metadata
+
 <!-- ✅ CLOSED — VarTrace.Extra map[string]any field added in model.go for IDE/plugin metadata. -->
 
 The `VarTrace.Extra map[string]any` field is reserved for future use:
+
 - IDE plugins can attach source location info
 - Remote taskfile features can attach URL/cache metadata
 - Custom renderers can attach rendering hints
 
 ### 5. New Output Formats
+
 <!-- ✅ CLOSED — Text renderer (renderer.go) + JSON renderer (renderer_json.go) implemented; data model is format-agnostic. -->
 
 The renderer is format-agnostic. To add a new output format:
+
 - Implement a new `Render*()` function in `internal/transparent/`
 - The `TraceReport` data structure remains the same
 
 ### 6. Copy-vs-Reference Tracking
+
 <!-- ✅ CLOSED — ValueID uses reflect.ValueOf().Pointer() for slices/maps; ptr displayed in both text and JSON output. -->
 
 The `VarTrace.ValueID` field uses `reflect.ValueOf().Pointer()` to track whether two variables point to the same underlying data (slices, maps). This works for any future variable type that uses reference semantics in Go.

@@ -1,16 +1,18 @@
 # 03 — Data Model
 
 ## Trace Structures
+
 <!-- ✅ CLOSED — All structures implemented in internal/transparent/model.go exactly as specified. -->
 
 All types live in `internal/transparent/model.go`.
 
 ### VarTrace
+
 <!-- ✅ CLOSED — All fields implemented including Extra, IsRef, RefName, ValueID, ShCmd. Sorted by origin in output. -->
 
 Captures one variable resolution event.
 
-```
+```Go
 VarTrace {
     Name       string       // "MY_VAR"
     Value      any          // resolved value
@@ -36,22 +38,24 @@ VarTrace {
 ```
 
 ### Copy vs Reference Semantics
+
 <!-- ✅ CLOSED — ValueID via reflect.ValueOf().Pointer(); ptr displayed in text and JSON; tested with ref examples. -->
 
-| Scenario | `IsRef` | `ValueID` | Display |
-|----------|---------|-----------|---------|
-| Static scalar: `NAME: "hello"` | false | 0 | `NAME = "hello"` |
-| Ref to scalar: `ALIAS: { ref: NAME }` | true | 0 | `ALIAS = "hello"  ref:NAME  (copy — scalar)` |
-| List value: `ITEMS: [a, b]` | false | 0xc000… | `ITEMS = ["a","b"]  ptr:0xc000…` |
-| Ref to list: `COPY: { ref: ITEMS }` | true | 0xc000… (same) | `COPY = ["a","b"]  ref:ITEMS  ← same instance` |
-| Re-assigned list: `OTHER: [a, b]` | false | 0xc001… (different) | `OTHER = ["a","b"]  ptr:0xc001…` |
+| Scenario                              | `IsRef` | `ValueID`           | Display                                        |
+| ------------------------------------- | ------- | ------------------- | ---------------------------------------------- |
+| Static scalar: `NAME: "hello"`        | false   | 0                   | `NAME = "hello"`                               |
+| Ref to scalar: `ALIAS: { ref: NAME }` | true    | 0                   | `ALIAS = "hello"  ref:NAME  (copy — scalar)`   |
+| List value: `ITEMS: [a, b]`           | false   | 0xc000…             | `ITEMS = ["a","b"]  ptr:0xc000…`               |
+| Ref to list: `COPY: { ref: ITEMS }`   | true    | 0xc000… (same)      | `COPY = ["a","b"]  ref:ITEMS  ← same instance` |
+| Re-assigned list: `OTHER: [a, b]`     | false   | 0xc001… (different) | `OTHER = ["a","b"]  ptr:0xc001…`               |
 
 `ValueID` is obtained via `reflect.ValueOf(v.Value).Pointer()` for types that support it (slices, maps, pointers). For scalar types (string, int, bool) it is always 0 and identity is not applicable — scalars are always copies in Go.
 
 ### VarOrigin (enum)
+
 <!-- ✅ CLOSED — All 10 origins implemented: Environment, Special, TaskfileEnv/Vars, Include, Call, Task, ForLoop, Dotenv. -->
 
-```
+```Go
 OriginEnvironment          // os environment
 OriginSpecial              // TASK, ROOT_DIR, TASK_DIR, etc.
 OriginTaskfileEnv          // Taskfile.yml `env:` block
@@ -65,11 +69,12 @@ OriginDotenv               // .env file
 ```
 
 ### TemplateTrace
+
 <!-- ✅ CLOSED — Input, Output, Context, PipeSteps, VarsUsed, Tips fields all implemented and populated. -->
 
 Captures one template evaluation.
 
-```
+```Go
 TemplateTrace {
     Input      string            // raw template: "{{printf \"%s\" .NAME | trim}}"
     Output     string            // resolved: "hello"
@@ -81,11 +86,12 @@ TemplateTrace {
 ```
 
 ### PipeStep
+
 <!-- ✅ CLOSED — AST-based pipe analysis via pipe_analyzer.go; FuncName, Args extracted from template/parse nodes. -->
 
 Captures one step in a template pipe chain.
 
-```
+```Go
 PipeStep {
     FuncName   string   // "printf", "trim"
     Args       []string // ["\"%s\"", ".NAME"]
@@ -95,11 +101,12 @@ PipeStep {
 ```
 
 ### TaskTrace
+
 <!-- ✅ CLOSED — TaskName, Vars, Templates, Deps, Cmds fields all implemented. -->
 
 Groups all traces for a single task.
 
-```
+```Go
 TaskTrace {
     TaskName    string
     Vars        []VarTrace
@@ -110,9 +117,10 @@ TaskTrace {
 ```
 
 ### CmdTrace
+
 <!-- ✅ CLOSED — Index, RawCmd, ResolvedCmd, IterationLabel fields implemented. Templates attached to cmds. -->
 
-```
+```Go
 CmdTrace {
     Index      int
     RawCmd     string   // before template substitution
@@ -122,6 +130,7 @@ CmdTrace {
 ```
 
 ## Relationships
+
 <!-- ✅ CLOSED — Class diagram matches actual implementation; Tracer→TraceReport→TaskTrace→VarTrace/TemplateTrace/CmdTrace. -->
 
 ```mermaid
