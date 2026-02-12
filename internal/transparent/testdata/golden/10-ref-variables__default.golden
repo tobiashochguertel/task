@@ -37,9 +37,15 @@
   │ echo 'Greeting: {{.GREETING}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Greeting: {{.GREETING}}'
+  │ 
   │ Step 1: Resolve a Variable — .GREETING
   │   I     hello-world
-  │   E     echo 'Greeting: '
+  │ 
+  │   R     echo 'Greeting: hello-world'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Greeting: hello-world'
@@ -52,9 +58,15 @@
   │ echo 'Alias: {{.ALIAS}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Alias: {{.ALIAS}}'
+  │ 
   │ Step 1: Resolve a Variable — .ALIAS
   │   I     hello-world
-  │   E     echo 'Alias: '
+  │ 
+  │   R     echo 'Alias: hello-world'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Alias: hello-world'

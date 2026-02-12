@@ -37,12 +37,23 @@
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo '{{.GREETING}} {{.NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .GREETING
   │   I     Hello
-  │   E     echo '{{"Hello"}} {{.NAME}}'
+  │ 
+  │   R     echo 'Hello'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo '{{.GREETING}} {{.NAME}}'
+  │ 
   │ Step 2: Resolve a Variable — .NAME
   │   I     global-value
-  │   E     echo ''
+  │ 
+  │   R     echo 'global-value'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Hello global-value'
@@ -55,9 +66,15 @@
   │ echo 'SHARED = {{.SHARED}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'SHARED = {{.SHARED}}'
+  │ 
   │ Step 1: Resolve a Variable — .SHARED
   │   I     from-global
-  │   E     echo 'SHARED = '
+  │ 
+  │   R     echo 'SHARED = from-global'
+  │ 
   └─
   ┌─ Output:
   │ echo 'SHARED = from-global'

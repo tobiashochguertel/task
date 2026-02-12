@@ -51,9 +51,15 @@
   │ echo 'Connection: {{.CONNECTION}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Connection: {{.CONNECTION}}'
+  │ 
   │ Step 1: Resolve a Variable — .CONNECTION
   │   I     localhost:5432/mydb
-  │   E     echo 'Connection: '
+  │ 
+  │   R     echo 'Connection: localhost:5432/mydb'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Connection: localhost:5432/mydb'

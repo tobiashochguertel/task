@@ -39,12 +39,23 @@
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo '{{.GREETING}} {{.NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .GREETING
   │   I     Hello
-  │   E     echo '{{"Hello"}} {{.NAME}}'
+  │ 
+  │   R     echo 'Hello'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo '{{.GREETING}} {{.NAME}}'
+  │ 
   │ Step 2: Resolve a Variable — .NAME
   │   I     double-task
-  │   E     echo ''
+  │ 
+  │   R     echo 'double-task'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Hello double-task'
@@ -57,9 +68,15 @@
   │ echo 'SHARED = {{.SHARED}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'SHARED = {{.SHARED}}'
+  │ 
   │ Step 1: Resolve a Variable — .SHARED
   │   I     from-task
-  │   E     echo 'SHARED = '
+  │ 
+  │   R     echo 'SHARED = from-task'
+  │ 
   └─
   ┌─ Output:
   │ echo 'SHARED = from-task'

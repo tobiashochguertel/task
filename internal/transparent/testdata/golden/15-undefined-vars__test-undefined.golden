@@ -35,12 +35,23 @@
   │ echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .DEFINED
   │   I     hello
-  │   E     echo '{{"hello"}} {{.UNDEFINED_VAR}}'
+  │ 
+  │   R     echo 'hello'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
+  │ 
   │ Step 2: Resolve a Variable — .UNDEFINED_VAR
   │   I     <nil>
-  │   E     echo ''
+  │ 
+  │   R     echo ''
+  │ 
   └─
   ┌─ Output:
   │ echo 'hello '

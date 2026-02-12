@@ -101,13 +101,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Task ID: '",
-              "input": "task-123",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".TASK_ID"
+              "action_index": 0,
+              "result": "echo 'Task ID: task-123'",
+              "source": "echo 'Task ID: {{.TASK_ID}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "task-123",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".TASK_ID"
+                }
+              ]
             }
           ],
           "input": "echo 'Task ID: {{.TASK_ID}}'",
@@ -118,13 +125,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Combined: '",
-              "input": "test-host-task-123",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".COMBINED"
+              "action_index": 0,
+              "result": "echo 'Combined: test-host-task-123'",
+              "source": "echo 'Combined: {{.COMBINED}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "test-host-task-123",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".COMBINED"
+                }
+              ]
             }
           ],
           "input": "echo 'Combined: {{.COMBINED}}'",

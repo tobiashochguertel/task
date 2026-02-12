@@ -86,13 +86,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Version  validated'",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".VERSION"
+              "action_index": 0,
+              "result": "echo 'Version 1.0.0 validated'",
+              "source": "echo 'Version {{.VERSION}} validated'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "echo 'Version {{.VERSION}} validated'",
@@ -103,13 +110,20 @@
         },
         {
           "context": "preconditions",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "test '' != ''",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".VERSION"
+              "action_index": 0,
+              "result": "test '1.0.0' != ''",
+              "source": "test '{{.VERSION}}' != ''",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "test '{{.VERSION}}' != ''",
@@ -120,13 +134,20 @@
         },
         {
           "context": "preconditions",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "VERSION must not be empty (got: '')",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".VERSION"
+              "action_index": 0,
+              "result": "VERSION must not be empty (got: '1.0.0')",
+              "source": "VERSION must not be empty (got: '{{.VERSION}}')",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "VERSION must not be empty (got: '{{.VERSION}}')",

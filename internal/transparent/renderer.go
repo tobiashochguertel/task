@@ -365,28 +365,42 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 		// Input box
 		renderBoxContent(w, "Input", t.Input)
 
-		// Detailed step-by-step evaluation (if available)
-		if len(t.DetailedSteps) > 0 {
+		// Action-grouped step-by-step evaluation (if available)
+		if len(t.EvalActions) > 0 {
+			totalActions := len(t.EvalActions)
 			renderBoxStart(w, "Evaluation Steps")
-			for _, ds := range t.DetailedSteps {
-				opColor := cCyan
-				if ds.Operation == "Apply a Function" {
-					opColor = cYellow
+			for _, ea := range t.EvalActions {
+				// Action header
+				renderBoxLine(w, "")
+				renderBoxLine(w, fmt.Sprintf("%s── Action %d of %d — line %d%s",
+					cDim, ea.ActionIndex+1, totalActions, ea.SourceLine, cReset))
+				// Source line
+				renderStepField(w, "S", ea.Source, cCyan, cReset)
+				renderBoxLine(w, "")
+
+				// Steps within this action
+				for _, ds := range ea.Steps {
+					opColor := cCyan
+					if ds.Operation == "Apply a Function" {
+						opColor = cYellow
+					}
+					renderBoxLine(w, fmt.Sprintf("%sStep %d:%s %s%s%s — %s%s%s",
+						cBold, ds.StepNum, cReset,
+						opColor, ds.Operation, cReset,
+						cDim, ds.Target, cReset))
+					if ds.Input != "" {
+						renderStepField(w, "I", ds.Input, "", "")
+					}
+					if ds.Output != "" {
+						renderStepField(w, "O", ds.Output, cGreen, cReset)
+					}
 				}
-				renderBoxLine(w, fmt.Sprintf("%sStep %d:%s %s%s%s — %s%s%s",
-					cBold, ds.StepNum, cReset,
-					opColor, ds.Operation, cReset,
-					cDim, ds.Target, cReset))
-				if ds.Input != "" {
-					renderStepField(w, "I", ds.Input, "", "")
-				}
-				if ds.Output != "" {
-					renderStepField(w, "O", ds.Output, cGreen, cReset)
-				}
-				if ds.Expression != "" {
-					renderStepField(w, "E", ds.Expression, cDim, cReset)
-				}
+
+				// Result line
+				renderBoxLine(w, "")
+				renderStepField(w, "R", ea.Result, cGreen, cReset)
 			}
+			renderBoxLine(w, "")
 			renderBoxEnd(w)
 		} else if len(t.Steps) > 0 {
 			// Fallback: show pipe steps if detailed steps not available
@@ -524,17 +538,24 @@ func applyWSToTemplates(templates []TemplateTrace) []TemplateTrace {
 	for i, t := range templates {
 		tc := t
 		tc.Output = makeWhitespaceVisible(t.Output)
-		// Apply whitespace visibility to detailed steps
-		if len(tc.DetailedSteps) > 0 {
-			steps := make([]TemplateStep, len(tc.DetailedSteps))
-			for j, ds := range tc.DetailedSteps {
-				sc := ds
-				sc.Input = makeWhitespaceVisible(ds.Input)
-				sc.Output = makeWhitespaceVisible(ds.Output)
-				sc.Expression = makeWhitespaceVisible(ds.Expression)
-				steps[j] = sc
+		// Apply whitespace visibility to eval actions
+		if len(tc.EvalActions) > 0 {
+			actions := make([]EvalAction, len(tc.EvalActions))
+			for j, ea := range tc.EvalActions {
+				ac := ea
+				ac.Source = makeWhitespaceVisible(ea.Source)
+				ac.Result = makeWhitespaceVisible(ea.Result)
+				steps := make([]TemplateStep, len(ea.Steps))
+				for k, ds := range ea.Steps {
+					sc := ds
+					sc.Input = makeWhitespaceVisible(ds.Input)
+					sc.Output = makeWhitespaceVisible(ds.Output)
+					steps[k] = sc
+				}
+				ac.Steps = steps
+				actions[j] = ac
 			}
-			tc.DetailedSteps = steps
+			tc.EvalActions = actions
 		}
 		out[i] = tc
 	}

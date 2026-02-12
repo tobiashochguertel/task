@@ -153,10 +153,11 @@ func lookupField(data map[string]any, ident []string) any {
 	return cur
 }
 
-// AnalyzeDetailedSteps produces fine-grained step-by-step evaluation traces
-// for a template expression. Each step shows either a variable resolution
-// or a function application, with the evolving expression state.
-func AnalyzeDetailedSteps(input string, data map[string]any, funcs template.FuncMap) []TemplateStep {
+// AnalyzeEvalActions produces action-grouped evaluation traces for a template.
+// Each EvalAction corresponds to one {{...}} expression in the template,
+// with source line tracking and correctly ordered steps that follow
+// Go's template evaluation order (depth-first for sub-pipelines).
+func AnalyzeEvalActions(input string, data map[string]any, funcs template.FuncMap) []EvalAction {
 	tpl, err := template.New("").Funcs(funcs).Parse(input)
 	if err != nil {
 		return nil
@@ -166,9 +167,10 @@ func AnalyzeDetailedSteps(input string, data map[string]any, funcs template.Func
 		return nil
 	}
 
-	var steps []TemplateStep
+	inputLines := strings.Split(input, "\n")
+	var actions []EvalAction
 	stepNum := 0
-	expr := input // evolving expression
+	actionIdx := 0
 
 	for _, node := range root.Nodes {
 		action, ok := node.(*parse.ActionNode)
@@ -176,74 +178,160 @@ func AnalyzeDetailedSteps(input string, data map[string]any, funcs template.Func
 			continue
 		}
 
-		// Process each command in the pipe
-		for _, cmd := range action.Pipe.Cmds {
-			if len(cmd.Args) == 0 {
-				continue
+		// Compute source line number from node position
+		lineNum := lineNumber(input, action.Position())
+		srcLine := ""
+		if lineNum >= 1 && lineNum <= len(inputLines) {
+			srcLine = inputLines[lineNum-1]
+		}
+
+		// Walk the pipe to generate steps
+		steps := walkPipeCommands(action.Pipe.Cmds, data, funcs, &stepNum)
+
+		// Evaluate the full action to get the result value
+		actionExpr := "{{" + action.Pipe.String() + "}}"
+		resultVal := evalPartial(actionExpr, data, funcs)
+
+		// Build the result line by replacing the {{...}} in the source line
+		resultLine := srcLine
+		if srcLine != "" {
+			// Find the {{...}} in the source line and replace with result
+			startIdx := strings.Index(srcLine, "{{")
+			endIdx := strings.LastIndex(srcLine, "}}")
+			if startIdx >= 0 && endIdx >= 0 && endIdx+2 <= len(srcLine) {
+				resultLine = srcLine[:startIdx] + resultVal + srcLine[endIdx+2:]
+			}
+		}
+
+		actions = append(actions, EvalAction{
+			ActionIndex: actionIdx,
+			SourceLine:  lineNum,
+			Source:      srcLine,
+			Result:      resultLine,
+			Steps:       steps,
+		})
+		actionIdx++
+	}
+
+	return actions
+}
+
+// lineNumber computes the 1-based line number for a given byte offset position.
+func lineNumber(input string, pos parse.Pos) int {
+	offset := int(pos)
+	if offset > len(input) {
+		offset = len(input)
+	}
+	return strings.Count(input[:offset], "\n") + 1
+}
+
+// walkPipeCommands recursively walks a slice of pipe commands and generates
+// TemplateStep entries in the correct evaluation order:
+// 1. For each command, process arguments first (depth-first for sub-pipelines)
+// 2. Then record the function application or variable resolution
+//
+// cmds is the full list of commands in this pipe. Each function application
+// evaluates the partial pipe from cmds[0..i] to get the correct piped output.
+func walkPipeCommands(cmds []*parse.CommandNode, data map[string]any, funcs template.FuncMap, stepNum *int) []TemplateStep {
+	var steps []TemplateStep
+
+	for i, cmd := range cmds {
+		if len(cmd.Args) == 0 {
+			continue
+		}
+
+		firstArg := cmd.Args[0]
+
+		// Check if this command is a function call (first arg is identifier)
+		if ident, isIdent := firstArg.(*parse.IdentifierNode); isIdent {
+			// Process non-first arguments first (depth-first)
+			for _, arg := range cmd.Args[1:] {
+				steps = append(steps, walkArg(arg, data, funcs, stepNum)...)
 			}
 
-			// Check for variable/field references in arguments
-			for _, arg := range cmd.Args {
-				switch v := arg.(type) {
-				case *parse.FieldNode:
-					// Variable resolution: .VARNAME
-					varName := "." + strings.Join(v.Ident, ".")
-					val := lookupField(data, v.Ident)
-					valStr := fmt.Sprintf("%v", val)
-					stepNum++
-
-					// Build expression with variable substituted
-					newExpr := strings.Replace(expr, varName, fmt.Sprintf("%q", valStr), 1)
-
-					steps = append(steps, TemplateStep{
-						StepNum:    stepNum,
-						Operation:  "Resolve a Variable",
-						Target:     varName,
-						Input:      valStr,
-						Output:     "",
-						Expression: newExpr,
-					})
-					expr = newExpr
-				}
+			// Build input description with resolved argument values
+			var inputParts []string
+			inputParts = append(inputParts, ident.Ident)
+			// If this is not the first command in the pipe, show the piped input
+			if i > 0 {
+				pipedVal := evalPartial(partialPipeString(cmds[:i]), data, funcs)
+				inputParts = append(inputParts, fmt.Sprintf("%q", pipedVal))
 			}
-
-			// Check if this is a function call
-			funcName := nodeString(cmd.Args[0])
-			if _, isField := cmd.Args[0].(*parse.FieldNode); !isField {
-				if _, isIdent := cmd.Args[0].(*parse.IdentifierNode); isIdent {
-					// Function application
-					// Evaluate partial to get intermediate output
-					partial := "{{" + cmd.String() + "}}"
-					output := evalPartial(partial, data, funcs)
-
-					// Build input description
-					var inputParts []string
-					inputParts = append(inputParts, funcName)
-					for _, a := range cmd.Args[1:] {
-						inputParts = append(inputParts, resolveNodeValue(a, data))
-					}
-					inputStr := strings.Join(inputParts, " ")
-
-					stepNum++
-					steps = append(steps, TemplateStep{
-						StepNum:   stepNum,
-						Operation: "Apply a Function",
-						Target:    funcName,
-						Input:     inputStr,
-						Output:    output,
-					})
-				}
+			for _, a := range cmd.Args[1:] {
+				inputParts = append(inputParts, resolveArgValue(a, data, funcs))
 			}
+			inputStr := strings.Join(inputParts, " ")
+
+			// Evaluate the partial pipe up to and including this command
+			// so that piped values flow correctly through the chain
+			partial := partialPipeString(cmds[:i+1])
+			output := evalPartial(partial, data, funcs)
+
+			*stepNum++
+			steps = append(steps, TemplateStep{
+				StepNum:   *stepNum,
+				Operation: "Apply a Function",
+				Target:    ident.Ident,
+				Input:     inputStr,
+				Output:    output,
+			})
+		} else if field, isField := firstArg.(*parse.FieldNode); isField {
+			// Variable access at start of pipe: .VARNAME
+			varName := "." + strings.Join(field.Ident, ".")
+			val := lookupField(data, field.Ident)
+			valStr := fmt.Sprintf("%v", val)
+
+			*stepNum++
+			steps = append(steps, TemplateStep{
+				StepNum:   *stepNum,
+				Operation: "Resolve a Variable",
+				Target:    varName,
+				Input:     valStr,
+			})
 		}
 	}
 
-	// Set the final expression on the last step
-	if len(steps) > 0 {
-		steps[len(steps)-1].Expression = input[:strings.Index(input, "{{")] + steps[len(steps)-1].Output +
-			input[strings.LastIndex(input, "}}")+2:]
-	}
-
 	return steps
+}
+
+// resolveArgValue returns the resolved value of an argument node for display
+// in the Input field. Unlike resolveNodeValue, this evaluates sub-pipelines
+// to show their result rather than raw AST text.
+func resolveArgValue(n parse.Node, data map[string]any, funcs template.FuncMap) string {
+	switch v := n.(type) {
+	case *parse.PipeNode:
+		// Sub-pipeline: evaluate it to get the result
+		return evalPartial("{{"+v.String()+"}}", data, funcs)
+	case *parse.FieldNode:
+		val := lookupField(data, v.Ident)
+		return fmt.Sprintf("%v", val)
+	default:
+		return resolveNodeValue(n, data)
+	}
+}
+
+// walkArg processes a single argument node, generating steps for variable
+// resolutions and recursing into sub-pipelines.
+func walkArg(arg parse.Node, data map[string]any, funcs template.FuncMap, stepNum *int) []TemplateStep {
+	switch v := arg.(type) {
+	case *parse.FieldNode:
+		varName := "." + strings.Join(v.Ident, ".")
+		val := lookupField(data, v.Ident)
+		valStr := fmt.Sprintf("%v", val)
+		*stepNum++
+		return []TemplateStep{{
+			StepNum:   *stepNum,
+			Operation: "Resolve a Variable",
+			Target:    varName,
+			Input:     valStr,
+		}}
+	case *parse.PipeNode:
+		// Sub-pipeline: recursively walk its commands
+		return walkPipeCommands(v.Cmds, data, funcs, stepNum)
+	default:
+		// Literals (string, number, etc.) don't generate steps
+		return nil
+	}
 }
 
 // multiArgFuncs lists template functions that accept multiple positional

@@ -104,13 +104,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building '",
-              "input": "myproject-2.0.0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".ARTIFACT"
+              "action_index": 0,
+              "result": "echo 'Building myproject-2.0.0'",
+              "source": "echo 'Building {{.ARTIFACT}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "myproject-2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".ARTIFACT"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.ARTIFACT}}'",
@@ -121,13 +128,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Tag: '",
-              "input": "myproject/2-0-0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".TAG"
+              "action_index": 0,
+              "result": "echo 'Tag: myproject/2-0-0'",
+              "source": "echo 'Tag: {{.TAG}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "myproject/2-0-0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".TAG"
+                }
+              ]
             }
           ],
           "input": "echo 'Tag: {{.TAG}}'",
@@ -138,13 +152,20 @@
         },
         {
           "context": "cmds[2]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Date: '",
-              "input": "2026-02-11",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".BUILD_DATE"
+              "action_index": 0,
+              "result": "echo 'Date: 2026-02-11'",
+              "source": "echo 'Date: {{.BUILD_DATE}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2026-02-11",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".BUILD_DATE"
+                }
+              ]
             }
           ],
           "input": "echo 'Date: {{.BUILD_DATE}}'",

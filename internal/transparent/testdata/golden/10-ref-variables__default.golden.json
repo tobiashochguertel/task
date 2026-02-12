@@ -98,13 +98,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Greeting: '",
-              "input": "hello-world",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".GREETING"
+              "action_index": 0,
+              "result": "echo 'Greeting: hello-world'",
+              "source": "echo 'Greeting: {{.GREETING}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello-world",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".GREETING"
+                }
+              ]
             }
           ],
           "input": "echo 'Greeting: {{.GREETING}}'",
@@ -115,13 +122,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Alias: '",
-              "input": "hello-world",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".ALIAS"
+              "action_index": 0,
+              "result": "echo 'Alias: hello-world'",
+              "source": "echo 'Alias: {{.ALIAS}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello-world",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".ALIAS"
+                }
+              ]
             }
           ],
           "input": "echo 'Alias: {{.ALIAS}}'",

@@ -86,13 +86,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo ' is ready'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'my-app is ready'",
+              "source": "echo '{{.APP_NAME}} is ready'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "echo '{{.APP_NAME}} is ready'",

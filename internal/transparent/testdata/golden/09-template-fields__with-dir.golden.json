@@ -92,13 +92,20 @@
       "templates": [
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "/tmp/",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "<PATH>",
+              "source": "<PATH>",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "<PATH>",
@@ -109,13 +116,20 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Working in  directory'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'Working in my-app directory'",
+              "source": "echo 'Working in {{.APP_NAME}} directory'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "echo 'Working in {{.APP_NAME}} directory'",

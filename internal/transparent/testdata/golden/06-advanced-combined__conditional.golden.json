@@ -107,35 +107,39 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{printf \"%s v%s built %s\" \"myproject\" .VERSION .BUILD_DATE}}'",
-              "input": "myproject",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
-            },
-            {
-              "expression": "echo '{{printf \"%s v%s built %s\" \"myproject\" \"2.0.0\" .BUILD_DATE}}'",
-              "input": "2.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
-            },
-            {
-              "expression": "echo '{{printf \"%s v%s built %s\" \"myproject\" \"2.0.0\" \"2026-02-11\"}}'",
-              "input": "2026-02-11",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".BUILD_DATE"
-            },
-            {
-              "expression": "echo 'myproject v2.0.0 built 2026-02-11'",
-              "input": "printf \"%s v%s built %s\" myproject 2.0.0 2026-02-11",
-              "operation": "Apply a Function",
-              "output": "myproject v2.0.0 built 2026-02-11",
-              "step": 4,
-              "target": "printf"
+              "action_index": 0,
+              "result": "echo 'myproject v2.0.0 built 2026-02-11'",
+              "source": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "myproject",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                },
+                {
+                  "input": "2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                },
+                {
+                  "input": "2026-02-11",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".BUILD_DATE"
+                },
+                {
+                  "input": "printf \"%s v%s built %s\" myproject 2.0.0 2026-02-11",
+                  "operation": "Apply a Function",
+                  "output": "myproject v2.0.0 built 2026-02-11",
+                  "step": 4,
+                  "target": "printf"
+                }
+              ]
             }
           ],
           "input": "echo '{{printf \"%s v%s built %s\" .PROJECT .VERSION .BUILD_DATE}}'",

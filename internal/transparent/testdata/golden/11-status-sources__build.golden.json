@@ -92,26 +92,48 @@
       "templates": [
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "{{\"./build\"}}/{{.APP_NAME}}-{{.VERSION}}",
-              "input": "./build",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".BUILD_DIR"
+              "action_index": 0,
+              "result": "./build",
+              "source": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "./build",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".BUILD_DIR"
+                }
+              ]
             },
             {
-              "expression": "{{\"./build\"}}/{{\"my-app\"}}-{{.VERSION}}",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".APP_NAME"
+              "action_index": 1,
+              "result": "my-app",
+              "source": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".VERSION"
+              "action_index": 2,
+              "result": "1.0.0",
+              "source": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
@@ -124,12 +146,20 @@
         },
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "input": "./build",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".BUILD_DIR"
+              "action_index": 0,
+              "result": "./build",
+              "source": "{{.BUILD_DIR}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "./build",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".BUILD_DIR"
+                }
+              ]
             }
           ],
           "input": "{{.BUILD_DIR}}",
@@ -140,20 +170,34 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building {{\"my-app\"}} v{{.VERSION}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'Building my-app'",
+              "source": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "expression": "echo 'Building '",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
+              "action_index": 1,
+              "result": "echo 'Building 1.0.0'",
+              "source": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
@@ -165,20 +209,34 @@
         },
         {
           "context": "status",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "test -f \"{{\"my-app\"}}-{{.VERSION}}\"",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "test -f \"my-app\"",
+              "source": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "expression": "test -f \"\"",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
+              "action_index": 1,
+              "result": "test -f \"1.0.0\"",
+              "source": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",

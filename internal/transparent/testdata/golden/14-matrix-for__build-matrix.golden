@@ -39,15 +39,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     linux
-  │   E     echo 'Build: {{"my-app"}}-{{"linux"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: linux'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     amd64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: amd64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-linux-amd64'
@@ -60,15 +76,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     linux
-  │   E     echo 'Build: {{"my-app"}}-{{"linux"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: linux'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     arm64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: arm64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-linux-arm64'
@@ -81,15 +113,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     darwin
-  │   E     echo 'Build: {{"my-app"}}-{{"darwin"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: darwin'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     amd64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: amd64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-darwin-amd64'
@@ -102,15 +150,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     darwin
-  │   E     echo 'Build: {{"my-app"}}-{{"darwin"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: darwin'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     arm64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: arm64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-darwin-arm64'
@@ -123,15 +187,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     windows
-  │   E     echo 'Build: {{"my-app"}}-{{"windows"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: windows'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     amd64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: amd64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-windows-amd64'
@@ -144,15 +224,31 @@
   │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Build: {{"my-app"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: my-app'
+  │ 
+  │ ── Action 2 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM.PLATFORM
   │   I     windows
-  │   E     echo 'Build: {{"my-app"}}-{{"windows"}}-{{.ITEM.ARCH}}'
+  │ 
+  │   R     echo 'Build: windows'
+  │ 
+  │ ── Action 3 of 3 — line 1
+  │   S     echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  │ 
   │ Step 3: Resolve a Variable — .ITEM.ARCH
   │   I     arm64
-  │   E     echo 'Build: '
+  │ 
+  │   R     echo 'Build: arm64'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build: my-app-windows-arm64'

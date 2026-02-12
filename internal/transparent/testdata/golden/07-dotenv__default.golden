@@ -50,9 +50,15 @@
   │ echo 'DB Host: {{.DB_HOST}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'DB Host: {{.DB_HOST}}'
+  │ 
   │ Step 1: Resolve a Variable — .DB_HOST
   │   I     localhost
-  │   E     echo 'DB Host: '
+  │ 
+  │   R     echo 'DB Host: localhost'
+  │ 
   └─
   ┌─ Output:
   │ echo 'DB Host: localhost'
@@ -65,9 +71,15 @@
   │ echo 'DB Port: {{.DB_PORT}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'DB Port: {{.DB_PORT}}'
+  │ 
   │ Step 1: Resolve a Variable — .DB_PORT
   │   I     5432
-  │   E     echo 'DB Port: '
+  │ 
+  │   R     echo 'DB Port: 5432'
+  │ 
   └─
   ┌─ Output:
   │ echo 'DB Port: 5432'
@@ -80,9 +92,15 @@
   │ echo 'App: {{.APP_NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'App: {{.APP_NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-dotenv-app
-  │   E     echo 'App: '
+  │ 
+  │   R     echo 'App: my-dotenv-app'
+  │ 
   └─
   ┌─ Output:
   │ echo 'App: my-dotenv-app'

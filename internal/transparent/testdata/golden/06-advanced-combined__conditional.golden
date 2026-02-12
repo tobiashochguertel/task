@@ -48,19 +48,22 @@
   │ echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     myproject
-  │   E     echo '{{printf "%s v%s built %s" "myproject" .VERSION .BUILD_DATE}}'
   │ Step 2: Resolve a Variable — .VERSION
   │   I     2.0.0
-  │   E     echo '{{printf "%s v%s built %s" "myproject" "2.0.0" .BUILD_DATE}}'
   │ Step 3: Resolve a Variable — .BUILD_DATE
   │   I     2026-02-11
-  │   E     echo '{{printf "%s v%s built %s" "myproject" "2.0.0" "2026-02-11"}}'
   │ Step 4: Apply a Function — printf
   │   I     printf "%s v%s built %s" myproject 2.0.0 2026-02-11
   │   O     myproject v2.0.0 built 2026-02-11
-  │   E     echo 'myproject v2.0.0 built 2026-02-11'
+  │ 
+  │   R     echo 'myproject v2.0.0 built 2026-02-11'
+  │ 
   └─
   ┌─ Output:
   │ echo 'myproject v2.0.0 built 2026-02-11'

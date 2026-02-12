@@ -235,13 +235,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'DB Host: '",
-              "input": "localhost",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".DB_HOST"
+              "action_index": 0,
+              "result": "echo 'DB Host: localhost'",
+              "source": "echo 'DB Host: {{.DB_HOST}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "localhost",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".DB_HOST"
+                }
+              ]
             }
           ],
           "input": "echo 'DB Host: {{.DB_HOST}}'",
@@ -252,13 +259,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'DB Port: '",
-              "input": "5432",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".DB_PORT"
+              "action_index": 0,
+              "result": "echo 'DB Port: 5432'",
+              "source": "echo 'DB Port: {{.DB_PORT}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "5432",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".DB_PORT"
+                }
+              ]
             }
           ],
           "input": "echo 'DB Port: {{.DB_PORT}}'",
@@ -269,13 +283,20 @@
         },
         {
           "context": "cmds[2]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'App: '",
-              "input": "my-dotenv-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'App: my-dotenv-app'",
+              "source": "echo 'App: {{.APP_NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-dotenv-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "echo 'App: {{.APP_NAME}}'",

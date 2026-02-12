@@ -42,9 +42,15 @@
   │ echo 'Level2: {{.LEVEL2_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Level2: {{.LEVEL2_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .LEVEL2_VAR
   │   I     from-level2
-  │   E     echo 'Level2: '
+  │ 
+  │   R     echo 'Level2: from-level2'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Level2: from-level2'
@@ -57,9 +63,15 @@
   │ echo 'L1 to L2: {{.L1_TO_L2}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'L1 to L2: {{.L1_TO_L2}}'
+  │ 
   │ Step 1: Resolve a Variable — .L1_TO_L2
   │   I     from-level1-include
-  │   E     echo 'L1 to L2: '
+  │ 
+  │   R     echo 'L1 to L2: from-level1-include'
+  │ 
   └─
   ┌─ Output:
   │ echo 'L1 to L2: from-level1-include'
@@ -72,9 +84,15 @@
   │ echo 'Parent: {{.PARENT_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Parent: {{.PARENT_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .PARENT_VAR
   │   I     from-root-include
-  │   E     echo 'Parent: '
+  │ 
+  │   R     echo 'Parent: from-root-include'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Parent: from-root-include'

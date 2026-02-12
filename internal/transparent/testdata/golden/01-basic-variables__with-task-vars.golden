@@ -39,9 +39,15 @@
   │ echo 'Output: {{.OUTPUT}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Output: {{.OUTPUT}}'
+  │ 
   │ Step 1: Resolve a Variable — .OUTPUT
   │   I     my-app-1.0.0
-  │   E     echo 'Output: '
+  │ 
+  │   R     echo 'Output: my-app-1.0.0'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Output: my-app-1.0.0'
@@ -54,9 +60,15 @@
   │ echo 'Build dir: {{.BUILD_DIR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Build dir: {{.BUILD_DIR}}'
+  │ 
   │ Step 1: Resolve a Variable — .BUILD_DIR
   │   I     ./build
-  │   E     echo 'Build dir: '
+  │ 
+  │   R     echo 'Build dir: ./build'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Build dir: ./build'

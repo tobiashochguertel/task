@@ -132,27 +132,48 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"linux\"}}-{{.ITEM.ARCH}}'",
-              "input": "linux",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: linux'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "linux",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "amd64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: amd64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "amd64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
@@ -166,27 +187,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"linux\"}}-{{.ITEM.ARCH}}'",
-              "input": "linux",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: linux'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "linux",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "arm64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: arm64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "arm64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
@@ -200,27 +242,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"darwin\"}}-{{.ITEM.ARCH}}'",
-              "input": "darwin",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: darwin'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "darwin",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "amd64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: amd64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "amd64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
@@ -234,27 +297,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"darwin\"}}-{{.ITEM.ARCH}}'",
-              "input": "darwin",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: darwin'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "darwin",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "arm64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: arm64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "arm64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
@@ -268,27 +352,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"windows\"}}-{{.ITEM.ARCH}}'",
-              "input": "windows",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: windows'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "windows",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "amd64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: amd64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "amd64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
@@ -302,27 +407,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Build: my-app'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: {{\"my-app\"}}-{{\"windows\"}}-{{.ITEM.ARCH}}'",
-              "input": "windows",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM.PLATFORM"
+              "action_index": 1,
+              "result": "echo 'Build: windows'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "windows",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM.PLATFORM"
+                }
+              ]
             },
             {
-              "expression": "echo 'Build: '",
-              "input": "arm64",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ITEM.ARCH"
+              "action_index": 2,
+              "result": "echo 'Build: arm64'",
+              "source": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "arm64",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ITEM.ARCH"
+                }
+              ]
             }
           ],
           "input": "echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'",

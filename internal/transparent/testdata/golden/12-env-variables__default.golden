@@ -38,9 +38,15 @@
   │ echo 'App: {{.APP_NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'App: {{.APP_NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     echo 'App: '
+  │ 
+  │   R     echo 'App: my-app'
+  │ 
   └─
   ┌─ Output:
   │ echo 'App: my-app'
@@ -53,9 +59,15 @@
   │ echo 'Env: {{.APP_ENV}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Env: {{.APP_ENV}}'
+  │ 
   │ Step 1: Resolve a Variable — .APP_ENV
   │   I     production
-  │   E     echo 'Env: '
+  │ 
+  │   R     echo 'Env: production'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Env: production'
@@ -68,9 +80,15 @@
   │ echo 'Log: {{.LOG_LEVEL}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Log: {{.LOG_LEVEL}}'
+  │ 
   │ Step 1: Resolve a Variable — .LOG_LEVEL
   │   I     info
-  │   E     echo 'Log: '
+  │ 
+  │   R     echo 'Log: info'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Log: info'

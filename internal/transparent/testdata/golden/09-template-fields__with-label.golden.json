@@ -92,20 +92,34 @@
       "templates": [
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "build-{{\"my-app\"}}-{{.VERSION}}",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "build-my-app",
+              "source": "build-{{.APP_NAME}}-{{.VERSION}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "expression": "build-",
-              "input": "2.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
+              "action_index": 1,
+              "result": "build-2.0.0",
+              "source": "build-{{.APP_NAME}}-{{.VERSION}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "build-{{.APP_NAME}}-{{.VERSION}}",
@@ -117,13 +131,20 @@
         },
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "Build ",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "Build my-app",
+              "source": "Build {{.APP_NAME}}",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "Build {{.APP_NAME}}",
@@ -134,13 +155,20 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building '",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'Building my-app'",
+              "source": "echo 'Building {{.APP_NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.APP_NAME}}'",

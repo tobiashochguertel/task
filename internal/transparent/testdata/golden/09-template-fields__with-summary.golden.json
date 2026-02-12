@@ -92,27 +92,48 @@
       "templates": [
         {
           "context": "fields",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "Deploy {{\"my-app\"}} version {{.VERSION}} to {{.ENV}}.\nThis task handles the full deployment pipeline.\n",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "Deploy my-app.",
+              "source": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "expression": "Deploy {{\"my-app\"}} version {{\"2.0.0\"}} to {{.ENV}}.\nThis task handles the full deployment pipeline.\n",
-              "input": "2.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
+              "action_index": 1,
+              "result": "Deploy 2.0.0.",
+              "source": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                }
+              ]
             },
             {
-              "expression": "Deploy .\nThis task handles the full deployment pipeline.\n",
-              "input": "production",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ENV"
+              "action_index": 2,
+              "result": "Deploy production.",
+              "source": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "production",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ENV"
+                }
+              ]
             }
           ],
           "input": "Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.\nThis task handles the full deployment pipeline.\n",
@@ -125,27 +146,48 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Deploying {{\"my-app\"}} v{{.VERSION}} to {{.ENV}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'Deploying my-app'",
+              "source": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             },
             {
-              "expression": "echo 'Deploying {{\"my-app\"}} v{{\"2.0.0\"}} to {{.ENV}}'",
-              "input": "2.0.0",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".VERSION"
+              "action_index": 1,
+              "result": "echo 'Deploying 2.0.0'",
+              "source": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".VERSION"
+                }
+              ]
             },
             {
-              "expression": "echo 'Deploying '",
-              "input": "production",
-              "operation": "Resolve a Variable",
-              "step": 3,
-              "target": ".ENV"
+              "action_index": 2,
+              "result": "echo 'Deploying production'",
+              "source": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "production",
+                  "operation": "Resolve a Variable",
+                  "step": 3,
+                  "target": ".ENV"
+                }
+              ]
             }
           ],
           "input": "echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'",

@@ -41,9 +41,15 @@
   │ echo 'Included var: {{.INCLUDED_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Included var: {{.INCLUDED_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .INCLUDED_VAR
   │   I     from-included
-  │   E     echo 'Included var: '
+  │ 
+  │   R     echo 'Included var: from-included'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Included var: from-included'
@@ -56,9 +62,15 @@
   │ echo 'Shared: {{.SHARED}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Shared: {{.SHARED}}'
+  │ 
   │ Step 1: Resolve a Variable — .SHARED
   │   I     included-shared
-  │   E     echo 'Shared: '
+  │ 
+  │   R     echo 'Shared: included-shared'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Shared: included-shared'
@@ -71,9 +83,15 @@
   │ echo 'Parent var: {{.PARENT_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Parent var: {{.PARENT_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .PARENT_VAR
   │   I     from-parent
-  │   E     echo 'Parent var: '
+  │ 
+  │   R     echo 'Parent var: from-parent'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Parent var: from-parent'

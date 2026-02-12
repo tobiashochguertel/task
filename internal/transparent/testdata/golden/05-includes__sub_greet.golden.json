@@ -146,13 +146,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Included var: '",
-              "input": "from-included",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".INCLUDED_VAR"
+              "action_index": 0,
+              "result": "echo 'Included var: from-included'",
+              "source": "echo 'Included var: {{.INCLUDED_VAR}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "from-included",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".INCLUDED_VAR"
+                }
+              ]
             }
           ],
           "input": "echo 'Included var: {{.INCLUDED_VAR}}'",
@@ -163,13 +170,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Shared: '",
-              "input": "included-shared",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".SHARED"
+              "action_index": 0,
+              "result": "echo 'Shared: included-shared'",
+              "source": "echo 'Shared: {{.SHARED}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "included-shared",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".SHARED"
+                }
+              ]
             }
           ],
           "input": "echo 'Shared: {{.SHARED}}'",
@@ -180,13 +194,20 @@
         },
         {
           "context": "cmds[2]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Parent var: '",
-              "input": "from-parent",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PARENT_VAR"
+              "action_index": 0,
+              "result": "echo 'Parent var: from-parent'",
+              "source": "echo 'Parent var: {{.PARENT_VAR}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "from-parent",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PARENT_VAR"
+                }
+              ]
             }
           ],
           "input": "echo 'Parent var: {{.PARENT_VAR}}'",

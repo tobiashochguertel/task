@@ -37,12 +37,23 @@
   │ build-{{.APP_NAME}}-{{.VERSION}}
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     build-{{.APP_NAME}}-{{.VERSION}}
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     build-{{"my-app"}}-{{.VERSION}}
+  │ 
+  │   R     build-my-app
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     build-{{.APP_NAME}}-{{.VERSION}}
+  │ 
   │ Step 2: Resolve a Variable — .VERSION
   │   I     2.0.0
-  │   E     build-
+  │ 
+  │   R     build-2.0.0
+  │ 
   └─
   ┌─ Output:
   │ build-my-app-2.0.0
@@ -55,9 +66,15 @@
   │ Build {{.APP_NAME}}
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     Build {{.APP_NAME}}
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     Build 
+  │ 
+  │   R     Build my-app
+  │ 
   └─
   ┌─ Output:
   │ Build my-app
@@ -70,9 +87,15 @@
   │ echo 'Building {{.APP_NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Building {{.APP_NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     echo 'Building '
+  │ 
+  │   R     echo 'Building my-app'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Building my-app'

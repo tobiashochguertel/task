@@ -36,9 +36,15 @@
   │ echo 'Version {{.VERSION}} validated'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Version {{.VERSION}} validated'
+  │ 
   │ Step 1: Resolve a Variable — .VERSION
   │   I     1.0.0
-  │   E     echo 'Version  validated'
+  │ 
+  │   R     echo 'Version 1.0.0 validated'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Version 1.0.0 validated'
@@ -51,9 +57,15 @@
   │ test '{{.VERSION}}' != ''
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     test '{{.VERSION}}' != ''
+  │ 
   │ Step 1: Resolve a Variable — .VERSION
   │   I     1.0.0
-  │   E     test '' != ''
+  │ 
+  │   R     test '1.0.0' != ''
+  │ 
   └─
   ┌─ Output:
   │ test '1.0.0' != ''
@@ -66,9 +78,15 @@
   │ VERSION must not be empty (got: '{{.VERSION}}')
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     VERSION must not be empty (got: '{{.VERSION}}')
+  │ 
   │ Step 1: Resolve a Variable — .VERSION
   │   I     1.0.0
-  │   E     VERSION must not be empty (got: '')
+  │ 
+  │   R     VERSION must not be empty (got: '1.0.0')
+  │ 
   └─
   ┌─ Output:
   │ VERSION must not be empty (got: '1.0.0')

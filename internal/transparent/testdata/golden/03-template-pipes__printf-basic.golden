@@ -37,13 +37,18 @@
   │ echo '{{printf "%s : %s" "NAME" .NAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo '{{printf "%s : %s" "NAME" .NAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .NAME
   │   I       world  
-  │   E     echo '{{printf "%s : %s" "NAME" "  world  "}}'
   │ Step 2: Apply a Function — printf
   │   I     printf "%s : %s" "NAME"   world  
   │   O     NAME :   world  
-  │   E     echo 'NAME :   world  '
+  │ 
+  │   R     echo 'NAME :   world  '
+  │ 
   └─
   ┌─ Output:
   │ echo 'NAME :   world  '

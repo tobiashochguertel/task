@@ -39,12 +39,23 @@
   │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  │ 
   │ Step 1: Resolve a Variable — .ITEM
   │   I     debug
-  │   E     echo 'Mode: {{"debug"}} for {{.PROJECT}}'
+  │ 
+  │   R     echo 'Mode: debug'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  │ 
   │ Step 2: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Mode: '
+  │ 
+  │   R     echo 'Mode: my-app'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Mode: debug for my-app'
@@ -57,12 +68,23 @@
   │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  │ 
   │ Step 1: Resolve a Variable — .ITEM
   │   I     release
-  │   E     echo 'Mode: {{"release"}} for {{.PROJECT}}'
+  │ 
+  │   R     echo 'Mode: release'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  │ 
   │ Step 2: Resolve a Variable — .PROJECT
   │   I     my-app
-  │   E     echo 'Mode: '
+  │ 
+  │   R     echo 'Mode: my-app'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Mode: release for my-app'

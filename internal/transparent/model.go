@@ -102,28 +102,34 @@ type PipeStep struct {
 	Output     string   // Intermediate result after this step
 }
 
-// TemplateStep captures one fine-grained step in a template evaluation,
-// showing how the expression evolves as variables are resolved and
-// functions are applied.
+// TemplateStep captures one fine-grained step in a template evaluation.
 type TemplateStep struct {
-	StepNum    int    // Sequential step number (1-based)
-	Operation  string // "Resolve a Variable" or "Apply a Function"
-	Target     string // Variable name (.NAME) or function name (trim)
-	Input      string // Input value(s) for this step
-	Output     string // Output value (empty for variable resolution)
-	Expression string // Full expression state after this step
+	StepNum   int    // Sequential step number (1-based, global across all actions)
+	Operation string // "Resolve a Variable" or "Apply a Function"
+	Target    string // Variable name (.NAME) or function name (trim)
+	Input     string // Input value(s) for this step
+	Output    string // Output value (empty for variable resolution)
+}
+
+// EvalAction groups evaluation steps for a single template action (one {{...}} expression).
+type EvalAction struct {
+	ActionIndex int            // 0-based index among all actions in this template
+	SourceLine  int            // 1-based line number in template where this action appears
+	Source      string         // The source line text containing the {{...}} expression
+	Result      string         // The line text after the {{...}} expression is resolved
+	Steps       []TemplateStep // Fine-grained steps within this action
 }
 
 // TemplateTrace captures one template evaluation.
 type TemplateTrace struct {
-	Input         string         // Raw template string
-	Output        string         // Resolved output
-	Context       string         // Where used: "task:build.cmds[0]"
-	Steps         []PipeStep     // Pipe chain breakdown
-	DetailedSteps []TemplateStep // Fine-grained step-by-step evaluation
-	Tips          []string       // User-friendly hints about potential pitfalls
-	VarsUsed      []string       // Variable names referenced
-	Error         string         // Template error if any
+	Input       string       // Raw template string
+	Output      string       // Resolved output
+	Context     string       // Where used: "task:build.cmds[0]"
+	Steps       []PipeStep   // Pipe chain breakdown
+	EvalActions []EvalAction // Action-grouped step-by-step evaluation
+	Tips        []string     // User-friendly hints about potential pitfalls
+	VarsUsed    []string     // Variable names referenced
+	Error       string       // Template error if any
 }
 
 // CmdTrace captures a single command before/after template substitution.

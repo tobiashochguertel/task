@@ -35,9 +35,15 @@
   │ echo '{{.DEFINED}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo '{{.DEFINED}}'
+  │ 
   │ Step 1: Resolve a Variable — .DEFINED
   │   I     hello
-  │   E     echo ''
+  │ 
+  │   R     echo 'hello'
+  │ 
   └─
   ┌─ Output:
   │ echo 'hello'

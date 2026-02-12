@@ -102,13 +102,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'App: '",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_NAME"
+              "action_index": 0,
+              "result": "echo 'App: my-app'",
+              "source": "echo 'App: {{.APP_NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_NAME"
+                }
+              ]
             }
           ],
           "input": "echo 'App: {{.APP_NAME}}'",
@@ -119,13 +126,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Version: '",
-              "input": "1.0.0",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".VERSION"
+              "action_index": 0,
+              "result": "echo 'Version: 1.0.0'",
+              "source": "echo 'Version: {{.VERSION}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "1.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".VERSION"
+                }
+              ]
             }
           ],
           "input": "echo 'Version: {{.VERSION}}'",
@@ -136,13 +150,20 @@
         },
         {
           "context": "cmds[2]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Environment: '",
-              "input": "development",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".ENV"
+              "action_index": 0,
+              "result": "echo 'Environment: development'",
+              "source": "echo 'Environment: {{.ENV}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "development",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".ENV"
+                }
+              ]
             }
           ],
           "input": "echo 'Environment: {{.ENV}}'",

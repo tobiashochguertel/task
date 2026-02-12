@@ -38,12 +38,23 @@
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     myproject
-  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │ 
+  │   R     echo 'Building myproject'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM
   │   I     linux
-  │   E     echo 'Building '
+  │ 
+  │   R     echo 'Building linux'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Building myproject for linux'
@@ -56,12 +67,23 @@
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     myproject
-  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │ 
+  │   R     echo 'Building myproject'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM
   │   I     darwin
-  │   E     echo 'Building '
+  │ 
+  │   R     echo 'Building darwin'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Building myproject for darwin'
@@ -74,12 +96,23 @@
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 1: Resolve a Variable — .PROJECT
   │   I     myproject
-  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │ 
+  │   R     echo 'Building myproject'
+  │ 
+  │ ── Action 2 of 2 — line 1
+  │   S     echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  │ 
   │ Step 2: Resolve a Variable — .ITEM
   │   I     windows
-  │   E     echo 'Building '
+  │ 
+  │   R     echo 'Building windows'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Building myproject for windows'

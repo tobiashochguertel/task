@@ -103,13 +103,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Task env: '",
-              "input": "production",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".APP_ENV"
+              "action_index": 0,
+              "result": "echo 'Task env: production'",
+              "source": "echo 'Task env: {{.APP_ENV}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "production",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".APP_ENV"
+                }
+              ]
             }
           ],
           "input": "echo 'Task env: {{.APP_ENV}}'",

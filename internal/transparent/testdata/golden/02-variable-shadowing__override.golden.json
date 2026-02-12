@@ -97,20 +97,34 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{\"Hello\"}} {{.NAME}}'",
-              "input": "Hello",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".GREETING"
+              "action_index": 0,
+              "result": "echo 'Hello'",
+              "source": "echo '{{.GREETING}} {{.NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "Hello",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".GREETING"
+                }
+              ]
             },
             {
-              "expression": "echo ''",
-              "input": "task-override",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".NAME"
+              "action_index": 1,
+              "result": "echo 'task-override'",
+              "source": "echo '{{.GREETING}} {{.NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "task-override",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".NAME"
+                }
+              ]
             }
           ],
           "input": "echo '{{.GREETING}} {{.NAME}}'",
@@ -122,13 +136,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'SHARED = '",
-              "input": "from-global",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".SHARED"
+              "action_index": 0,
+              "result": "echo 'SHARED = from-global'",
+              "source": "echo 'SHARED = {{.SHARED}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "from-global",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".SHARED"
+                }
+              ]
             }
           ],
           "input": "echo 'SHARED = {{.SHARED}}'",

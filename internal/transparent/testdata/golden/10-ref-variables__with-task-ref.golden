@@ -39,9 +39,15 @@
   │ echo 'Local greeting: {{.LOCAL_GREETING}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Local greeting: {{.LOCAL_GREETING}}'
+  │ 
   │ Step 1: Resolve a Variable — .LOCAL_GREETING
   │   I     hello-world
-  │   E     echo 'Local greeting: '
+  │ 
+  │   R     echo 'Local greeting: hello-world'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Local greeting: hello-world'

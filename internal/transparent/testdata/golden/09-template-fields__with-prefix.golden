@@ -37,9 +37,15 @@
   │ [{{.APP_NAME}}]
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     [{{.APP_NAME}}]
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     []
+  │ 
+  │   R     [my-app]
+  │ 
   └─
   ┌─ Output:
   │ [my-app]

@@ -93,13 +93,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Local greeting: '",
-              "input": "hello-world",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".LOCAL_GREETING"
+              "action_index": 0,
+              "result": "echo 'Local greeting: hello-world'",
+              "source": "echo 'Local greeting: {{.LOCAL_GREETING}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello-world",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".LOCAL_GREETING"
+                }
+              ]
             }
           ],
           "input": "echo 'Local greeting: {{.LOCAL_GREETING}}'",

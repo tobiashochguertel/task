@@ -37,9 +37,15 @@
   │ <PATH>
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     <PATH>
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     /tmp/
+  │ 
+  │   R     <PATH>
+  │ 
   └─
   ┌─ Output:
   │ <PATH>
@@ -52,9 +58,15 @@
   │ echo 'Working in {{.APP_NAME}} directory'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Working in {{.APP_NAME}} directory'
+  │ 
   │ Step 1: Resolve a Variable — .APP_NAME
   │   I     my-app
-  │   E     echo 'Working in  directory'
+  │ 
+  │   R     echo 'Working in my-app directory'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Working in my-app directory'

@@ -80,13 +80,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo ''",
-              "input": "hello",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".DEFINED"
+              "action_index": 0,
+              "result": "echo 'hello'",
+              "source": "echo '{{.DEFINED}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".DEFINED"
+                }
+              ]
             }
           ],
           "input": "echo '{{.DEFINED}}'",

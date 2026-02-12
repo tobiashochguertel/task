@@ -97,21 +97,27 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{\"hello world\" | upper}}'",
-              "input": "hello world",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".TITLE"
-            },
-            {
-              "expression": "echo '<exec error: template: :1:2: executing \"\" at <upper>: wrong number of args for upper: want 1 got 0>'",
-              "input": "upper",
-              "operation": "Apply a Function",
-              "output": "<exec error: template: :1:2: executing \"\" at <upper>: wrong number of args for upper: want 1 got 0>",
-              "step": 2,
-              "target": "upper"
+              "action_index": 0,
+              "result": "echo 'HELLO WORLD'",
+              "source": "echo '{{.TITLE | upper}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello world",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".TITLE"
+                },
+                {
+                  "input": "upper \"hello world\"",
+                  "operation": "Apply a Function",
+                  "output": "HELLO WORLD",
+                  "step": 2,
+                  "target": "upper"
+                }
+              ]
             }
           ],
           "input": "echo '{{.TITLE | upper}}'",
@@ -132,21 +138,27 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{\"hello world\" | title}}'",
-              "input": "hello world",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".TITLE"
-            },
-            {
-              "expression": "echo '<exec error: template: :1:2: executing \"\" at <title>: wrong number of args for title: want 1 got 0>'",
-              "input": "title",
-              "operation": "Apply a Function",
-              "output": "<exec error: template: :1:2: executing \"\" at <title>: wrong number of args for title: want 1 got 0>",
-              "step": 2,
-              "target": "title"
+              "action_index": 0,
+              "result": "echo 'Hello World'",
+              "source": "echo '{{.TITLE | title}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "hello world",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".TITLE"
+                },
+                {
+                  "input": "title \"hello world\"",
+                  "operation": "Apply a Function",
+                  "output": "Hello World",
+                  "step": 2,
+                  "target": "title"
+                }
+              ]
             }
           ],
           "input": "echo '{{.TITLE | title}}'",

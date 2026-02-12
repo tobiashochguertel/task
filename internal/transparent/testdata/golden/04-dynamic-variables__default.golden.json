@@ -106,13 +106,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Static: '",
-              "input": "static-value",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".STATIC_VAR"
+              "action_index": 0,
+              "result": "echo 'Static: static-value'",
+              "source": "echo 'Static: {{.STATIC_VAR}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "static-value",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".STATIC_VAR"
+                }
+              ]
             }
           ],
           "input": "echo 'Static: {{.STATIC_VAR}}'",
@@ -123,13 +130,20 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Hostname: '",
-              "input": "test-host",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".HOSTNAME"
+              "action_index": 0,
+              "result": "echo 'Hostname: test-host'",
+              "source": "echo 'Hostname: {{.HOSTNAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "test-host",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".HOSTNAME"
+                }
+              ]
             }
           ],
           "input": "echo 'Hostname: {{.HOSTNAME}}'",
@@ -140,13 +154,20 @@
         },
         {
           "context": "cmds[2]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Date: '",
-              "input": "2026-02-11",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".DATE"
+              "action_index": 0,
+              "result": "echo 'Date: 2026-02-11'",
+              "source": "echo 'Date: {{.DATE}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2026-02-11",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".DATE"
+                }
+              ]
             }
           ],
           "input": "echo 'Date: {{.DATE}}'",

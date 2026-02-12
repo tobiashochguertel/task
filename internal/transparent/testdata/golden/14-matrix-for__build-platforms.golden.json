@@ -114,20 +114,34 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Building my-app'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Building '",
-              "input": "linux",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM"
+              "action_index": 1,
+              "result": "echo 'Building linux'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "linux",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
@@ -139,20 +153,34 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Building my-app'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Building '",
-              "input": "darwin",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM"
+              "action_index": 1,
+              "result": "echo 'Building darwin'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "darwin",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
@@ -164,20 +192,34 @@
         },
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
-              "input": "my-app",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".PROJECT"
+              "action_index": 0,
+              "result": "echo 'Building my-app'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "my-app",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PROJECT"
+                }
+              ]
             },
             {
-              "expression": "echo 'Building '",
-              "input": "windows",
-              "operation": "Resolve a Variable",
-              "step": 2,
-              "target": ".ITEM"
+              "action_index": 1,
+              "result": "echo 'Building windows'",
+              "source": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "windows",
+                  "operation": "Resolve a Variable",
+                  "step": 2,
+                  "target": ".ITEM"
+                }
+              ]
             }
           ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",

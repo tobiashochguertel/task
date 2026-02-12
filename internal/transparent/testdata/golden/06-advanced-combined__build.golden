@@ -39,9 +39,15 @@
   │ echo 'Building {{.ARTIFACT}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Building {{.ARTIFACT}}'
+  │ 
   │ Step 1: Resolve a Variable — .ARTIFACT
   │   I     myproject-2.0.0
-  │   E     echo 'Building '
+  │ 
+  │   R     echo 'Building myproject-2.0.0'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Building myproject-2.0.0'
@@ -54,9 +60,15 @@
   │ echo 'Tag: {{.TAG}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Tag: {{.TAG}}'
+  │ 
   │ Step 1: Resolve a Variable — .TAG
   │   I     myproject/2-0-0
-  │   E     echo 'Tag: '
+  │ 
+  │   R     echo 'Tag: myproject/2-0-0'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Tag: myproject/2-0-0'
@@ -69,9 +81,15 @@
   │ echo 'Date: {{.BUILD_DATE}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Date: {{.BUILD_DATE}}'
+  │ 
   │ Step 1: Resolve a Variable — .BUILD_DATE
   │   I     2026-02-11
-  │   E     echo 'Date: '
+  │ 
+  │   R     echo 'Date: 2026-02-11'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

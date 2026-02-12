@@ -97,28 +97,34 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{\"  world  \" | trim | upper}}'",
-              "input": "  world  ",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".NAME"
-            },
-            {
-              "input": "trim",
-              "operation": "Apply a Function",
-              "output": "<exec error: template: :1:2: executing \"\" at <trim>: wrong number of args for trim: want 1 got 0>",
-              "step": 2,
-              "target": "trim"
-            },
-            {
-              "expression": "echo '<exec error: template: :1:2: executing \"\" at <upper>: wrong number of args for upper: want 1 got 0>'",
-              "input": "upper",
-              "operation": "Apply a Function",
-              "output": "<exec error: template: :1:2: executing \"\" at <upper>: wrong number of args for upper: want 1 got 0>",
-              "step": 3,
-              "target": "upper"
+              "action_index": 0,
+              "result": "echo 'WORLD'",
+              "source": "echo '{{.NAME | trim | upper}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "  world  ",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".NAME"
+                },
+                {
+                  "input": "trim \"  world  \"",
+                  "operation": "Apply a Function",
+                  "output": "world",
+                  "step": 2,
+                  "target": "trim"
+                },
+                {
+                  "input": "upper \"world\"",
+                  "operation": "Apply a Function",
+                  "output": "WORLD",
+                  "step": 3,
+                  "target": "upper"
+                }
+              ]
             }
           ],
           "input": "echo '{{.NAME | trim | upper}}'",
@@ -143,14 +149,41 @@
         },
         {
           "context": "cmds[1]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'APP_WORLD'",
-              "input": "printf \"APP_%s\" .NAME | trim | upper",
-              "operation": "Apply a Function",
-              "output": "APP_WORLD",
-              "step": 1,
-              "target": "printf"
+              "action_index": 0,
+              "result": "echo 'APP_WORLD'",
+              "source": "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "  world  ",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".NAME"
+                },
+                {
+                  "input": "trim \"  world  \"",
+                  "operation": "Apply a Function",
+                  "output": "world",
+                  "step": 2,
+                  "target": "trim"
+                },
+                {
+                  "input": "upper \"world\"",
+                  "operation": "Apply a Function",
+                  "output": "WORLD",
+                  "step": 3,
+                  "target": "upper"
+                },
+                {
+                  "input": "printf \"APP_%s\" WORLD",
+                  "operation": "Apply a Function",
+                  "output": "APP_WORLD",
+                  "step": 4,
+                  "target": "printf"
+                }
+              ]
             }
           ],
           "input": "echo '{{printf \"APP_%s\" (.NAME | trim | upper)}}'",

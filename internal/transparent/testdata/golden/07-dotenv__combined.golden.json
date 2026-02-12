@@ -225,13 +225,20 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo 'Connection: '",
-              "input": "localhost:5432/mydb",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".CONNECTION"
+              "action_index": 0,
+              "result": "echo 'Connection: localhost:5432/mydb'",
+              "source": "echo 'Connection: {{.CONNECTION}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "localhost:5432/mydb",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".CONNECTION"
+                }
+              ]
             }
           ],
           "input": "echo 'Connection: {{.CONNECTION}}'",

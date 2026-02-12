@@ -92,21 +92,27 @@
       "templates": [
         {
           "context": "cmds[0]",
-          "detailed_steps": [
+          "eval_actions": [
             {
-              "expression": "echo '{{printf \"%s : %s\" \"NAME\" \"  world  \"}}'",
-              "input": "  world  ",
-              "operation": "Resolve a Variable",
-              "step": 1,
-              "target": ".NAME"
-            },
-            {
-              "expression": "echo 'NAME :   world  '",
-              "input": "printf \"%s : %s\" \"NAME\"   world  ",
-              "operation": "Apply a Function",
-              "output": "NAME :   world  ",
-              "step": 2,
-              "target": "printf"
+              "action_index": 0,
+              "result": "echo 'NAME :   world  '",
+              "source": "echo '{{printf \"%s : %s\" \"NAME\" .NAME}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "  world  ",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".NAME"
+                },
+                {
+                  "input": "printf \"%s : %s\" \"NAME\"   world  ",
+                  "operation": "Apply a Function",
+                  "output": "NAME :   world  ",
+                  "step": 2,
+                  "target": "printf"
+                }
+              ]
             }
           ],
           "input": "echo '{{printf \"%s : %s\" \"NAME\" .NAME}}'",

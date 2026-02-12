@@ -37,13 +37,18 @@
   │ echo '{{.NAME | trim}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo '{{.NAME | trim}}'
+  │ 
   │ Step 1: Resolve a Variable — .NAME
   │   I       world  
-  │   E     echo '{{"  world  " | trim}}'
   │ Step 2: Apply a Function — trim
-  │   I     trim
-  │   O     <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
-  │   E     echo '<exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>'
+  │   I     trim "  world  "
+  │   O     world
+  │ 
+  │   R     echo 'world'
+  │ 
   └─
   ┌─ Output:
   │ echo 'world'
@@ -56,10 +61,21 @@
   │ echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
   └─
   ┌─ Evaluation Steps:
-  │ Step 1: Apply a Function — printf
-  │   I     printf "%s:%s" "NAME" .NAME | trim
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
+  │ 
+  │ Step 1: Resolve a Variable — .NAME
+  │   I       world  
+  │ Step 2: Apply a Function — trim
+  │   I     trim "  world  "
+  │   O     world
+  │ Step 3: Apply a Function — printf
+  │   I     printf "%s:%s" "NAME" world
   │   O     NAME:world
-  │   E     echo 'NAME:world'
+  │ 
+  │   R     echo 'NAME:world'
+  │ 
   └─
   ┌─ Output:
   │ echo 'NAME:world'

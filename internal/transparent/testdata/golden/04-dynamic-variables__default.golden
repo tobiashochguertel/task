@@ -37,9 +37,15 @@
   │ echo 'Static: {{.STATIC_VAR}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Static: {{.STATIC_VAR}}'
+  │ 
   │ Step 1: Resolve a Variable — .STATIC_VAR
   │   I     static-value
-  │   E     echo 'Static: '
+  │ 
+  │   R     echo 'Static: static-value'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Static: static-value'
@@ -52,9 +58,15 @@
   │ echo 'Hostname: {{.HOSTNAME}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Hostname: {{.HOSTNAME}}'
+  │ 
   │ Step 1: Resolve a Variable — .HOSTNAME
   │   I     test-host
-  │   E     echo 'Hostname: '
+  │ 
+  │   R     echo 'Hostname: test-host'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Hostname: test-host'
@@ -67,9 +79,15 @@
   │ echo 'Date: {{.DATE}}'
   └─
   ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Date: {{.DATE}}'
+  │ 
   │ Step 1: Resolve a Variable — .DATE
   │   I     2026-02-11
-  │   E     echo 'Date: '
+  │ 
+  │   R     echo 'Date: 2026-02-11'
+  │ 
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

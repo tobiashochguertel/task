@@ -43,24 +43,31 @@ type jsonShadowInfo struct {
 }
 
 type jsonTemplateTrace struct {
-	Input         string             `json:"input"`
-	Output        string             `json:"output"`
-	Context       string             `json:"context,omitempty"`
-	VarsUsed      []string           `json:"vars_used,omitempty"`
-	Steps         []jsonPipeStep     `json:"pipe_steps,omitempty"`
-	DetailedSteps []jsonTemplateStep `json:"detailed_steps,omitempty"`
-	Tips          []string           `json:"tips,omitempty"`
-	Notes         []string           `json:"notes,omitempty"`
-	Error         string             `json:"error,omitempty"`
+	Input       string           `json:"input"`
+	Output      string           `json:"output"`
+	Context     string           `json:"context,omitempty"`
+	VarsUsed    []string         `json:"vars_used,omitempty"`
+	Steps       []jsonPipeStep   `json:"pipe_steps,omitempty"`
+	EvalActions []jsonEvalAction `json:"eval_actions,omitempty"`
+	Tips        []string         `json:"tips,omitempty"`
+	Notes       []string         `json:"notes,omitempty"`
+	Error       string           `json:"error,omitempty"`
+}
+
+type jsonEvalAction struct {
+	ActionIndex int                `json:"action_index"`
+	SourceLine  int                `json:"source_line"`
+	Source      string             `json:"source"`
+	Result      string             `json:"result"`
+	Steps       []jsonTemplateStep `json:"steps"`
 }
 
 type jsonTemplateStep struct {
-	StepNum    int    `json:"step"`
-	Operation  string `json:"operation"`
-	Target     string `json:"target"`
-	Input      string `json:"input,omitempty"`
-	Output     string `json:"output,omitempty"`
-	Expression string `json:"expression,omitempty"`
+	StepNum   int    `json:"step"`
+	Operation string `json:"operation"`
+	Target    string `json:"target"`
+	Input     string `json:"input,omitempty"`
+	Output    string `json:"output,omitempty"`
 }
 
 type jsonPipeStep struct {
@@ -128,8 +135,23 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 			for _, step := range tmpl.Steps {
 				jtt.Steps = append(jtt.Steps, jsonPipeStep(step))
 			}
-			for _, ds := range tmpl.DetailedSteps {
-				jtt.DetailedSteps = append(jtt.DetailedSteps, jsonTemplateStep(ds))
+			for _, ea := range tmpl.EvalActions {
+				jea := jsonEvalAction{
+					ActionIndex: ea.ActionIndex,
+					SourceLine:  ea.SourceLine,
+					Source:      ea.Source,
+					Result:      ea.Result,
+				}
+				for _, ds := range ea.Steps {
+					jea.Steps = append(jea.Steps, jsonTemplateStep{
+						StepNum:   ds.StepNum,
+						Operation: ds.Operation,
+						Target:    ds.Target,
+						Input:     ds.Input,
+						Output:    ds.Output,
+					})
+				}
+				jtt.EvalActions = append(jtt.EvalActions, jea)
 			}
 			jt.Templates = append(jt.Templates, jtt)
 		}
