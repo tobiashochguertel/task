@@ -9,6 +9,8 @@ includes:
 vars:
   BIN: "{{.ROOT_DIR}}/bin"
   GOTESTSUM_FORMAT: '{{if .CI}}github-actions{{else}}pkgname{{end}}'
+  DEV_BIN_NAME: task-dev
+  DEV_INSTALL_DIR: '{{.ROOT_DIR}}/bin'
 
 env:
   CGO_ENABLED: '0'
@@ -32,6 +34,50 @@ tasks:
       - go.mod
     cmds:
       - go install -v ./cmd/task
+
+  install:dev:
+    desc: "Builds and installs the dev binary as '{{.DEV_BIN_NAME}}' to GOPATH/bin"
+    summary: |
+      Installs the in-development Task binary under a different name so it can
+      coexist with the official 'task' binary installed via mise/brew/etc.
+
+      The binary is installed as '{{.DEV_BIN_NAME}}' to $GOPATH/bin.
+
+      Usage:
+        task install:dev                          # install as 'task-dev'
+        task install:dev DEV_BIN_NAME=task-local  # custom name
+
+      After install, use: task-dev --version
+    aliases: [id]
+    sources:
+      - './**/*.go'
+      - go.mod
+    generates:
+      - "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}}"
+    vars:
+      GOPATH:
+        sh: go env GOPATH
+    cmds:
+      - go build -o "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}}" ./cmd/task
+      - cmd: echo "Installed {{.DEV_BIN_NAME}} to {{.GOPATH}}/bin/{{.DEV_BIN_NAME}}"
+        silent: true
+      - cmd: "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}} --version"
+        silent: true
+
+  install:dev:local:
+    desc: "Builds the dev binary to ./bin/{{.DEV_BIN_NAME}} (project-local)"
+    aliases: [idl]
+    sources:
+      - './**/*.go'
+      - go.mod
+    generates:
+      - "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}"
+    cmds:
+      - go build -o "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}" ./cmd/task
+      - cmd: echo "Installed {{.DEV_BIN_NAME}} to {{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}"
+        silent: true
+      - cmd: "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}} --version"
+        silent: true
 
   generate:
     aliases: [gen, g]

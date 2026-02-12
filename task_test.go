@@ -2808,15 +2808,15 @@ func TestListVariablesCommand(t *testing.T) {
 		require.NoError(t, err)
 
 		output := buff.String()
-		// Check that JSON output contains variable information
-		assert.Contains(t, output, `"name":"APP_NAME"`)
-		assert.Contains(t, output, `"desc":"The name of the application"`)
-		assert.Contains(t, output, `"name":"VERSION"`)
-		assert.Contains(t, output, `"desc":"Application version number"`)
+		// Check that JSON output contains variable information (pretty-printed)
+		assert.Contains(t, output, `"name": "APP_NAME"`)
+		assert.Contains(t, output, `"desc": "The name of the application"`)
+		assert.Contains(t, output, `"name": "VERSION"`)
+		assert.Contains(t, output, `"desc": "Application version number"`)
 		// Static variables should include value
-		assert.Contains(t, output, `"value":"my-awesome-app"`)
+		assert.Contains(t, output, `"value": "my-awesome-app"`)
 		// Dynamic variables (sh) should not include value
-		assert.NotContains(t, output, `"value":"1.0.0"`)
+		assert.NotContains(t, output, `"value": "1.0.0"`)
 	})
 }
 
