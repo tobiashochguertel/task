@@ -36,3 +36,4 @@ tags
 /tmp
 node_modules
 website/.netlify/
+docs/transparent-mode/sessions/*.md
