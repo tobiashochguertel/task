@@ -1,5 +1,191 @@
 # Improvements - 1
 
+## 0. Environment
+
+```shell
+❯ whereis task-dev
+task-dev: /Users/tobiashochgurtel/go/bin/task-dev
+
+❯ alias task-dev
+task-dev='task-dev --transparent'
+
+❯ task-dev --version
+Task version: 3.48.0
+Branch:       feature/transparent-mode
+Built:        2026-02-12T09:28:12Z
+Built by:     tobiashochgurtel
+```
+
+## 1. General Formatting
+
+The output of the transparent mode is good, but we have to improve it.
+
+```shell
+~/work-dev/temp-projects/compare-vscode-extension_inline-fold/vscode-demo-recorder main* ❯
+❯ task-dev -v
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     default
+  ROOT_DIR          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  ROOT_TASKFILE     special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK              special         string      ·     default
+  TASKFILE          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASKFILE_DIR      special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK_DIR          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK_EXE          special         string      ·     task-dev
+  TASK_VERSION      special         string      ·     3.48.0
+  USER_WORKING_DIR  special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  BUN_ARGS          taskfile-vars   string      ·     --bun
+  CLI               taskfile-vars   string      ·      node   --experimental-strip-types  src/cli.ts
+  CLI_ARGS          taskfile-vars   string      ·
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: 0x1035a9680
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     true
+  ENGINE            taskfile-vars   string      ·      node
+  ENGINE_ARGS       taskfile-vars   string      ·      --experimental-strip-types
+  LAUNCH            taskfile-vars   string      ·      node   --experimental-strip-types  src/launch.ts
+  NODE_ARGS         taskfile-vars   string      ·     --experimental-strip-types
+  OUTPUT_DIR        taskfile-vars   string      ·     ./output
+  OUT_DIR           taskfile-vars   string      ·     ./out
+  SCHEMAS_DIR       taskfile-vars   string      ·     ./schemas
+
+── Task: default
+  Variables:
+  Name   Origin          Type      Ref?    Value
+  ───────────────────────────────────────────
+  MATCH  call-vars       []string    ·     []
+         ptr: 0x1035a9680
+  Commands:
+  [0] task --list
+echo ""
+echo "::Development::"
+echo ""
+echo "task setup"
+echo ""
+
+
+══════ End Report ══════
+```
+
+The column `Value` is somehow truncate, that should never happen. No column of the table should be truncate, otherwise we can't understand the output / report.
+we should also add a additional cli option for the transparent mode which makes white spaces visibile and understandable via a legend and coloring might be also good.
+
+The above shown output is from the following project: `/Users/tobiashochgurtel/work-dev/temp-projects/compare-vscode-extension_inline-fold/vscode-demo-recorder`if you need to playaround or verify something...
+
+Here is a more advanced task output for the task `debug`:
+
+```shell
+❯ task-dev -v debug
+
+══════ Transparent Mode Report ══════
+
+── Global Variables
+  Variables:
+  Name              Origin          Type      Ref?    Value
+  ──────────────────────────────────────────────────────
+  ALIAS             special         string      ·     debug
+  ROOT_DIR          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  ROOT_TASKFILE     special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK              special         string      ·     debug
+  TASKFILE          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASKFILE_DIR      special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK_DIR          special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  TASK_EXE          special         string      ·     task-dev
+  TASK_VERSION      special         string      ·     3.48.0
+  USER_WORKING_DIR  special         string      ·     /Users/tobiashochgurtel/work-dev/temp-projects/compare-vs...
+  BUN_ARGS          taskfile-vars   string      ·     --bun
+  CLI               taskfile-vars   string      ·      node   --experimental-strip-types  src/cli.ts
+  CLI_ARGS          taskfile-vars   string      ·
+  CLI_ARGS_LIST     taskfile-vars   []string    ·     []
+                    ptr: 0x102ce9680
+  CLI_ASSUME_YES    taskfile-vars   bool        ·     false
+  CLI_FORCE         taskfile-vars   bool        ·     false
+  CLI_OFFLINE       taskfile-vars   bool        ·     false
+  CLI_SILENT        taskfile-vars   bool        ·     false
+  CLI_VERBOSE       taskfile-vars   bool        ·     true
+  ENGINE            taskfile-vars   string      ·      node
+  ENGINE_ARGS       taskfile-vars   string      ·      --experimental-strip-types
+  LAUNCH            taskfile-vars   string      ·      node   --experimental-strip-types  src/launch.ts
+  NODE_ARGS         taskfile-vars   string      ·     --experimental-strip-types
+  OUTPUT_DIR        taskfile-vars   string      ·     ./output
+  OUT_DIR           taskfile-vars   string      ·     ./out
+  SCHEMAS_DIR       taskfile-vars   string      ·     ./schemas
+
+── Task: debug
+  Variables:
+  Name            Origin          Type      Ref?    Value
+  ────────────────────────────────────────────────────
+  MATCH           call-vars       []string    ·     []
+                  ptr: 0x102ce9680
+  COLOR_AQUA      task-vars       string      ·     33[38;5;87m
+  COLOR_BLACK     task-vars       string      ·     33[30m
+  COLOR_BLUE      task-vars       string      ·     33[34m
+  COLOR_BOLD      task-vars       string      ·     33[1m
+  COLOR_BROWN     task-vars       string      ·     33[38;5;130m
+  COLOR_CYAN      task-vars       string      ·     33[36m
+  COLOR_DIM       task-vars       string      ·     33[2m
+  COLOR_GRAY      task-vars       string      ·     33[90m
+  COLOR_GREEN     task-vars       string      ·     33[32m
+  COLOR_INDIGO    task-vars       string      ·     33[38;5;63m
+  COLOR_LAVENDER  task-vars       string      ·     33[38;5;183m
+  COLOR_LIME      task-vars       string      ·     33[38;5;154m
+  COLOR_MAGENTA   task-vars       string      ·     33[35m
+  COLOR_MAUVE     task-vars       string      ·     33[38;5;135m
+  COLOR_ORANGE    task-vars       string      ·     33[38;5;208m
+  COLOR_PINK      task-vars       string      ·     33[38;5;213m
+  COLOR_PLUM      task-vars       string      ·     33[38;5;93m
+  COLOR_PURPLE    task-vars       string      ·     33[38;5;170m
+  COLOR_RED       task-vars       string      ·     33[31m
+  COLOR_RESET     task-vars       string      ·     33[0m
+  COLOR_ROSE      task-vars       string      ·     33[38;5;211m
+  COLOR_SALMON    task-vars       string      ·     33[38;5;217m
+  COLOR_SKY       task-vars       string      ·     33[38;5;117m
+  COLOR_TAN       task-vars       string      ·     33[38;5;180m
+  COLOR_TEAL      task-vars       string      ·     33[38;5;37m
+  COLOR_VIOLET    task-vars       string      ·     33[38;5;127m
+  COLOR_WHITE     task-vars       string      ·     33[37m
+  COLOR_YELLOW    task-vars       string      ·     33[33m
+  SPACE           task-vars       int         ·     20
+  Template Evaluations:
+  [1] (cmds[0]) Input:  echo ":: Global Taskfile variables ::"
+echo ""
+echo "{{spew (.ENGINE | trim)}}"
+echo '{{printf "%s: %*s %s" "ENGINE" .SPACE (.ENGINE | trim)}}'
+
+       Output: echo ":: Global Taskfile variables ::"
+echo ""
+echo "(string) (len=4) "node"
+"
+echo 'ENGINE:                 node %!s(MISSING)'
+
+       Vars used: ENGINE, SPACE
+  Commands:
+  [0] raw:      echo ":: Global Taskfile variables ::"
+echo ""
+echo "{{spew (.ENGINE | trim)}}"
+echo '{{printf "%s: %*s %s" "ENGINE" .SPACE (.ENGINE | trim)}}'
+
+       resolved: echo ":: Global Taskfile variables ::"
+echo ""
+echo "(string) (len=4) "node"
+"
+echo 'ENGINE:                 node %!s(MISSING)'
+
+
+══════ End Report ══════
+```
+
+## 2. Template Evaluation Steps
+
 Here is the current output format:
 
 ```shell
@@ -109,7 +295,7 @@ We can improve the output to show it like this:
 
 see `## Human-Readable Output Example` in `/Users/tobiashochgurtel/work-dev/my-projects/task/docs/transparent-mode/05-OUTPUT-FORMAT.md` for more details.
 
-2. In the `Template Evaluation` section, we should show the steps of the template evaluation, like in the example:
+1. In the `Template Evaluation` section, we should show the steps of the template evaluation, like in the example:
 
 ```yaml
         echo ":: Global Taskfile variables ::"
@@ -210,9 +396,9 @@ Example:
 - `I` is the separator between the input and the operation
 - `O` is the separator between the operation and the output
 - `F` is the separator between the output and the final command
-- Each line is prefixed with `| ` to indicate that it is part of the step
-- The step number is always followed by a colon and a space (e.g., `1: `)
-- The operation name is always followed by a colon and a space (e.g., `Resolve a Variable: `)
+- Each line is prefixed with `|` to indicate that it is part of the step
+- The step number is always followed by a colon and a space (e.g., `1:`)
+- The operation name is always followed by a colon and a space (e.g., `Resolve a Variable:`)
 - The input, output, and final command are always on the same line and aligned at the same column position (e.g., `|   I     input`, `|   O     output`, `|   F     final command`)
 - Integrate the option to make Whitespaces visible in the output (e.g. use · for spaces and → for tabs)... as a toggle via CLI options (e.g. `--show-whitespaces`).
 
