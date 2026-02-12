@@ -100,10 +100,10 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 			if newVar.Value != nil || newVar.Sh == nil {
 				result.Set(k, ast.Var{Value: newVar.Value})
 				c.Tracer.RecordVar(transparent.VarTrace{
-					Name:   k,
-					Value:  newVar.Value,
-					Origin: origin,
-					IsRef:  v.Ref != "",
+					Name:    k,
+					Value:   newVar.Value,
+					Origin:  origin,
+					IsRef:   v.Ref != "",
 					RefName: v.Ref,
 				})
 				return nil

@@ -1,6 +1,7 @@
 package transparent_test
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -34,7 +35,7 @@ func runTransparent(t *testing.T, dir string, taskName string) string {
 	if taskName != "" {
 		args = append(args, taskName)
 	}
-	cmd := exec.Command(bin, args...)
+	cmd := exec.CommandContext(context.Background(), bin, args...)
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -44,6 +45,7 @@ func runTransparent(t *testing.T, dir string, taskName string) string {
 }
 
 func TestE2EBasicVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -69,6 +71,7 @@ func TestE2EBasicVariables(t *testing.T) {
 }
 
 func TestE2EVariableShadowing(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
 
 	// Test task that overrides a global variable
@@ -86,6 +89,7 @@ func TestE2EVariableShadowing(t *testing.T) {
 }
 
 func TestE2EVariableShadowingDefault(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
 
 	// Default task uses global NAME — no shadow expected
@@ -95,6 +99,7 @@ func TestE2EVariableShadowingDefault(t *testing.T) {
 }
 
 func TestE2ETemplatePipeTrim(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "trim-pipe")
 
@@ -104,6 +109,7 @@ func TestE2ETemplatePipeTrim(t *testing.T) {
 }
 
 func TestE2ETemplatePipeUpper(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "upper-lower")
 
@@ -112,6 +118,7 @@ func TestE2ETemplatePipeUpper(t *testing.T) {
 }
 
 func TestE2ETemplatePipeCombined(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "combined-pipes")
 
@@ -120,6 +127,7 @@ func TestE2ETemplatePipeCombined(t *testing.T) {
 }
 
 func TestE2EDynamicVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "04-dynamic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -135,6 +143,7 @@ func TestE2EDynamicVariables(t *testing.T) {
 }
 
 func TestE2EDynamicVariablesTaskLevel(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "04-dynamic-variables")
 	output := runTransparent(t, dir, "task-dynamic")
 
@@ -142,6 +151,7 @@ func TestE2EDynamicVariablesTaskLevel(t *testing.T) {
 }
 
 func TestE2EIncludedTaskfile(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "05-includes")
 	output := runTransparent(t, dir, "sub:greet")
 
@@ -151,6 +161,7 @@ func TestE2EIncludedTaskfile(t *testing.T) {
 }
 
 func TestE2EAdvancedBuild(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "06-advanced-combined")
 	output := runTransparent(t, dir, "build")
 
@@ -163,6 +174,7 @@ func TestE2EAdvancedBuild(t *testing.T) {
 }
 
 func TestE2EAdvancedConditional(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "06-advanced-combined")
 	output := runTransparent(t, dir, "conditional")
 
@@ -171,6 +183,7 @@ func TestE2EAdvancedConditional(t *testing.T) {
 }
 
 func TestE2EDoesNotExecuteCommands(t *testing.T) {
+	t.Parallel()
 	// Transparent mode should NOT execute any commands
 	// Verify by checking there's no actual command output, only the report
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
@@ -197,10 +210,11 @@ func TestE2EDoesNotExecuteCommands(t *testing.T) {
 }
 
 func TestE2EShortFlagT(t *testing.T) {
+	t.Parallel()
 	// Test -T short flag works the same as --transparent
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "-T", "-d", dir)
+	cmd := exec.CommandContext(context.Background(), bin, "-T", "-d", dir)
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -210,9 +224,10 @@ func TestE2EShortFlagT(t *testing.T) {
 }
 
 func TestE2EMultipleTasksOnCLI(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
-	cmd := exec.Command(bin, "--transparent", "-d", dir, "default", "override")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "-d", dir, "default", "override")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -249,6 +264,7 @@ func truncateOutput(s string, max int) string {
 // --- New E2E tests for expanded examples ---
 
 func TestE2EDotenv(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "07-dotenv")
 	output := runTransparent(t, dir, "default")
 
@@ -263,6 +279,7 @@ func TestE2EDotenv(t *testing.T) {
 }
 
 func TestE2EDotenvCombined(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "07-dotenv")
 	output := runTransparent(t, dir, "combined")
 
@@ -271,6 +288,7 @@ func TestE2EDotenvCombined(t *testing.T) {
 }
 
 func TestE2EPreconditions(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "08-preconditions")
 	output := runTransparent(t, dir, "check-binary")
 
@@ -281,6 +299,7 @@ func TestE2EPreconditions(t *testing.T) {
 }
 
 func TestE2EPreconditionsTemplate(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "08-preconditions")
 	output := runTransparent(t, dir, "check-version")
 
@@ -289,6 +308,7 @@ func TestE2EPreconditionsTemplate(t *testing.T) {
 }
 
 func TestE2ETemplateFieldsLabel(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "09-template-fields")
 	output := runTransparent(t, dir, "with-label")
 
@@ -300,6 +320,7 @@ func TestE2ETemplateFieldsLabel(t *testing.T) {
 }
 
 func TestE2ETemplateFieldsSummary(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "09-template-fields")
 	output := runTransparent(t, dir, "with-summary")
 
@@ -307,6 +328,7 @@ func TestE2ETemplateFieldsSummary(t *testing.T) {
 }
 
 func TestE2ETemplateFieldsDir(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "09-template-fields")
 	output := runTransparent(t, dir, "with-dir")
 
@@ -315,6 +337,7 @@ func TestE2ETemplateFieldsDir(t *testing.T) {
 }
 
 func TestE2ERefVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "10-ref-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -327,6 +350,7 @@ func TestE2ERefVariables(t *testing.T) {
 }
 
 func TestE2ERefVariablesTaskLevel(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "10-ref-variables")
 	output := runTransparent(t, dir, "with-task-ref")
 
@@ -336,6 +360,7 @@ func TestE2ERefVariablesTaskLevel(t *testing.T) {
 }
 
 func TestE2EStatusSources(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "11-status-sources")
 	output := runTransparent(t, dir, "build")
 
@@ -347,6 +372,7 @@ func TestE2EStatusSources(t *testing.T) {
 }
 
 func TestE2EEnvVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "12-env-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -360,6 +386,7 @@ func TestE2EEnvVariables(t *testing.T) {
 }
 
 func TestE2EEnvVariablesShadowing(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "12-env-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -368,6 +395,7 @@ func TestE2EEnvVariablesShadowing(t *testing.T) {
 }
 
 func TestE2ENestedIncludesLevel1(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "13-nested-includes")
 	output := runTransparent(t, dir, "level1:greet")
 
@@ -380,6 +408,7 @@ func TestE2ENestedIncludesLevel1(t *testing.T) {
 }
 
 func TestE2ENestedIncludesLevel2(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "13-nested-includes")
 	output := runTransparent(t, dir, "level1:level2:greet")
 
@@ -394,6 +423,7 @@ func TestE2ENestedIncludesLevel2(t *testing.T) {
 }
 
 func TestE2EMatrixFor(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "14-matrix-for")
 	output := runTransparent(t, dir, "build-platforms")
 
@@ -407,6 +437,7 @@ func TestE2EMatrixFor(t *testing.T) {
 }
 
 func TestE2EMatrixForInline(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "14-matrix-for")
 	output := runTransparent(t, dir, "build-inline")
 
@@ -415,6 +446,7 @@ func TestE2EMatrixForInline(t *testing.T) {
 }
 
 func TestE2EMatrixForMatrix(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "14-matrix-for")
 	output := runTransparent(t, dir, "build-matrix")
 
@@ -425,6 +457,7 @@ func TestE2EMatrixForMatrix(t *testing.T) {
 }
 
 func TestE2EMultiLevelShadowChain(t *testing.T) {
+	t.Parallel()
 	// Test that a variable shadowed through multiple scopes is detected
 	dir := filepath.Join(examplesDir(), "12-env-variables")
 	output := runTransparent(t, dir, "default")
@@ -435,9 +468,10 @@ func TestE2EMultiLevelShadowChain(t *testing.T) {
 }
 
 func TestE2EColorFlagFalse(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--color=false", "-d", dir, "default")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--color=false", "-d", dir, "default")
 	// Don't set NO_COLOR — rely on --color=false flag
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -450,9 +484,10 @@ func TestE2EColorFlagFalse(t *testing.T) {
 }
 
 func TestE2EOutputToStderr(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "-d", dir, "default")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "-d", dir, "default")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 
 	var stdout, stderr strings.Builder
@@ -476,6 +511,7 @@ func TestE2EOutputToStderr(t *testing.T) {
 // ── Pipe Analyzer E2E Tests ──
 
 func TestE2EPipeStepsTrim(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "trim-pipe")
 
@@ -487,6 +523,7 @@ func TestE2EPipeStepsTrim(t *testing.T) {
 }
 
 func TestE2EPipeStepsCombined(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "combined-pipes")
 
@@ -499,6 +536,7 @@ func TestE2EPipeStepsCombined(t *testing.T) {
 }
 
 func TestE2EPipeStepsUpperLower(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	output := runTransparent(t, dir, "upper-lower")
 
@@ -510,9 +548,10 @@ func TestE2EPipeStepsUpperLower(t *testing.T) {
 // ── JSON Output E2E Tests ──
 
 func TestE2EJSONOutput(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--json", "-d", dir, "default")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -538,9 +577,10 @@ func TestE2EJSONOutput(t *testing.T) {
 }
 
 func TestE2EJSONPipeSteps(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
-	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "trim-pipe")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--json", "-d", dir, "trim-pipe")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -569,6 +609,7 @@ func TestE2EJSONPipeSteps(t *testing.T) {
 // ── Undefined Variable Warning E2E Tests ──
 
 func TestE2EUndefinedVarWarning(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "15-undefined-vars")
 	output := runTransparent(t, dir, "test-undefined")
 
@@ -577,6 +618,7 @@ func TestE2EUndefinedVarWarning(t *testing.T) {
 }
 
 func TestE2ENoWarningForDefinedVars(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "15-undefined-vars")
 	output := runTransparent(t, dir, "test-all-defined")
 
@@ -587,6 +629,7 @@ func TestE2ENoWarningForDefinedVars(t *testing.T) {
 // --- Round 2 gap-closure tests ---
 
 func TestE2EGlobalVarsSection(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -602,6 +645,7 @@ func TestE2EGlobalVarsSection(t *testing.T) {
 }
 
 func TestE2EGlobalVarsSeparation(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -632,6 +676,7 @@ func TestE2EGlobalVarsSeparation(t *testing.T) {
 }
 
 func TestE2EShadowWarningFormat(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
 	output := runTransparent(t, dir, "override")
 
@@ -642,6 +687,7 @@ func TestE2EShadowWarningFormat(t *testing.T) {
 }
 
 func TestE2EDynamicVarShellCommand(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "04-dynamic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -651,9 +697,10 @@ func TestE2EDynamicVarShellCommand(t *testing.T) {
 }
 
 func TestE2EListAllTransparent(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--list-all", "-d", dir)
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--list-all", "-d", dir)
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -667,6 +714,7 @@ func TestE2EListAllTransparent(t *testing.T) {
 }
 
 func TestE2ETemplateContext(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	output := runTransparent(t, dir, "default")
 
@@ -676,9 +724,10 @@ func TestE2ETemplateContext(t *testing.T) {
 }
 
 func TestE2EJSONGlobalVars(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--json", "-d", dir, "default")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -707,9 +756,10 @@ func TestE2EJSONGlobalVars(t *testing.T) {
 }
 
 func TestE2EJSONTemplateContext(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, "default")
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--json", "-d", dir, "default")
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -742,7 +792,7 @@ func runTaskArgs(t *testing.T, dir string, args ...string) string {
 	t.Helper()
 	bin := getTaskBinary(t)
 	fullArgs := append([]string{"-d", dir}, args...)
-	cmd := exec.Command(bin, fullArgs...)
+	cmd := exec.CommandContext(context.Background(), bin, fullArgs...)
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -755,6 +805,7 @@ func runTaskArgs(t *testing.T, dir string, args ...string) string {
 }
 
 func TestE2EVerboseModeHidesInternalVars(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 
 	// Non-verbose: CLI_ARGS should be hidden
@@ -777,6 +828,7 @@ func TestE2EVerboseModeHidesInternalVars(t *testing.T) {
 }
 
 func TestE2EVerboseModeJSON(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 
 	// Non-verbose JSON: should not include CLI_ARGS in global_vars
@@ -814,6 +866,7 @@ func TestE2EVerboseModeJSON(t *testing.T) {
 }
 
 func TestE2ETypeMismatchDetection(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "16-type-mismatch")
 
 	// Text mode: should show type mismatch warning
@@ -857,6 +910,7 @@ func TestE2ETypeMismatchDetection(t *testing.T) {
 }
 
 func TestE2EDynamicVarWarningInListAll(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "17-dynamic-var-warning")
 
 	// When running --transparent normally, dynamic vars are resolved (no warning)

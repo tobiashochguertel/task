@@ -51,19 +51,19 @@ func (o VarOrigin) String() string {
 
 // VarTrace captures a single variable resolution event.
 type VarTrace struct {
-	Name       string    // Variable name
-	Value      any       // Resolved value
-	RawValue   any       // Pre-template-substitution value (nil if same as Value)
-	Origin     VarOrigin // Where the variable was defined
-	Type       string    // Go type string
-	IsDynamic  bool      // True if resolved via sh:
-	ShCmd      string    // Shell command (if dynamic)
-	Dir        string    // Directory context
-	ShadowsVar *VarTrace // Non-nil if this var shadows another from outer scope
-	TaskName   string    // Empty for global scope
-	IsRef      bool      // True if defined via ref: keyword
-	RefName    string    // Source variable name for ref vars
-	ValueID    uintptr   // reflect pointer for slice/map identity; 0 for scalars
+	Name       string         // Variable name
+	Value      any            // Resolved value
+	RawValue   any            // Pre-template-substitution value (nil if same as Value)
+	Origin     VarOrigin      // Where the variable was defined
+	Type       string         // Go type string
+	IsDynamic  bool           // True if resolved via sh:
+	ShCmd      string         // Shell command (if dynamic)
+	Dir        string         // Directory context
+	ShadowsVar *VarTrace      // Non-nil if this var shadows another from outer scope
+	TaskName   string         // Empty for global scope
+	IsRef      bool           // True if defined via ref: keyword
+	RefName    string         // Source variable name for ref vars
+	ValueID    uintptr        // reflect pointer for slice/map identity; 0 for scalars
 	Extra      map[string]any // Extensibility field for IDE plugins and future use
 }
 

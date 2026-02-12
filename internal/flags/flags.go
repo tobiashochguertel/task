@@ -250,7 +250,7 @@ func Validate() error {
 	if (Cert != "" && CertKey == "") || (Cert == "" && CertKey != "") {
 		return errors.New("task: --cert and --cert-key must be provided together")
 	}
-	
+
 	if ListVars && !ListJson && (List || ListAll) {
 		return errors.New("task: --list-vars cannot be used with --list or --list-all")
 	}

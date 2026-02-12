@@ -85,6 +85,7 @@ map:
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
 			var v ast.Var
 			err := yaml.Unmarshal([]byte(test.content), &v)
 			require.NoError(t, err)
@@ -320,6 +321,7 @@ value:
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			var v ast.Var
 			err := yaml.Unmarshal([]byte(tt.yaml), &v)
 			require.NoError(t, err)
@@ -417,6 +419,7 @@ value: test
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			var v ast.Var
 			err := yaml.Unmarshal([]byte(tt.yaml), &v)
 			require.Error(t, err)

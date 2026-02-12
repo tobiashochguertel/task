@@ -25,10 +25,10 @@ const (
 
 // Active color codes (resolved once at first render)
 var (
-	cReset, cBold, cDim       string
-	cRed, cGreen, cYellow     string
-	cBlue, cCyan, cWhite      string
-	colorOnce                 sync.Once
+	cReset, cBold, cDim   string
+	cRed, cGreen, cYellow string
+	cBlue, cCyan, cWhite  string
+	colorOnce             sync.Once
 )
 
 func resolveColors() {

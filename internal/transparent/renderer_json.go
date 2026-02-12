@@ -14,11 +14,11 @@ type jsonReport struct {
 }
 
 type jsonTaskTrace struct {
-	Name       string              `json:"name"`
-	Variables  []jsonVarTrace      `json:"variables"`
-	Templates  []jsonTemplateTrace `json:"templates,omitempty"`
-	Commands   []jsonCmdTrace      `json:"commands,omitempty"`
-	Dependencies []string          `json:"dependencies,omitempty"`
+	Name         string              `json:"name"`
+	Variables    []jsonVarTrace      `json:"variables"`
+	Templates    []jsonTemplateTrace `json:"templates,omitempty"`
+	Commands     []jsonCmdTrace      `json:"commands,omitempty"`
+	Dependencies []string            `json:"dependencies,omitempty"`
 }
 
 type jsonVarTrace struct {
@@ -102,12 +102,7 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 				Error:    tmpl.Error,
 			}
 			for _, step := range tmpl.Steps {
-				jtt.Steps = append(jtt.Steps, jsonPipeStep{
-					FuncName:   step.FuncName,
-					Args:       step.Args,
-					ArgsValues: step.ArgsValues,
-					Output:     step.Output,
-				})
+				jtt.Steps = append(jtt.Steps, jsonPipeStep(step))
 			}
 			jt.Templates = append(jt.Templates, jtt)
 		}

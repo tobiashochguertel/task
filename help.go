@@ -140,14 +140,14 @@ func (e *Executor) ListTaskNames(allTasks bool) error {
 // ListVariables prints a list of global variables with their descriptions
 func (e *Executor) ListVariables(formatAsJson bool) error {
 	vars := e.Taskfile.Vars
-	
+
 	if formatAsJson {
 		type varInfo struct {
 			Name  string `json:"name"`
 			Desc  string `json:"desc,omitempty"`
 			Value string `json:"value,omitempty"`
 		}
-		
+
 		output := make([]varInfo, 0, vars.Len())
 		for k, v := range vars.All() {
 			vi := varInfo{
@@ -160,18 +160,18 @@ func (e *Executor) ListVariables(formatAsJson bool) error {
 			}
 			output = append(output, vi)
 		}
-		
+
 		encoder := json.NewEncoder(e.Stdout)
 		encoder.SetIndent("", "  ")
 		return encoder.Encode(output)
 	}
-	
+
 	// Format as human-readable table
 	if vars.Len() == 0 {
 		e.Logger.Outf(logger.Yellow, "task: No variables defined in this Taskfile\n")
 		return nil
 	}
-	
+
 	e.Logger.Outf(logger.Default, "task: Available variables for this project:\n")
 	w := tabwriter.NewWriter(e.Stdout, 0, 8, 6, ' ', 0)
 	for k, v := range vars.All() {

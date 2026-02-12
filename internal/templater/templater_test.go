@@ -5,6 +5,7 @@ import (
 )
 
 func TestExtractVarNames(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		input string
 		want  []string

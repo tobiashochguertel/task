@@ -38,6 +38,7 @@ func allVars(report *transparent.TraceReport, taskIdx int) []transparent.VarTrac
 }
 
 func TestIntegrationBasicVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	e := setupExecutor(t, dir)
 
@@ -82,6 +83,7 @@ func TestIntegrationBasicVariables(t *testing.T) {
 }
 
 func TestIntegrationVariableShadowing(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "02-variable-shadowing")
 	e := setupExecutor(t, dir)
 
@@ -116,6 +118,7 @@ func TestIntegrationVariableShadowing(t *testing.T) {
 }
 
 func TestIntegrationTemplatePipes(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "03-template-pipes")
 	e := setupExecutor(t, dir)
 
@@ -147,6 +150,7 @@ func TestIntegrationTemplatePipes(t *testing.T) {
 }
 
 func TestIntegrationDynamicVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "04-dynamic-variables")
 	e := setupExecutor(t, dir)
 
@@ -178,6 +182,7 @@ func TestIntegrationDynamicVariables(t *testing.T) {
 }
 
 func TestIntegrationMultipleTasks(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
 	e := setupExecutor(t, dir)
 
@@ -196,6 +201,7 @@ func TestIntegrationMultipleTasks(t *testing.T) {
 }
 
 func TestIntegrationDotenv(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "07-dotenv")
 	e := setupExecutor(t, dir)
 
@@ -222,6 +228,7 @@ func TestIntegrationDotenv(t *testing.T) {
 }
 
 func TestIntegrationRefVariables(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "10-ref-variables")
 	e := setupExecutor(t, dir)
 
@@ -250,6 +257,7 @@ func TestIntegrationRefVariables(t *testing.T) {
 }
 
 func TestIntegrationNestedIncludes(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "13-nested-includes")
 	e := setupExecutor(t, dir)
 
@@ -291,6 +299,7 @@ func TestIntegrationNestedIncludes(t *testing.T) {
 }
 
 func TestIntegrationEnvVarsShadow(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "12-env-variables")
 	e := setupExecutor(t, dir)
 
@@ -323,6 +332,7 @@ func TestIntegrationEnvVarsShadow(t *testing.T) {
 }
 
 func TestIntegrationMatrixFor(t *testing.T) {
+	t.Parallel()
 	dir := filepath.Join(examplesDir(), "14-matrix-for")
 	e := setupExecutor(t, dir)
 

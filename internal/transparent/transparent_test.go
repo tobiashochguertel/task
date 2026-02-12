@@ -21,6 +21,7 @@ func defaultFuncs() template.FuncMap {
 }
 
 func TestTracerNilSafe(t *testing.T) {
+	t.Parallel()
 	var tracer *Tracer
 	// All methods should be no-ops on nil receiver
 	tracer.SetCurrentTask("test")
@@ -38,6 +39,7 @@ func TestTracerNilSafe(t *testing.T) {
 }
 
 func TestTracerRecordVar(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	// Record a global var
@@ -55,6 +57,7 @@ func TestTracerRecordVar(t *testing.T) {
 }
 
 func TestTracerRecordVarMultipleOrigins(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	tracer.RecordVar(VarTrace{Name: "A", Value: "env-val", Origin: OriginEnvironment})
@@ -73,6 +76,7 @@ func TestTracerRecordVarMultipleOrigins(t *testing.T) {
 }
 
 func TestTracerShadowDetection(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	// Record global var
@@ -102,6 +106,7 @@ func TestTracerShadowDetection(t *testing.T) {
 }
 
 func TestTracerShadowWithinGlobalScope(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	// Two global vars with same name (e.g., env then taskfile override)
@@ -121,6 +126,7 @@ func TestTracerShadowWithinGlobalScope(t *testing.T) {
 }
 
 func TestTracerNoShadowForDifferentNames(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	tracer.RecordVar(VarTrace{Name: "FOO", Value: "1", Origin: OriginTaskfileVars})
@@ -134,6 +140,7 @@ func TestTracerNoShadowForDifferentNames(t *testing.T) {
 }
 
 func TestTracerTemplateAndCmd(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 	tracer.SetCurrentTask("test")
 
@@ -158,6 +165,7 @@ func TestTracerTemplateAndCmd(t *testing.T) {
 }
 
 func TestTracerTemplateNotRecordedInGlobalScope(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 	// Templates in global scope should be silently dropped
 	tracer.RecordTemplate(TemplateTrace{Input: "{{.X}}", Output: "y"})
@@ -168,6 +176,7 @@ func TestTracerTemplateNotRecordedInGlobalScope(t *testing.T) {
 }
 
 func TestTracerMultipleTasks(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 
 	tracer.SetCurrentTask("build")
@@ -196,6 +205,7 @@ func TestTracerMultipleTasks(t *testing.T) {
 }
 
 func TestTracerDeps(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 	tracer.SetCurrentTask("deploy")
 	tracer.RecordDep("deploy", "build")
@@ -212,6 +222,7 @@ func TestTracerDeps(t *testing.T) {
 }
 
 func TestTracerDynamicVar(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 	tracer.RecordVar(VarTrace{
 		Name:      "HOST",
@@ -231,6 +242,7 @@ func TestTracerDynamicVar(t *testing.T) {
 }
 
 func TestTracerRefTracking(t *testing.T) {
+	t.Parallel()
 	tracer := NewTracer()
 	tracer.RecordVar(VarTrace{
 		Name:    "ALIAS",
@@ -250,6 +262,7 @@ func TestTracerRefTracking(t *testing.T) {
 }
 
 func TestComputeValueID(t *testing.T) {
+	t.Parallel()
 	slice := []string{"a", "b"}
 	vt := VarTrace{Name: "LIST", Value: slice}
 	vt.ComputeValueID()
@@ -288,6 +301,7 @@ func TestComputeValueID(t *testing.T) {
 }
 
 func TestTypeString(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		value any
 		want  string
@@ -307,6 +321,7 @@ func TestTypeString(t *testing.T) {
 }
 
 func TestRenderText(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -349,6 +364,7 @@ func TestRenderText(t *testing.T) {
 }
 
 func TestRenderTextNilReport(t *testing.T) {
+	t.Parallel()
 	var buf bytes.Buffer
 	RenderText(&buf, nil, nil)
 	if buf.Len() != 0 {
@@ -357,14 +373,17 @@ func TestRenderTextNilReport(t *testing.T) {
 }
 
 func TestRenderTextWithShadow(t *testing.T) {
+	t.Parallel()
 	shadowedVar := VarTrace{Name: "X", Value: "old", Origin: OriginTaskfileVars}
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
 				TaskName: "t",
 				Vars: []VarTrace{
-					{Name: "X", Value: "new", Origin: OriginTaskVars, Type: "string",
-						ShadowsVar: &shadowedVar},
+					{
+						Name: "X", Value: "new", Origin: OriginTaskVars, Type: "string",
+						ShadowsVar: &shadowedVar,
+					},
 				},
 			},
 		},
@@ -378,6 +397,7 @@ func TestRenderTextWithShadow(t *testing.T) {
 }
 
 func TestRenderTextWithDeps(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -398,13 +418,16 @@ func TestRenderTextWithDeps(t *testing.T) {
 }
 
 func TestRenderTextDynamicVar(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
 				TaskName: "t",
 				Vars: []VarTrace{
-					{Name: "HOST", Value: "myhost", Origin: OriginTaskfileVars,
-						Type: "string", IsDynamic: true},
+					{
+						Name: "HOST", Value: "myhost", Origin: OriginTaskfileVars,
+						Type: "string", IsDynamic: true,
+					},
 				},
 			},
 		},
@@ -417,13 +440,16 @@ func TestRenderTextDynamicVar(t *testing.T) {
 }
 
 func TestRenderTextRefVar(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
 				TaskName: "t",
 				Vars: []VarTrace{
-					{Name: "ALIAS", Value: "val", Origin: OriginIncludeVars,
-						Type: "string", IsRef: true, RefName: "ORIGINAL"},
+					{
+						Name: "ALIAS", Value: "val", Origin: OriginIncludeVars,
+						Type: "string", IsRef: true, RefName: "ORIGINAL",
+					},
 				},
 			},
 		},
@@ -440,6 +466,7 @@ func TestRenderTextRefVar(t *testing.T) {
 }
 
 func TestRenderTextUnchangedCmd(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -460,6 +487,7 @@ func TestRenderTextUnchangedCmd(t *testing.T) {
 }
 
 func TestRenderTextPipeSteps(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -489,6 +517,7 @@ func TestRenderTextPipeSteps(t *testing.T) {
 }
 
 func TestVarOriginString(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		origin VarOrigin
 		want   string
@@ -512,6 +541,7 @@ func TestVarOriginString(t *testing.T) {
 }
 
 func TestVarOriginStringUnknown(t *testing.T) {
+	t.Parallel()
 	o := VarOrigin(999)
 	s := o.String()
 	if !strings.Contains(s, "unknown") {
@@ -522,6 +552,7 @@ func TestVarOriginStringUnknown(t *testing.T) {
 // ── Pipe Analyzer Tests ──
 
 func TestAnalyzePipesSimple(t *testing.T) {
+	t.Parallel()
 	funcs := template.FuncMap{
 		"upper": strings.ToUpper,
 		"trim":  strings.TrimSpace,
@@ -546,6 +577,7 @@ func TestAnalyzePipesSimple(t *testing.T) {
 }
 
 func TestAnalyzePipesThreeSteps(t *testing.T) {
+	t.Parallel()
 	funcs := template.FuncMap{
 		"upper": strings.ToUpper,
 		"trim":  strings.TrimSpace,
@@ -564,6 +596,7 @@ func TestAnalyzePipesThreeSteps(t *testing.T) {
 }
 
 func TestAnalyzePipesNoPipe(t *testing.T) {
+	t.Parallel()
 	funcs := template.FuncMap{}
 	data := map[string]any{"FOO": "bar"}
 	steps := AnalyzePipes("{{.FOO}}", data, funcs)
@@ -573,6 +606,7 @@ func TestAnalyzePipesNoPipe(t *testing.T) {
 }
 
 func TestAnalyzePipesPlainText(t *testing.T) {
+	t.Parallel()
 	funcs := template.FuncMap{}
 	data := map[string]any{}
 	steps := AnalyzePipes("no templates here", data, funcs)
@@ -582,6 +616,7 @@ func TestAnalyzePipesPlainText(t *testing.T) {
 }
 
 func TestAnalyzePipesResolveArgs(t *testing.T) {
+	t.Parallel()
 	funcs := template.FuncMap{
 		"trim": strings.TrimSpace,
 	}
@@ -601,6 +636,7 @@ func TestAnalyzePipesResolveArgs(t *testing.T) {
 }
 
 func TestGeneratePipeTipsMultiArgPipe(t *testing.T) {
+	t.Parallel()
 	// printf with args piped to trim should generate a tip
 	steps := []PipeStep{
 		{FuncName: "printf", Args: []string{`"%s : %s"`, `"NAME"`, ".NAME"}},
@@ -616,6 +652,7 @@ func TestGeneratePipeTipsMultiArgPipe(t *testing.T) {
 }
 
 func TestGeneratePipeTipsNoTipForSingleArgPipe(t *testing.T) {
+	t.Parallel()
 	// .NAME | trim should NOT generate a tip (no multi-arg function)
 	steps := []PipeStep{
 		{FuncName: ".NAME", Args: nil},
@@ -628,6 +665,7 @@ func TestGeneratePipeTipsNoTipForSingleArgPipe(t *testing.T) {
 }
 
 func TestGeneratePipeTipsEmptySteps(t *testing.T) {
+	t.Parallel()
 	tips := GeneratePipeTips(nil)
 	if len(tips) != 0 {
 		t.Errorf("expected no tips for nil steps, got: %v", tips)
@@ -642,6 +680,7 @@ func TestGeneratePipeTipsEmptySteps(t *testing.T) {
 // --- Tests for Feature 1: Verbose mode (filterGlobals) ---
 
 func TestFilterGlobalsNonVerbose(t *testing.T) {
+	t.Parallel()
 	vars := []VarTrace{
 		{Name: "TASK", Origin: OriginSpecial, Value: "default"},
 		{Name: "MY_VAR", Origin: OriginTaskfileVars, Value: "hello"},
@@ -669,6 +708,7 @@ func TestFilterGlobalsNonVerbose(t *testing.T) {
 }
 
 func TestFilterGlobalsVerbose(t *testing.T) {
+	t.Parallel()
 	vars := []VarTrace{
 		{Name: "TASK", Origin: OriginSpecial, Value: "default"},
 		{Name: "CLI_ARGS", Origin: OriginTaskfileVars, Value: ""},
@@ -681,6 +721,7 @@ func TestFilterGlobalsVerbose(t *testing.T) {
 }
 
 func TestRenderTextVerboseHidesInternalVars(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		GlobalVars: []VarTrace{
 			{Name: "TASK", Origin: OriginSpecial, Value: "x"},
@@ -718,6 +759,7 @@ func TestRenderTextVerboseHidesInternalVars(t *testing.T) {
 // --- Tests for Feature 2: Dynamic var warning ---
 
 func TestRenderTextDynamicVarEmptyWarning(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -737,6 +779,7 @@ func TestRenderTextDynamicVarEmptyWarning(t *testing.T) {
 }
 
 func TestRenderTextDynamicVarNoWarningWhenResolved(t *testing.T) {
+	t.Parallel()
 	report := &TraceReport{
 		Tasks: []*TaskTrace{
 			{
@@ -758,6 +801,7 @@ func TestRenderTextDynamicVarNoWarningWhenResolved(t *testing.T) {
 // --- Tests for Feature 3: Type mismatch detection ---
 
 func TestDetectTypeMismatchesStringInAdd(t *testing.T) {
+	t.Parallel()
 	data := map[string]any{
 		"COUNT": 42,
 		"NAME":  "hello",
@@ -772,6 +816,7 @@ func TestDetectTypeMismatchesStringInAdd(t *testing.T) {
 }
 
 func TestDetectTypeMismatchesValidNumeric(t *testing.T) {
+	t.Parallel()
 	data := map[string]any{
 		"A": 10,
 		"B": 20,
@@ -783,6 +828,7 @@ func TestDetectTypeMismatchesValidNumeric(t *testing.T) {
 }
 
 func TestDetectTypeMismatchesNoTemplate(t *testing.T) {
+	t.Parallel()
 	warnings := DetectTypeMismatches("just plain text", nil, defaultFuncs())
 	if len(warnings) != 0 {
 		t.Errorf("expected no warnings for plain text, got: %v", warnings)
@@ -790,6 +836,7 @@ func TestDetectTypeMismatchesNoTemplate(t *testing.T) {
 }
 
 func TestDetectTypeMismatchesMulWithString(t *testing.T) {
+	t.Parallel()
 	data := map[string]any{
 		"NUM":   5,
 		"LABEL": "abc",
@@ -804,6 +851,7 @@ func TestDetectTypeMismatchesMulWithString(t *testing.T) {
 }
 
 func TestDetectTypeMismatchesFloat(t *testing.T) {
+	t.Parallel()
 	data := map[string]any{
 		"PRICE": 9.99,
 		"QTY":   3,
@@ -815,6 +863,7 @@ func TestDetectTypeMismatchesFloat(t *testing.T) {
 }
 
 func TestDetectTypeMismatchesNonNumericFunc(t *testing.T) {
+	t.Parallel()
 	data := map[string]any{
 		"NAME": "hello",
 	}

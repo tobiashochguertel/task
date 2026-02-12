@@ -55,8 +55,8 @@ type (
 		Concurrency         int
 		Interval            time.Duration
 		Failfast            bool
-	Transparent         bool
-	TransparentJSON     bool
+		Transparent         bool
+		TransparentJSON     bool
 
 		// I/O
 		Stdin  io.Reader

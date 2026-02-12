@@ -2,6 +2,7 @@ package transparent_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -141,13 +142,15 @@ func safeTaskName(task string) string {
 
 // TestGoldenText verifies text output of --transparent matches golden files.
 func TestGoldenText(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 
 	for _, tc := range allGoldenTestCases() {
 		name := fmt.Sprintf("%s/%s", tc.Example, tc.Task)
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			dir := filepath.Join(examplesDir(), tc.Example)
-			cmd := exec.Command(bin, "--transparent", "-d", dir, tc.Task)
+			cmd := exec.CommandContext(context.Background(), bin, "--transparent", "-d", dir, tc.Task)
 			cmd.Env = append(os.Environ(), "NO_COLOR=1")
 			out, err := cmd.CombinedOutput()
 			if err != nil {
@@ -158,7 +161,7 @@ func TestGoldenText(t *testing.T) {
 			goldenFile := filepath.Join(goldenDir(), fmt.Sprintf("%s__%s.golden", tc.Example, safeTaskName(tc.Task)))
 
 			if updateGolden {
-				if err := os.WriteFile(goldenFile, []byte(actual), 0644); err != nil {
+				if err := os.WriteFile(goldenFile, []byte(actual), 0o644); err != nil {
 					t.Fatalf("failed to write golden file: %v", err)
 				}
 				return
@@ -178,13 +181,15 @@ func TestGoldenText(t *testing.T) {
 
 // TestGoldenJSON verifies JSON output of --transparent --json matches golden files.
 func TestGoldenJSON(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 
 	for _, tc := range allGoldenTestCases() {
 		name := fmt.Sprintf("%s/%s", tc.Example, tc.Task)
 		t.Run(name, func(t *testing.T) {
+			t.Parallel()
 			dir := filepath.Join(examplesDir(), tc.Example)
-			cmd := exec.Command(bin, "--transparent", "--json", "-d", dir, tc.Task)
+			cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--json", "-d", dir, tc.Task)
 			cmd.Env = append(os.Environ(), "NO_COLOR=1")
 			out, err := cmd.CombinedOutput()
 			if err != nil {
@@ -200,7 +205,7 @@ func TestGoldenJSON(t *testing.T) {
 			goldenFile := filepath.Join(goldenDir(), fmt.Sprintf("%s__%s.golden.json", tc.Example, safeTaskName(tc.Task)))
 
 			if updateGolden {
-				if err := os.WriteFile(goldenFile, []byte(actual), 0644); err != nil {
+				if err := os.WriteFile(goldenFile, []byte(actual), 0o644); err != nil {
 					t.Fatalf("failed to write golden file: %v", err)
 				}
 				return
@@ -227,9 +232,10 @@ func TestGoldenJSON(t *testing.T) {
 
 // TestGoldenListAll verifies --transparent --list-all output.
 func TestGoldenListAll(t *testing.T) {
+	t.Parallel()
 	bin := getTaskBinary(t)
 	dir := filepath.Join(examplesDir(), "01-basic-variables")
-	cmd := exec.Command(bin, "--transparent", "--list-all", "-d", dir)
+	cmd := exec.CommandContext(context.Background(), bin, "--transparent", "--list-all", "-d", dir)
 	cmd.Env = append(os.Environ(), "NO_COLOR=1")
 	out, err := cmd.CombinedOutput()
 	if err != nil {

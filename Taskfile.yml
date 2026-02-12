@@ -57,8 +57,21 @@ tasks:
     vars:
       GOPATH:
         sh: go env GOPATH
+      GIT_COMMIT:
+        sh: git rev-parse --short HEAD 2>/dev/null || echo "unknown"
+      GIT_BRANCH:
+        sh: git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown"
+      BUILD_TIME:
+        sh: date -u '+%Y-%m-%dT%H:%M:%SZ'
+      BUILD_USER:
+        sh: whoami
+      VERSION_PKG: github.com/go-task/task/v3/internal/version
+      LDFLAGS: >-
+        -X '{{.VERSION_PKG}}.branch={{.GIT_BRANCH}}'
+        -X '{{.VERSION_PKG}}.buildTime={{.BUILD_TIME}}'
+        -X '{{.VERSION_PKG}}.buildUser={{.BUILD_USER}}'
     cmds:
-      - go build -o "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}}" ./cmd/task
+      - go build -ldflags "{{.LDFLAGS}}" -o "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}}" ./cmd/task
       - cmd: echo "Installed {{.DEV_BIN_NAME}} to {{.GOPATH}}/bin/{{.DEV_BIN_NAME}}"
         silent: true
       - cmd: "{{.GOPATH}}/bin/{{.DEV_BIN_NAME}} --version"
@@ -72,8 +85,22 @@ tasks:
       - go.mod
     generates:
       - "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}"
+    vars:
+      GIT_COMMIT:
+        sh: git rev-parse --short HEAD 2>/dev/null || echo "unknown"
+      GIT_BRANCH:
+        sh: git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "unknown"
+      BUILD_TIME:
+        sh: date -u '+%Y-%m-%dT%H:%M:%SZ'
+      BUILD_USER:
+        sh: whoami
+      VERSION_PKG: github.com/go-task/task/v3/internal/version
+      LDFLAGS: >-
+        -X '{{.VERSION_PKG}}.branch={{.GIT_BRANCH}}'
+        -X '{{.VERSION_PKG}}.buildTime={{.BUILD_TIME}}'
+        -X '{{.VERSION_PKG}}.buildUser={{.BUILD_USER}}'
     cmds:
-      - go build -o "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}" ./cmd/task
+      - go build -ldflags "{{.LDFLAGS}}" -o "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}" ./cmd/task
       - cmd: echo "Installed {{.DEV_BIN_NAME}} to {{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}}"
         silent: true
       - cmd: "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}} --version"

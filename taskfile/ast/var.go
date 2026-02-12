@@ -30,7 +30,7 @@ func (v *Var) UnmarshalYAML(node *yaml.Node) error {
 		if err := node.Decode(&m); err != nil {
 			return errors.NewTaskfileDecodeError(err, node)
 		}
-		
+
 		// Check if any of the expected fields are set
 		if m.Sh != nil || m.Ref != "" || m.Map != nil || m.Value != nil || m.Desc != "" {
 			// Validate mutually exclusive fields
@@ -47,26 +47,26 @@ func (v *Var) UnmarshalYAML(node *yaml.Node) error {
 			if m.Value != nil {
 				exclusiveCount++
 			}
-			
+
 			if exclusiveCount > 1 {
 				return errors.NewTaskfileDecodeError(nil, node).WithMessage(
 					`variable cannot have more than one of: "sh", "ref", "map", "value"`)
 			}
-			
+
 			v.Sh = m.Sh
 			v.Ref = m.Ref
 			v.Desc = m.Desc
-			
+
 			// Set the value based on which type is present
 			if m.Map != nil {
 				v.Value = m.Map
 			} else if m.Value != nil {
 				v.Value = m.Value
 			}
-			
+
 			return nil
 		}
-		
+
 		// If none of the expected fields are set, this is an error
 		key := "<none>"
 		if len(node.Content) > 0 {

@@ -74,7 +74,7 @@ func run() error {
 	}
 
 	if flags.Version {
-		fmt.Println(version.GetVersionWithBuildInfo())
+		fmt.Println(version.GetDetailedVersionInfo())
 		return nil
 	}
 

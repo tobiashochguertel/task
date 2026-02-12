@@ -22,7 +22,7 @@ func AnalyzePipes(input string, data map[string]any, funcs template.FuncMap) []P
 	if err != nil {
 		return nil
 	}
-	root := tpl.Tree.Root
+	root := tpl.Root
 	if root == nil {
 		return nil
 	}
@@ -208,7 +208,7 @@ func DetectTypeMismatches(input string, data map[string]any, funcs template.Func
 	if err != nil {
 		return nil
 	}
-	root := tpl.Tree.Root
+	root := tpl.Root
 	if root == nil {
 		return nil
 	}

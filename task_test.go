@@ -2772,6 +2772,7 @@ func TestListVariablesCommand(t *testing.T) {
 	const dir = "testdata/var-desc-integration"
 
 	t.Run("list variables in table format", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2795,6 +2796,7 @@ func TestListVariablesCommand(t *testing.T) {
 	})
 
 	t.Run("list variables in JSON format", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2827,6 +2829,7 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 	const dir = "testdata/var-desc-e2e"
 
 	t.Run("deployment pipeline workflow", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2847,6 +2850,7 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 	})
 
 	t.Run("list all pipeline variables", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2872,6 +2876,7 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 	})
 
 	t.Run("verify variable descriptions in JSON output", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2894,6 +2899,7 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 	})
 
 	t.Run("clean up after deployment", func(t *testing.T) {
+		t.Parallel()
 		var buff bytes.Buffer
 		e := task.NewExecutor(
 			task.WithDir(dir),
@@ -2907,4 +2913,3 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 		assert.Contains(t, output, "Cleaning ./build")
 	})
 }
-

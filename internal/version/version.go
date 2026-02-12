@@ -11,6 +11,10 @@ var (
 	version string
 	commit  string
 	dirty   bool
+	// Set at build time via -ldflags for dev builds
+	branch    string
+	buildTime string
+	buildUser string
 )
 
 func init() {
@@ -64,4 +68,33 @@ func GetVersionWithBuildInfo() string {
 		return version + "+" + strings.Join(buildMetadata, ".")
 	}
 	return version
+}
+
+// GetDetailedVersionInfo returns a multi-line version string with git branch,
+// commit, build time, and user. Useful for dev builds to identify the exact
+// source of the binary.
+func GetDetailedVersionInfo() string {
+	var sb strings.Builder
+	sb.WriteString("Task version: ")
+	sb.WriteString(GetVersionWithBuildInfo())
+	if branch != "" {
+		sb.WriteString("\nBranch:       ")
+		sb.WriteString(branch)
+	}
+	if commit != "" {
+		sb.WriteString("\nCommit:       ")
+		sb.WriteString(commit)
+	}
+	if dirty {
+		sb.WriteString(" (dirty)")
+	}
+	if buildTime != "" {
+		sb.WriteString("\nBuilt:        ")
+		sb.WriteString(buildTime)
+	}
+	if buildUser != "" {
+		sb.WriteString("\nBuilt by:     ")
+		sb.WriteString(buildUser)
+	}
+	return sb.String()
 }
