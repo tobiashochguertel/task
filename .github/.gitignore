@@ -1,0 +1,16 @@
+# Ignore sensitive agents configuration
+
+**/mcp-server-task-configs
+**/mcp-server-task-configs/
+**/mcp-switcher
+**/mcp-switcher/
+
+ARCHIVE
+agents
+guidelines
+instructions
+project-root
+prompts
+AGENTS.md
+agents-config.yaml
+copilot-instructions.md
