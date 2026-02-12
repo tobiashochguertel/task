@@ -55,28 +55,28 @@ Running `task greet --transparent` outputs:
 ── Task: greet ────────────────────────────────────────
 
   Variables in scope:
-  ┌─────────────┬────────────┬──────────────┬────────────┐
-  │ Name        │ Value      │ Origin       │ Shadows?   │
-  ├─────────────┼────────────┼──────────────┼────────────┤
-  │ GREETING    │ "Hello"    │ taskfile:vars│            │
-  │ NAME        │ "Task"     │ task:vars    │ ⚠ SHADOWS  │
-  │             │            │              │ global NAME│
-  │             │            │              │ ="  World  " │
-  └─────────────┴────────────┴──────────────┴────────────┘
+  ┌─────────────┬────────────┬───────────────┬───────────────┐
+  │ Name        │ Value      │ Origin        │ Shadows?      │
+  ├─────────────┼────────────┼───────────────┼───────────────┤
+  │ GREETING    │ "Hello"    │ taskfile:vars │               │
+  │ NAME        │ "Task"     │ task:vars     │ ⚠ SHADOWS     │
+  │             │            │               │ global NAME   │
+  │             │            │               │ ="  World  "  │
+  └─────────────┴────────────┴───────────────┴───────────────┘
 
   Template Evaluation — cmds[0]:
-  ┌─────────────────────────────────────────────────────┐
+  ┌──────────────────────────────────────────────────────────┐
   │ Input:  echo {{printf "%s : %s" .GREETING .NAME | trim}} │
-  │                                                       │
-  │ Step 1: Resolve .GREETING → "Hello"                   │
-  │ Step 2: Resolve .NAME    → "Task"    (from task:vars) │
-  │ Step 3: printf "%s : %s" "Hello" "Task"               │
-  │         → "Hello : Task"                              │
-  │ Step 4: trim "Hello : Task"                           │
-  │         → "Hello : Task"  (no change — no whitespace) │
-  │                                                       │
-  │ Output: echo Hello : Task                             │
-  └─────────────────────────────────────────────────────┘
+  │                                                          │
+  │ Step 1: Resolve .GREETING → "Hello"                      │
+  │ Step 2: Resolve .NAME    → "Task"    (from task:vars)    │
+  │ Step 3: printf "%s : %s" "Hello" "Task"                  │
+  │         → "Hello : Task"                                 │
+  │ Step 4: trim "Hello : Task"                              │
+  │         → "Hello : Task"  (no change — no whitespace)    │
+  │                                                          │
+  │ Output: echo Hello : Task                                │
+  └──────────────────────────────────────────────────────────┘
 
   ℹ Note: If you intended to trim .NAME before printf, use:
     {{printf "%s : %s" .GREETING (.NAME | trim)}}
