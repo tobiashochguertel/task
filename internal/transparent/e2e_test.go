@@ -30,7 +30,7 @@ func getTaskBinary(t *testing.T) string {
 	binPath := filepath.Join(repoRoot, "bin", "task")
 
 	buildOnce.Do(func() {
-		cmd := exec.Command("go", "build", "-o", binPath, "./cmd/task")
+		cmd := exec.CommandContext(context.Background(), "go", "build", "-o", binPath, "./cmd/task")
 		cmd.Dir = repoRoot
 		cmd.Env = os.Environ()
 		out, err := cmd.CombinedOutput()
