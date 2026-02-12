@@ -93,21 +93,33 @@
     {
       "name": "LEVEL1_VAR",
       "origin": "included:taskfile:vars",
-      "shadows": "LEVEL1_VAR=\"from-level1\" [taskfile:vars]",
+      "shadows": {
+        "name": "LEVEL1_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-level1"
+      },
       "type": "string",
       "value": "from-level1"
     },
     {
       "name": "LEVEL2_VAR",
       "origin": "included:taskfile:vars",
-      "shadows": "LEVEL2_VAR=\"from-level2\" [taskfile:vars]",
+      "shadows": {
+        "name": "LEVEL2_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-level2"
+      },
       "type": "string",
       "value": "from-level2"
     },
     {
       "name": "ROOT_VAR",
       "origin": "included:taskfile:vars",
-      "shadows": "ROOT_VAR=\"from-root\" [taskfile:vars]",
+      "shadows": {
+        "name": "ROOT_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-root"
+      },
       "type": "string",
       "value": "from-root"
     }

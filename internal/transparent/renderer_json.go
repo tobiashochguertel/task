@@ -8,9 +8,10 @@ import (
 
 // jsonReport mirrors TraceReport with JSON-friendly struct tags.
 type jsonReport struct {
-	Version    string          `json:"version"`
-	GlobalVars []jsonVarTrace  `json:"global_vars,omitempty"`
-	Tasks      []jsonTaskTrace `json:"tasks"`
+	Version            string          `json:"version"`
+	WhitespaceVisible  bool            `json:"whitespace_visible,omitempty"`
+	GlobalVars         []jsonVarTrace  `json:"global_vars,omitempty"`
+	Tasks              []jsonTaskTrace `json:"tasks"`
 }
 
 type jsonTaskTrace struct {
@@ -22,17 +23,23 @@ type jsonTaskTrace struct {
 }
 
 type jsonVarTrace struct {
-	Name      string `json:"name"`
-	Origin    string `json:"origin"`
-	Type      string `json:"type"`
-	Value     any    `json:"value"`
-	ValueID   string `json:"value_id,omitempty"`
-	IsRef     bool   `json:"is_ref,omitempty"`
-	RefName   string `json:"ref_name,omitempty"`
-	IsDynamic bool   `json:"is_dynamic,omitempty"`
-	ShCmd     string `json:"sh_cmd,omitempty"`
-	Shadows   string `json:"shadows,omitempty"`
-	Warning   string `json:"warning,omitempty"`
+	Name      string          `json:"name"`
+	Origin    string          `json:"origin"`
+	Type      string          `json:"type"`
+	Value     any             `json:"value"`
+	ValueID   string          `json:"value_id,omitempty"`
+	IsRef     bool            `json:"is_ref,omitempty"`
+	RefName   string          `json:"ref_name,omitempty"`
+	IsDynamic bool            `json:"is_dynamic,omitempty"`
+	ShCmd     string          `json:"sh_cmd,omitempty"`
+	Shadows   *jsonShadowInfo `json:"shadows,omitempty"`
+	Warning   string          `json:"warning,omitempty"`
+}
+
+type jsonShadowInfo struct {
+	Name   string `json:"name"`
+	Value  any    `json:"value"`
+	Origin string `json:"origin"`
 }
 
 type jsonTemplateTrace struct {
@@ -42,6 +49,7 @@ type jsonTemplateTrace struct {
 	VarsUsed []string       `json:"vars_used,omitempty"`
 	Steps    []jsonPipeStep `json:"pipe_steps,omitempty"`
 	Tips     []string       `json:"tips,omitempty"`
+	Notes    []string       `json:"notes,omitempty"`
 	Error    string         `json:"error,omitempty"`
 }
 
@@ -70,9 +78,15 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 		opts = &RenderOptions{}
 	}
 
+	// ShowWhitespaces: apply transformation to report values
+	if opts.ShowWhitespaces {
+		report = applyWhitespaceVisibility(report)
+	}
+
 	jr := jsonReport{
-		Version: "1.0",
-		Tasks:   make([]jsonTaskTrace, 0, len(report.Tasks)),
+		Version:           "1.0",
+		WhitespaceVisible: opts.ShowWhitespaces,
+		Tasks:             make([]jsonTaskTrace, 0, len(report.Tasks)),
 	}
 
 	// Global variables (apply verbose filter)
@@ -140,7 +154,11 @@ func varToJSON(v VarTrace) jsonVarTrace {
 		jv.ValueID = fmt.Sprintf("0x%x", v.ValueID)
 	}
 	if v.ShadowsVar != nil {
-		jv.Shadows = fmt.Sprintf("%s=%q [%s]", v.ShadowsVar.Name, v.ShadowsVar.Value, v.ShadowsVar.Origin)
+		jv.Shadows = &jsonShadowInfo{
+			Name:   v.ShadowsVar.Name,
+			Value:  v.ShadowsVar.Value,
+			Origin: v.ShadowsVar.Origin.String(),
+		}
 	}
 	if v.IsDynamic && fmt.Sprintf("%v", v.Value) == "" {
 		jv.Warning = "dynamic variable not evaluated (sh: command not executed in transparent mode)"

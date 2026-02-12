@@ -124,7 +124,11 @@
         {
           "name": "NAME",
           "origin": "task:vars",
-          "shadows": "NAME=\"global-value\" [taskfile:vars]",
+          "shadows": {
+            "name": "NAME",
+            "origin": "taskfile:vars",
+            "value": "global-value"
+          },
           "type": "string",
           "value": "task-override"
         }

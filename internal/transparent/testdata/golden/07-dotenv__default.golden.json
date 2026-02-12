@@ -9,7 +9,11 @@
     {
       "name": "ALIAS",
       "origin": "special",
-      "shadows": "ALIAS=\"\" [special]",
+      "shadows": {
+        "name": "ALIAS",
+        "origin": "special",
+        "value": ""
+      },
       "type": "string",
       "value": "default"
     },
@@ -22,7 +26,11 @@
     {
       "name": "ROOT_DIR",
       "origin": "special",
-      "shadows": "ROOT_DIR=\"<PATH> [special]",
+      "shadows": {
+        "name": "ROOT_DIR",
+        "origin": "special",
+        "value": "<PATH>"
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -35,7 +43,11 @@
     {
       "name": "ROOT_TASKFILE",
       "origin": "special",
-      "shadows": "ROOT_TASKFILE=\"<PATH> [special]",
+      "shadows": {
+        "name": "ROOT_TASKFILE",
+        "origin": "special",
+        "value": "<PATH>"
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -48,7 +60,11 @@
     {
       "name": "TASK",
       "origin": "special",
-      "shadows": "TASK=\"\" [special]",
+      "shadows": {
+        "name": "TASK",
+        "origin": "special",
+        "value": ""
+      },
       "type": "string",
       "value": "default"
     },
@@ -61,7 +77,11 @@
     {
       "name": "TASKFILE",
       "origin": "special",
-      "shadows": "TASKFILE=\"\" [special]",
+      "shadows": {
+        "name": "TASKFILE",
+        "origin": "special",
+        "value": ""
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -74,7 +94,11 @@
     {
       "name": "TASKFILE_DIR",
       "origin": "special",
-      "shadows": "TASKFILE_DIR=\"\" [special]",
+      "shadows": {
+        "name": "TASKFILE_DIR",
+        "origin": "special",
+        "value": ""
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -87,7 +111,11 @@
     {
       "name": "TASK_DIR",
       "origin": "special",
-      "shadows": "TASK_DIR=\"\" [special]",
+      "shadows": {
+        "name": "TASK_DIR",
+        "origin": "special",
+        "value": ""
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -100,7 +128,11 @@
     {
       "name": "TASK_EXE",
       "origin": "special",
-      "shadows": "TASK_EXE=\"<PATH> [special]",
+      "shadows": {
+        "name": "TASK_EXE",
+        "origin": "special",
+        "value": "<PATH>"
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -113,7 +145,11 @@
     {
       "name": "TASK_VERSION",
       "origin": "special",
-      "shadows": "TASK_VERSION=\"<TASK_VERSION>\" [special]",
+      "shadows": {
+        "name": "TASK_VERSION",
+        "origin": "special",
+        "value": "<TASK_VERSION>"
+      },
       "type": "string",
       "value": "<TASK_VERSION>"
     },
@@ -126,7 +162,11 @@
     {
       "name": "USER_WORKING_DIR",
       "origin": "special",
-      "shadows": "USER_WORKING_DIR=\"<PATH> [special]",
+      "shadows": {
+        "name": "USER_WORKING_DIR",
+        "origin": "special",
+        "value": "<PATH>"
+      },
       "type": "string",
       "value": "<PATH>"
     },
@@ -163,7 +203,11 @@
     {
       "name": "APP_NAME",
       "origin": "taskfile:vars",
-      "shadows": "APP_NAME=\"my-dotenv-app\" [taskfile:vars]",
+      "shadows": {
+        "name": "APP_NAME",
+        "origin": "taskfile:vars",
+        "value": "my-dotenv-app"
+      },
       "type": "string",
       "value": "my-dotenv-app"
     }

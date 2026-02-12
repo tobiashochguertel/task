@@ -124,14 +124,22 @@
         {
           "name": "NAME",
           "origin": "task:vars",
-          "shadows": "NAME=\"global-value\" [taskfile:vars]",
+          "shadows": {
+            "name": "NAME",
+            "origin": "taskfile:vars",
+            "value": "global-value"
+          },
           "type": "string",
           "value": "double-task"
         },
         {
           "name": "SHARED",
           "origin": "task:vars",
-          "shadows": "SHARED=\"from-global\" [taskfile:vars]",
+          "shadows": {
+            "name": "SHARED",
+            "origin": "taskfile:vars",
+            "value": "from-global"
+          },
           "type": "string",
           "value": "from-task"
         }

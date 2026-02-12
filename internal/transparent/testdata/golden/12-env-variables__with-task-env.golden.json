@@ -75,7 +75,11 @@
     {
       "name": "APP_ENV",
       "origin": "taskfile:vars",
-      "shadows": "APP_ENV=\"staging\" [taskfile:env]",
+      "shadows": {
+        "name": "APP_ENV",
+        "origin": "taskfile:env",
+        "value": "staging"
+      },
       "type": "string",
       "value": "production"
     },

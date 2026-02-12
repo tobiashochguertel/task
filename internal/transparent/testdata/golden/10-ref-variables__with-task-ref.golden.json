@@ -65,7 +65,11 @@
       "name": "ALIAS",
       "origin": "taskfile:vars",
       "ref_name": ".GREETING",
-      "shadows": "ALIAS=\"with-task-ref\" [special]",
+      "shadows": {
+        "name": "ALIAS",
+        "origin": "special",
+        "value": "with-task-ref"
+      },
       "type": "string",
       "value": "hello-world"
     },

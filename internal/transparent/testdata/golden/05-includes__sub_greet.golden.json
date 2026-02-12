@@ -81,28 +81,44 @@
     {
       "name": "PARENT_VAR",
       "origin": "include:vars",
-      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]",
+      "shadows": {
+        "name": "PARENT_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-parent"
+      },
       "type": "string",
       "value": "from-parent"
     },
     {
       "name": "INCLUDED_VAR",
       "origin": "included:taskfile:vars",
-      "shadows": "INCLUDED_VAR=\"from-included\" [taskfile:vars]",
+      "shadows": {
+        "name": "INCLUDED_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-included"
+      },
       "type": "string",
       "value": "from-included"
     },
     {
       "name": "PARENT_VAR",
       "origin": "included:taskfile:vars",
-      "shadows": "PARENT_VAR=\"from-parent\" [taskfile:vars]",
+      "shadows": {
+        "name": "PARENT_VAR",
+        "origin": "taskfile:vars",
+        "value": "from-parent"
+      },
       "type": "string",
       "value": "from-parent"
     },
     {
       "name": "SHARED",
       "origin": "included:taskfile:vars",
-      "shadows": "SHARED=\"included-shared\" [taskfile:vars]",
+      "shadows": {
+        "name": "SHARED",
+        "origin": "taskfile:vars",
+        "value": "included-shared"
+      },
       "type": "string",
       "value": "included-shared"
     }
