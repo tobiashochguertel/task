@@ -52,8 +52,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .CONNECTION
-  │   Input:  localhost:5432/mydb
-  │   Expr:   echo 'Connection: '
+  │   I     localhost:5432/mydb
+  │   E     echo 'Connection: '
   └─
   ┌─ Output:
   │ echo 'Connection: localhost:5432/mydb'

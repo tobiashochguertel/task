@@ -27,20 +27,20 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'App: {{.APP_NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   echo 'App: '
+  │   I     my-app
+  │   E     echo 'App: '
   └─
   ┌─ Output:
   │ echo 'App: my-app'
@@ -54,8 +54,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_ENV
-  │   Input:  production
-  │   Expr:   echo 'Env: '
+  │   I     production
+  │   E     echo 'Env: '
   └─
   ┌─ Output:
   │ echo 'Env: production'
@@ -69,8 +69,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .LOG_LEVEL
-  │   Input:  info
-  │   Expr:   echo 'Log: '
+  │   I     info
+  │   E     echo 'Log: '
   └─
   ┌─ Output:
   │ echo 'Log: info'

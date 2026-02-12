@@ -26,24 +26,24 @@
 
 ── Task: upper-lower
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.TITLE | upper}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .TITLE
-  │   Input:  hello world
-  │   Expr:   echo '{{"hello world" | upper}}'
+  │   I     hello world
+  │   E     echo '{{"hello world" | upper}}'
   │ Step 2: Apply a Function — upper
-  │   Input:  upper
-  │   Output: <exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>
-  │   Expr:   echo '<exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>'
+  │   I     upper
+  │   O     <exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>
+  │   E     echo '<exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'HELLO WORLD'
@@ -57,12 +57,12 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .TITLE
-  │   Input:  hello world
-  │   Expr:   echo '{{"hello world" | title}}'
+  │   I     hello world
+  │   E     echo '{{"hello world" | title}}'
   │ Step 2: Apply a Function — title
-  │   Input:  title
-  │   Output: <exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>
-  │   Expr:   echo '<exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>'
+  │   I     title
+  │   O     <exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>
+  │   E     echo '<exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'Hello World'

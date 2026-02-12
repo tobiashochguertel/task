@@ -26,24 +26,24 @@
 
 ── Task: printf-basic
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{printf "%s : %s" "NAME" .NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .NAME
-  │   Input:    world  
-  │   Expr:   echo '{{printf "%s : %s" "NAME" "  world  "}}'
+  │   I       world  
+  │   E     echo '{{printf "%s : %s" "NAME" "  world  "}}'
   │ Step 2: Apply a Function — printf
-  │   Input:  printf "%s : %s" "NAME"   world  
-  │   Output: NAME :   world  
-  │   Expr:   echo 'NAME :   world  '
+  │   I     printf "%s : %s" "NAME"   world  
+  │   O     NAME :   world  
+  │   E     echo 'NAME :   world  '
   └─
   ┌─ Output:
   │ echo 'NAME :   world  '

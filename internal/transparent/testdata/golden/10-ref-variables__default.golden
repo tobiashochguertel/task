@@ -26,20 +26,20 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Greeting: {{.GREETING}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .GREETING
-  │   Input:  hello-world
-  │   Expr:   echo 'Greeting: '
+  │   I     hello-world
+  │   E     echo 'Greeting: '
   └─
   ┌─ Output:
   │ echo 'Greeting: hello-world'
@@ -53,8 +53,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .ALIAS
-  │   Input:  hello-world
-  │   Expr:   echo 'Alias: '
+  │   I     hello-world
+  │   E     echo 'Alias: '
   └─
   ┌─ Output:
   │ echo 'Alias: hello-world'

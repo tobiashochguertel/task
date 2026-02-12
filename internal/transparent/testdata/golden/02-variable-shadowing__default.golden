@@ -26,23 +26,23 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .GREETING
-  │   Input:  Hello
-  │   Expr:   echo '{{"Hello"}} {{.NAME}}'
+  │   I     Hello
+  │   E     echo '{{"Hello"}} {{.NAME}}'
   │ Step 2: Resolve a Variable — .NAME
-  │   Input:  global-value
-  │   Expr:   echo ''
+  │   I     global-value
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo 'Hello global-value'
@@ -56,8 +56,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .SHARED
-  │   Input:  from-global
-  │   Expr:   echo 'SHARED = '
+  │   I     from-global
+  │   E     echo 'SHARED = '
   └─
   ┌─ Output:
   │ echo 'SHARED = from-global'

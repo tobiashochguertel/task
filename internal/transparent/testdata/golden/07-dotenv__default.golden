@@ -39,20 +39,20 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'DB Host: {{.DB_HOST}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .DB_HOST
-  │   Input:  localhost
-  │   Expr:   echo 'DB Host: '
+  │   I     localhost
+  │   E     echo 'DB Host: '
   └─
   ┌─ Output:
   │ echo 'DB Host: localhost'
@@ -66,8 +66,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .DB_PORT
-  │   Input:  5432
-  │   Expr:   echo 'DB Port: '
+  │   I     5432
+  │   E     echo 'DB Port: '
   └─
   ┌─ Output:
   │ echo 'DB Port: 5432'
@@ -81,8 +81,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-dotenv-app
-  │   Expr:   echo 'App: '
+  │   I     my-dotenv-app
+  │   E     echo 'App: '
   └─
   ┌─ Output:
   │ echo 'App: my-dotenv-app'

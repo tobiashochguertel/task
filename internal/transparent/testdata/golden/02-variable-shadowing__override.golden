@@ -26,24 +26,24 @@
 
 ── Task: override
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────────────┬─────────────────────────────────────────────────┐
-  │ Name  │ Origin    │ Type     │ Value         │ Shadows?                                        │
-  ├───────┼───────────┼──────────┼───────────────┼─────────────────────────────────────────────────┤
-  │ MATCH │ call-vars │ []string │ []            │                                                 │
+  ┌───────┬───────────┬──────────┬──────────────────┬─────────────────────────────────────────────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows?                                        │
+  ├───────┼───────────┼──────────┼──────────────────┼─────────────────────────────────────────────────┤
+  │ MATCH │ call-vars │ []string │ []               │                                                 │
   │       │           │          │ ptr: <PTR> │                                                 │
-  │ NAME  │ task-vars │ string   │ task-override │ ⚠ SHADOWS NAME="global-value" [taskfile-vars]   │
-  └───────┴───────────┴──────────┴───────────────┴─────────────────────────────────────────────────┘
+  │ NAME  │ task-vars │ string   │ task-override    │ ⚠ SHADOWS NAME="global-value" [taskfile-vars]   │
+  └───────┴───────────┴──────────┴──────────────────┴─────────────────────────────────────────────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .GREETING
-  │   Input:  Hello
-  │   Expr:   echo '{{"Hello"}} {{.NAME}}'
+  │   I     Hello
+  │   E     echo '{{"Hello"}} {{.NAME}}'
   │ Step 2: Resolve a Variable — .NAME
-  │   Input:  task-override
-  │   Expr:   echo ''
+  │   I     task-override
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo 'Hello task-override'
@@ -57,8 +57,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .SHARED
-  │   Input:  from-global
-  │   Expr:   echo 'SHARED = '
+  │   I     from-global
+  │   E     echo 'SHARED = '
   └─
   ┌─ Output:
   │ echo 'SHARED = from-global'

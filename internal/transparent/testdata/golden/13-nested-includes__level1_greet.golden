@@ -30,20 +30,20 @@
 
 ── Task: level1:greet
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Level1: {{.LEVEL1_VAR}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .LEVEL1_VAR
-  │   Input:  from-level1
-  │   Expr:   echo 'Level1: '
+  │   I     from-level1
+  │   E     echo 'Level1: '
   └─
   ┌─ Output:
   │ echo 'Level1: from-level1'
@@ -57,8 +57,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PARENT_VAR
-  │   Input:  from-root-include
-  │   Expr:   echo 'Parent: '
+  │   I     from-root-include
+  │   E     echo 'Parent: '
   └─
   ┌─ Output:
   │ echo 'Parent: from-root-include'

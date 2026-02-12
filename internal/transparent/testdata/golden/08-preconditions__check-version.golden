@@ -25,20 +25,20 @@
 
 ── Task: check-version
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Version {{.VERSION}} validated'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .VERSION
-  │   Input:  1.0.0
-  │   Expr:   echo 'Version  validated'
+  │   I     1.0.0
+  │   E     echo 'Version  validated'
   └─
   ┌─ Output:
   │ echo 'Version 1.0.0 validated'
@@ -52,8 +52,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .VERSION
-  │   Input:  1.0.0
-  │   Expr:   test '' != ''
+  │   I     1.0.0
+  │   E     test '' != ''
   └─
   ┌─ Output:
   │ test '1.0.0' != ''
@@ -67,8 +67,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .VERSION
-  │   Input:  1.0.0
-  │   Expr:   VERSION must not be empty (got: '')
+  │   I     1.0.0
+  │   E     VERSION must not be empty (got: '')
   └─
   ┌─ Output:
   │ VERSION must not be empty (got: '1.0.0')

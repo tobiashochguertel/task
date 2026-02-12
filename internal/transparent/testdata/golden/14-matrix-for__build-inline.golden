@@ -28,23 +28,23 @@
 
 ── Task: build-inline
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .ITEM
-  │   Input:  debug
-  │   Expr:   echo 'Mode: {{"debug"}} for {{.PROJECT}}'
+  │   I     debug
+  │   E     echo 'Mode: {{"debug"}} for {{.PROJECT}}'
   │ Step 2: Resolve a Variable — .PROJECT
-  │   Input:  my-app
-  │   Expr:   echo 'Mode: '
+  │   I     my-app
+  │   E     echo 'Mode: '
   └─
   ┌─ Output:
   │ echo 'Mode: debug for my-app'
@@ -58,11 +58,11 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .ITEM
-  │   Input:  release
-  │   Expr:   echo 'Mode: {{"release"}} for {{.PROJECT}}'
+  │   I     release
+  │   E     echo 'Mode: {{"release"}} for {{.PROJECT}}'
   │ Step 2: Resolve a Variable — .PROJECT
-  │   Input:  my-app
-  │   Expr:   echo 'Mode: '
+  │   I     my-app
+  │   E     echo 'Mode: '
   └─
   ┌─ Output:
   │ echo 'Mode: release for my-app'

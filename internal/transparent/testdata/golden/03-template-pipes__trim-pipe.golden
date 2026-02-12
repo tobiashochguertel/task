@@ -26,24 +26,24 @@
 
 ── Task: trim-pipe
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.NAME | trim}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .NAME
-  │   Input:    world  
-  │   Expr:   echo '{{"  world  " | trim}}'
+  │   I       world  
+  │   E     echo '{{"  world  " | trim}}'
   │ Step 2: Apply a Function — trim
-  │   Input:  trim
-  │   Output: <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
-  │   Expr:   echo '<exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>'
+  │   I     trim
+  │   O     <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
+  │   E     echo '<exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'world'
@@ -57,9 +57,9 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Apply a Function — printf
-  │   Input:  printf "%s:%s" "NAME" .NAME | trim
-  │   Output: NAME:world
-  │   Expr:   echo 'NAME:world'
+  │   I     printf "%s:%s" "NAME" .NAME | trim
+  │   O     NAME:world
+  │   E     echo 'NAME:world'
   └─
   ┌─ Output:
   │ echo 'NAME:world'

@@ -26,22 +26,22 @@
 
 ── Task: build
   Variables in scope:
-  ┌──────────┬───────────┬──────────┬─────────────────┬──────────┐
-  │ Name     │ Origin    │ Type     │ Value           │ Shadows? │
-  ├──────────┼───────────┼──────────┼─────────────────┼──────────┤
-  │ MATCH    │ call-vars │ []string │ []              │          │
+  ┌──────────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name     │ Origin    │ Type     │ Value            │ Shadows? │
+  ├──────────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH    │ call-vars │ []string │ []               │          │
   │          │           │          │ ptr: <PTR> │          │
-  │ ARTIFACT │ task-vars │ string   │ myproject-2.0.0 │          │
-  │ TAG      │ task-vars │ string   │ myproject/2-0-0 │          │
-  └──────────┴───────────┴──────────┴─────────────────┴──────────┘
+  │ ARTIFACT │ task-vars │ string   │ myproject-2.0.0  │          │
+  │ TAG      │ task-vars │ string   │ myproject/2-0-0  │          │
+  └──────────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Building {{.ARTIFACT}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .ARTIFACT
-  │   Input:  myproject-2.0.0
-  │   Expr:   echo 'Building '
+  │   I     myproject-2.0.0
+  │   E     echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building myproject-2.0.0'
@@ -55,8 +55,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .TAG
-  │   Input:  myproject/2-0-0
-  │   Expr:   echo 'Tag: '
+  │   I     myproject/2-0-0
+  │   E     echo 'Tag: '
   └─
   ┌─ Output:
   │ echo 'Tag: myproject/2-0-0'
@@ -70,8 +70,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .BUILD_DATE
-  │   Input:  2026-02-11
-  │   Expr:   echo 'Date: '
+  │   I     2026-02-11
+  │   E     echo 'Date: '
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

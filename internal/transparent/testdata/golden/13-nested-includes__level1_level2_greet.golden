@@ -31,20 +31,20 @@
 
 ── Task: level1:level2:greet
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Level2: {{.LEVEL2_VAR}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .LEVEL2_VAR
-  │   Input:  from-level2
-  │   Expr:   echo 'Level2: '
+  │   I     from-level2
+  │   E     echo 'Level2: '
   └─
   ┌─ Output:
   │ echo 'Level2: from-level2'
@@ -58,8 +58,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .L1_TO_L2
-  │   Input:  from-level1-include
-  │   Expr:   echo 'L1 to L2: '
+  │   I     from-level1-include
+  │   E     echo 'L1 to L2: '
   └─
   ┌─ Output:
   │ echo 'L1 to L2: from-level1-include'
@@ -73,8 +73,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PARENT_VAR
-  │   Input:  from-root-include
-  │   Expr:   echo 'Parent: '
+  │   I     from-root-include
+  │   E     echo 'Parent: '
   └─
   ┌─ Output:
   │ echo 'Parent: from-root-include'

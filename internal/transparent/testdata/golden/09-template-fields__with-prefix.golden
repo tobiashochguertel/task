@@ -26,20 +26,20 @@
 
 ── Task: with-prefix
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — fields:
   ┌─ Input:
   │ [{{.APP_NAME}}]
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   []
+  │   I     my-app
+  │   E     []
   └─
   ┌─ Output:
   │ [my-app]

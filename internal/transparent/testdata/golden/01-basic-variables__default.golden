@@ -26,20 +26,20 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'App: {{.APP_NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   echo 'App: '
+  │   I     my-app
+  │   E     echo 'App: '
   └─
   ┌─ Output:
   │ echo 'App: my-app'
@@ -53,8 +53,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .VERSION
-  │   Input:  1.0.0
-  │   Expr:   echo 'Version: '
+  │   I     1.0.0
+  │   E     echo 'Version: '
   └─
   ┌─ Output:
   │ echo 'Version: 1.0.0'
@@ -68,8 +68,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .ENV
-  │   Input:  development
-  │   Expr:   echo 'Environment: '
+  │   I     development
+  │   E     echo 'Environment: '
   └─
   ┌─ Output:
   │ echo 'Environment: development'

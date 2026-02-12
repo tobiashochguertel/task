@@ -26,23 +26,23 @@
 
 ── Task: quote-pipe
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo {{.TITLE | quote}}
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .TITLE
-  │   Input:  hello world
-  │   Expr:   echo {{"hello world" | quote}}
+  │   I     hello world
+  │   E     echo {{"hello world" | quote}}
   │ Step 2: Apply a Function — quote
-  │   Input:  quote
-  │   Expr:   echo 
+  │   I     quote
+  │   E     echo 
   └─
   ┌─ Output:
   │ echo "hello world"
@@ -56,14 +56,14 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .NAME
-  │   Input:    world  
-  │   Expr:   echo '{{"  world  " | trim | quote}}'
+  │   I       world  
+  │   E     echo '{{"  world  " | trim | quote}}'
   │ Step 2: Apply a Function — trim
-  │   Input:  trim
-  │   Output: <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
+  │   I     trim
+  │   O     <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
   │ Step 3: Apply a Function — quote
-  │   Input:  quote
-  │   Expr:   echo ''
+  │   I     quote
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo '"world"'

@@ -30,20 +30,20 @@
 
 ── Task: sub:greet
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Included var: {{.INCLUDED_VAR}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .INCLUDED_VAR
-  │   Input:  from-included
-  │   Expr:   echo 'Included var: '
+  │   I     from-included
+  │   E     echo 'Included var: '
   └─
   ┌─ Output:
   │ echo 'Included var: from-included'
@@ -57,8 +57,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .SHARED
-  │   Input:  included-shared
-  │   Expr:   echo 'Shared: '
+  │   I     included-shared
+  │   E     echo 'Shared: '
   └─
   ┌─ Output:
   │ echo 'Shared: included-shared'
@@ -72,8 +72,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PARENT_VAR
-  │   Input:  from-parent
-  │   Expr:   echo 'Parent var: '
+  │   I     from-parent
+  │   E     echo 'Parent var: '
   └─
   ┌─ Output:
   │ echo 'Parent var: from-parent'

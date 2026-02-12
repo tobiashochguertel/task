@@ -26,22 +26,22 @@
 
 ── Task: with-task-ref
   Variables in scope:
-  ┌────────────────┬───────────┬──────────┬───────────────────┬──────────┐
-  │ Name           │ Origin    │ Type     │ Value             │ Shadows? │
-  ├────────────────┼───────────┼──────────┼───────────────────┼──────────┤
-  │ MATCH          │ call-vars │ []string │ []                │          │
-  │                │           │          │ ptr: <PTR>  │          │
-  │ LOCAL_GREETING │ task-vars │ string   │ (ref) hello-world │          │
-  │                │           │          │ → aliases: .GREETING │          │
-  └────────────────┴───────────┴──────────┴───────────────────┴──────────┘
+  ┌────────────────┬───────────┬──────────┬────────────────────────┬──────────┐
+  │ Name           │ Origin    │ Type     │ Value                  │ Shadows? │
+  ├────────────────┼───────────┼──────────┼────────────────────────┼──────────┤
+  │ MATCH          │ call-vars │ []string │ []                     │          │
+  │                │           │          │ ptr: <PTR>       │          │
+  │ LOCAL_GREETING │ task-vars │ string   │ (ref) hello-world      │          │
+  │                │           │          │ → aliases: .GREETING   │          │
+  └────────────────┴───────────┴──────────┴────────────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Local greeting: {{.LOCAL_GREETING}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .LOCAL_GREETING
-  │   Input:  hello-world
-  │   Expr:   echo 'Local greeting: '
+  │   I     hello-world
+  │   E     echo 'Local greeting: '
   └─
   ┌─ Output:
   │ echo 'Local greeting: hello-world'

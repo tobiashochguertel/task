@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 
@@ -210,6 +211,12 @@ func renderVars(w io.Writer, vars []VarTrace) {
 		if len(rd.value) > colValue {
 			colValue = len(rd.value)
 		}
+		// Include extra lines (ptr, ref alias) in value column width
+		for _, extra := range rd.extraLines {
+			if len(extra) > colValue {
+				colValue = len(extra)
+			}
+		}
 		if len(rd.origin) > colOrigin {
 			colOrigin = len(rd.origin)
 		}
@@ -236,12 +243,18 @@ func renderVars(w io.Writer, vars []VarTrace) {
 	}
 
 	row := func(name, origin, typeStr, value, shadow string) {
+		// Adjust padding widths to account for invisible ANSI escape sequences
+		padName := colName + (len(name) - visibleLen(name))
+		padOrigin := colOrigin + (len(origin) - visibleLen(origin))
+		padType := colType + (len(typeStr) - visibleLen(typeStr))
+		padValue := colValue + (len(value) - visibleLen(value))
+		padShadow := colShadow + (len(shadow) - visibleLen(shadow))
 		fmt.Fprintf(w, "  %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s\n",
-			cDim, cReset, colName, name,
-			cDim, cReset, colOrigin, origin,
-			cDim, cReset, colType, typeStr,
-			cDim, cReset, colValue, value,
-			cDim, cReset, colShadow, shadow,
+			cDim, cReset, padName, name,
+			cDim, cReset, padOrigin, origin,
+			cDim, cReset, padType, typeStr,
+			cDim, cReset, padValue, value,
+			cDim, cReset, padShadow, shadow,
 			cDim, cReset)
 	}
 
@@ -283,10 +296,47 @@ func renderBoxEnd(w io.Writer) {
 
 func renderBoxContent(w io.Writer, label string, content string) {
 	renderBoxStart(w, label)
-	for _, line := range strings.Split(content, "\n") {
+	lines := strings.Split(content, "\n")
+	// Remove trailing empty lines to avoid blank line before └─
+	for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+	for _, line := range lines {
 		renderBoxLine(w, line)
 	}
 	renderBoxEnd(w)
+}
+
+// ansiRegex matches ANSI escape sequences for stripping when computing visible width.
+var ansiRegex = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+
+// visibleLen returns the visible length of a string, excluding ANSI escape sequences.
+func visibleLen(s string) int {
+	return len(ansiRegex.ReplaceAllString(s, ""))
+}
+
+// stepFieldPad is the indentation for continuation lines in step fields,
+// matching the column where content starts after the single-char label.
+const stepFieldPad = "        " // 8 spaces: 2 indent + 1 label + 5 spacing
+
+// renderStepField renders a step field (I/O/E) with proper multiline alignment.
+// label is a single character. content may contain newlines. colorStart/colorEnd
+// wrap each content line in ANSI color codes (pass empty strings for no color).
+func renderStepField(w io.Writer, label string, content string, colorStart, colorEnd string) {
+	lines := strings.Split(content, "\n")
+	// Remove trailing empty lines
+	for len(lines) > 0 && strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+	if len(lines) == 0 {
+		return
+	}
+	// First line with label: "  I     content"
+	renderBoxLine(w, fmt.Sprintf("  %s     %s%s%s", label, colorStart, lines[0], colorEnd))
+	// Continuation lines aligned to same column
+	for _, line := range lines[1:] {
+		renderBoxLine(w, fmt.Sprintf("%s%s%s%s", stepFieldPad, colorStart, line, colorEnd))
+	}
 }
 
 // highlightErrors wraps known Go template error patterns with red ANSI codes.
@@ -328,13 +378,13 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 					opColor, ds.Operation, cReset,
 					cDim, ds.Target, cReset))
 				if ds.Input != "" {
-					renderBoxLine(w, fmt.Sprintf("  Input:  %s", ds.Input))
+					renderStepField(w, "I", ds.Input, "", "")
 				}
 				if ds.Output != "" {
-					renderBoxLine(w, fmt.Sprintf("  Output: %s%s%s", cGreen, ds.Output, cReset))
+					renderStepField(w, "O", ds.Output, cGreen, cReset)
 				}
 				if ds.Expression != "" {
-					renderBoxLine(w, fmt.Sprintf("  Expr:   %s%s%s", cDim, ds.Expression, cReset))
+					renderStepField(w, "E", ds.Expression, cDim, cReset)
 				}
 			}
 			renderBoxEnd(w)
@@ -474,6 +524,18 @@ func applyWSToTemplates(templates []TemplateTrace) []TemplateTrace {
 	for i, t := range templates {
 		tc := t
 		tc.Output = makeWhitespaceVisible(t.Output)
+		// Apply whitespace visibility to detailed steps
+		if len(tc.DetailedSteps) > 0 {
+			steps := make([]TemplateStep, len(tc.DetailedSteps))
+			for j, ds := range tc.DetailedSteps {
+				sc := ds
+				sc.Input = makeWhitespaceVisible(ds.Input)
+				sc.Output = makeWhitespaceVisible(ds.Output)
+				sc.Expression = makeWhitespaceVisible(ds.Expression)
+				steps[j] = sc
+			}
+			tc.DetailedSteps = steps
+		}
 		out[i] = tc
 	}
 	return out

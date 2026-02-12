@@ -24,20 +24,20 @@
 
 ── Task: test-all-defined
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.DEFINED}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .DEFINED
-  │   Input:  hello
-  │   Expr:   echo ''
+  │   I     hello
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo 'hello'

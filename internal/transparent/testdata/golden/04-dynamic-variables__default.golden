@@ -26,20 +26,20 @@
 
 ── Task: default
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Static: {{.STATIC_VAR}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .STATIC_VAR
-  │   Input:  static-value
-  │   Expr:   echo 'Static: '
+  │   I     static-value
+  │   E     echo 'Static: '
   └─
   ┌─ Output:
   │ echo 'Static: static-value'
@@ -53,8 +53,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .HOSTNAME
-  │   Input:  test-host
-  │   Expr:   echo 'Hostname: '
+  │   I     test-host
+  │   E     echo 'Hostname: '
   └─
   ┌─ Output:
   │ echo 'Hostname: test-host'
@@ -68,8 +68,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .DATE
-  │   Input:  2026-02-11
-  │   Expr:   echo 'Date: '
+  │   I     2026-02-11
+  │   E     echo 'Date: '
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

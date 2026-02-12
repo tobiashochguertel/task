@@ -24,23 +24,23 @@
 
 ── Task: test-undefined
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .DEFINED
-  │   Input:  hello
-  │   Expr:   echo '{{"hello"}} {{.UNDEFINED_VAR}}'
+  │   I     hello
+  │   E     echo '{{"hello"}} {{.UNDEFINED_VAR}}'
   │ Step 2: Resolve a Variable — .UNDEFINED_VAR
-  │   Input:  <nil>
-  │   Expr:   echo ''
+  │   I     <nil>
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo 'hello '

@@ -26,25 +26,25 @@
 
 ── Task: double-override
   Variables in scope:
-  ┌────────┬───────────┬──────────┬─────────────┬──────────────────────────────────────────────────┐
-  │ Name   │ Origin    │ Type     │ Value       │ Shadows?                                         │
-  ├────────┼───────────┼──────────┼─────────────┼──────────────────────────────────────────────────┤
-  │ MATCH  │ call-vars │ []string │ []          │                                                  │
+  ┌────────┬───────────┬──────────┬──────────────────┬──────────────────────────────────────────────────┐
+  │ Name   │ Origin    │ Type     │ Value            │ Shadows?                                         │
+  ├────────┼───────────┼──────────┼──────────────────┼──────────────────────────────────────────────────┤
+  │ MATCH  │ call-vars │ []string │ []               │                                                  │
   │        │           │          │ ptr: <PTR> │                                                  │
-  │ NAME   │ task-vars │ string   │ double-task │ ⚠ SHADOWS NAME="global-value" [taskfile-vars]    │
-  │ SHARED │ task-vars │ string   │ from-task   │ ⚠ SHADOWS SHARED="from-global" [taskfile-vars]   │
-  └────────┴───────────┴──────────┴─────────────┴──────────────────────────────────────────────────┘
+  │ NAME   │ task-vars │ string   │ double-task      │ ⚠ SHADOWS NAME="global-value" [taskfile-vars]    │
+  │ SHARED │ task-vars │ string   │ from-task        │ ⚠ SHADOWS SHARED="from-global" [taskfile-vars]   │
+  └────────┴───────────┴──────────┴──────────────────┴──────────────────────────────────────────────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .GREETING
-  │   Input:  Hello
-  │   Expr:   echo '{{"Hello"}} {{.NAME}}'
+  │   I     Hello
+  │   E     echo '{{"Hello"}} {{.NAME}}'
   │ Step 2: Resolve a Variable — .NAME
-  │   Input:  double-task
-  │   Expr:   echo ''
+  │   I     double-task
+  │   E     echo ''
   └─
   ┌─ Output:
   │ echo 'Hello double-task'
@@ -58,8 +58,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .SHARED
-  │   Input:  from-task
-  │   Expr:   echo 'SHARED = '
+  │   I     from-task
+  │   E     echo 'SHARED = '
   └─
   ┌─ Output:
   │ echo 'SHARED = from-task'

@@ -26,39 +26,34 @@
 
 ── Task: with-summary
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — fields:
   ┌─ Input:
   │ Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.
   │ This task handles the full deployment pipeline.
-  │ 
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   Deploy {{"my-app"}} version {{.VERSION}} to {{.ENV}}.
-This task handles the full deployment pipeline.
-
+  │   I     my-app
+  │   E     Deploy {{"my-app"}} version {{.VERSION}} to {{.ENV}}.
+  │         This task handles the full deployment pipeline.
   │ Step 2: Resolve a Variable — .VERSION
-  │   Input:  2.0.0
-  │   Expr:   Deploy {{"my-app"}} version {{"2.0.0"}} to {{.ENV}}.
-This task handles the full deployment pipeline.
-
+  │   I     2.0.0
+  │   E     Deploy {{"my-app"}} version {{"2.0.0"}} to {{.ENV}}.
+  │         This task handles the full deployment pipeline.
   │ Step 3: Resolve a Variable — .ENV
-  │   Input:  production
-  │   Expr:   Deploy .
-This task handles the full deployment pipeline.
-
+  │   I     production
+  │   E     Deploy .
+  │         This task handles the full deployment pipeline.
   └─
   ┌─ Output:
   │ Deploy my-app version 2.0.0 to production.
   │ This task handles the full deployment pipeline.
-  │ 
   └─
   ┌─ Vars used:
   │ APP_NAME, VERSION, ENV
@@ -69,14 +64,14 @@ This task handles the full deployment pipeline.
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   echo 'Deploying {{"my-app"}} v{{.VERSION}} to {{.ENV}}'
+  │   I     my-app
+  │   E     echo 'Deploying {{"my-app"}} v{{.VERSION}} to {{.ENV}}'
   │ Step 2: Resolve a Variable — .VERSION
-  │   Input:  2.0.0
-  │   Expr:   echo 'Deploying {{"my-app"}} v{{"2.0.0"}} to {{.ENV}}'
+  │   I     2.0.0
+  │   E     echo 'Deploying {{"my-app"}} v{{"2.0.0"}} to {{.ENV}}'
   │ Step 3: Resolve a Variable — .ENV
-  │   Input:  production
-  │   Expr:   echo 'Deploying '
+  │   I     production
+  │   E     echo 'Deploying '
   └─
   ┌─ Output:
   │ echo 'Deploying my-app v2.0.0 to production'

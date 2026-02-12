@@ -39,11 +39,11 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PROJECT
-  │   Input:  myproject
-  │   Expr:   echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │   I     myproject
+  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
   │ Step 2: Resolve a Variable — .ITEM
-  │   Input:  linux
-  │   Expr:   echo 'Building '
+  │   I     linux
+  │   E     echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building myproject for linux'
@@ -57,11 +57,11 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PROJECT
-  │   Input:  myproject
-  │   Expr:   echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │   I     myproject
+  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
   │ Step 2: Resolve a Variable — .ITEM
-  │   Input:  darwin
-  │   Expr:   echo 'Building '
+  │   I     darwin
+  │   E     echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building myproject for darwin'
@@ -75,11 +75,11 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PROJECT
-  │   Input:  myproject
-  │   Expr:   echo 'Building {{"myproject"}} for {{.ITEM}}'
+  │   I     myproject
+  │   E     echo 'Building {{"myproject"}} for {{.ITEM}}'
   │ Step 2: Resolve a Variable — .ITEM
-  │   Input:  windows
-  │   Expr:   echo 'Building '
+  │   I     windows
+  │   E     echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building myproject for windows'

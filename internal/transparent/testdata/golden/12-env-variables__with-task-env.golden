@@ -27,20 +27,20 @@
 
 ── Task: with-task-env
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Task env: {{.APP_ENV}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_ENV
-  │   Input:  production
-  │   Expr:   echo 'Task env: '
+  │   I     production
+  │   E     echo 'Task env: '
   └─
   ┌─ Output:
   │ echo 'Task env: production'

@@ -26,24 +26,24 @@
 
 ── Task: deploy
   Variables in scope:
-  ┌────────┬───────────┬──────────┬────────────┬──────────┐
-  │ Name   │ Origin    │ Type     │ Value      │ Shadows? │
-  ├────────┼───────────┼──────────┼────────────┼──────────┤
-  │ MATCH  │ call-vars │ []string │ []         │          │
+  ┌────────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name   │ Origin    │ Type     │ Value            │ Shadows? │
+  ├────────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH  │ call-vars │ []string │ []               │          │
   │        │           │          │ ptr: <PTR> │          │
-  │ TARGET │ task-vars │ string   │ production │          │
-  └────────┴───────────┴──────────┴────────────┴──────────┘
+  │ TARGET │ task-vars │ string   │ production       │          │
+  └────────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .PROJECT
-  │   Input:  myproject
-  │   Expr:   echo 'Deploying {{"myproject"}} to {{.TARGET}}'
+  │   I     myproject
+  │   E     echo 'Deploying {{"myproject"}} to {{.TARGET}}'
   │ Step 2: Resolve a Variable — .TARGET
-  │   Input:  production
-  │   Expr:   echo 'Deploying '
+  │   I     production
+  │   E     echo 'Deploying '
   └─
   ┌─ Output:
   │ echo 'Deploying myproject to production'

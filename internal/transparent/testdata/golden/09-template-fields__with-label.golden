@@ -26,23 +26,23 @@
 
 ── Task: with-label
   Variables in scope:
-  ┌───────┬───────────┬──────────┬───────┬──────────┐
-  │ Name  │ Origin    │ Type     │ Value │ Shadows? │
-  ├───────┼───────────┼──────────┼───────┼──────────┤
-  │ MATCH │ call-vars │ []string │ []    │          │
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
-  └───────┴───────────┴──────────┴───────┴──────────┘
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — fields:
   ┌─ Input:
   │ build-{{.APP_NAME}}-{{.VERSION}}
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   build-{{"my-app"}}-{{.VERSION}}
+  │   I     my-app
+  │   E     build-{{"my-app"}}-{{.VERSION}}
   │ Step 2: Resolve a Variable — .VERSION
-  │   Input:  2.0.0
-  │   Expr:   build-
+  │   I     2.0.0
+  │   E     build-
   └─
   ┌─ Output:
   │ build-my-app-2.0.0
@@ -56,8 +56,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   Build 
+  │   I     my-app
+  │   E     Build 
   └─
   ┌─ Output:
   │ Build my-app
@@ -71,8 +71,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .APP_NAME
-  │   Input:  my-app
-  │   Expr:   echo 'Building '
+  │   I     my-app
+  │   E     echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building my-app'

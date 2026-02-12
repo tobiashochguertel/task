@@ -26,22 +26,22 @@
 
 ── Task: with-task-vars
   Variables in scope:
-  ┌───────────┬───────────┬──────────┬──────────────┬──────────┐
-  │ Name      │ Origin    │ Type     │ Value        │ Shadows? │
-  ├───────────┼───────────┼──────────┼──────────────┼──────────┤
-  │ MATCH     │ call-vars │ []string │ []           │          │
+  ┌───────────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name      │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH     │ call-vars │ []string │ []               │          │
   │           │           │          │ ptr: <PTR> │          │
-  │ BUILD_DIR │ task-vars │ string   │ ./build      │          │
-  │ OUTPUT    │ task-vars │ string   │ my-app-1.0.0 │          │
-  └───────────┴───────────┴──────────┴──────────────┴──────────┘
+  │ BUILD_DIR │ task-vars │ string   │ ./build          │          │
+  │ OUTPUT    │ task-vars │ string   │ my-app-1.0.0     │          │
+  └───────────┴───────────┴──────────┴──────────────────┴──────────┘
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Output: {{.OUTPUT}}'
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .OUTPUT
-  │   Input:  my-app-1.0.0
-  │   Expr:   echo 'Output: '
+  │   I     my-app-1.0.0
+  │   E     echo 'Output: '
   └─
   ┌─ Output:
   │ echo 'Output: my-app-1.0.0'
@@ -55,8 +55,8 @@
   └─
   ┌─ Evaluation Steps:
   │ Step 1: Resolve a Variable — .BUILD_DIR
-  │   Input:  ./build
-  │   Expr:   echo 'Build dir: '
+  │   I     ./build
+  │   E     echo 'Build dir: '
   └─
   ┌─ Output:
   │ echo 'Build dir: ./build'
