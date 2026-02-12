@@ -79,6 +79,21 @@ tasks:
       - cmd: "{{.DEV_INSTALL_DIR}}/{{.DEV_BIN_NAME}} --version"
         silent: true
 
+  dev:verify:
+    desc: Builds the dev binary and runs the transparent mode test suite
+    aliases: [dv]
+    cmds:
+      - task: install:dev:local
+      - task: test:transparent
+
+  test:transparent:
+    desc: Runs only the transparent mode tests
+    aliases: [tt]
+    deps: [gotestsum:install]
+    cmds:
+      - go build -o {{.BIN}}/task ./cmd/task
+      - gotestsum -f '{{.GOTESTSUM_FORMAT}}' ./internal/transparent/ ./internal/templater/
+
   generate:
     aliases: [gen, g]
     desc: Runs all generate tasks
