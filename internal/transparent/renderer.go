@@ -20,14 +20,13 @@ const (
 	ansiYellow = "\033[33m"
 	ansiBlue   = "\033[34m"
 	ansiCyan   = "\033[36m"
-	ansiWhite  = "\033[37m"
 )
 
 // Active color codes (resolved once at first render)
 var (
 	cReset, cBold, cDim   string
 	cRed, cGreen, cYellow string
-	cBlue, cCyan, cWhite  string
+	cBlue, cCyan          string
 	colorOnce             sync.Once
 )
 
@@ -44,7 +43,6 @@ func resolveColors() {
 		cYellow = ansiYellow
 		cBlue = ansiBlue
 		cCyan = ansiCyan
-		cWhite = ansiWhite
 	})
 }
 
@@ -421,13 +419,6 @@ func originLabel(o VarOrigin) string {
 	default:
 		return "unknown"
 	}
-}
-
-func truncate(s string, max int) string {
-	if len(s) <= max {
-		return s
-	}
-	return s[:max-3] + "..."
 }
 
 // makeWhitespaceVisible replaces spaces with · and tabs with → to make

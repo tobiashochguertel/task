@@ -8,10 +8,10 @@ import (
 
 // jsonReport mirrors TraceReport with JSON-friendly struct tags.
 type jsonReport struct {
-	Version            string          `json:"version"`
-	WhitespaceVisible  bool            `json:"whitespace_visible,omitempty"`
-	GlobalVars         []jsonVarTrace  `json:"global_vars,omitempty"`
-	Tasks              []jsonTaskTrace `json:"tasks"`
+	Version           string          `json:"version"`
+	WhitespaceVisible bool            `json:"whitespace_visible,omitempty"`
+	GlobalVars        []jsonVarTrace  `json:"global_vars,omitempty"`
+	Tasks             []jsonTaskTrace `json:"tasks"`
 }
 
 type jsonTaskTrace struct {
@@ -129,14 +129,7 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 				jtt.Steps = append(jtt.Steps, jsonPipeStep(step))
 			}
 			for _, ds := range tmpl.DetailedSteps {
-				jtt.DetailedSteps = append(jtt.DetailedSteps, jsonTemplateStep{
-					StepNum:    ds.StepNum,
-					Operation:  ds.Operation,
-					Target:     ds.Target,
-					Input:      ds.Input,
-					Output:     ds.Output,
-					Expression: ds.Expression,
-				})
+				jtt.DetailedSteps = append(jtt.DetailedSteps, jsonTemplateStep(ds))
 			}
 			jt.Templates = append(jt.Templates, jtt)
 		}
