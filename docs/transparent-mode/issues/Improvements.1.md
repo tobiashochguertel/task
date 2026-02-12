@@ -293,7 +293,7 @@ We can improve the output to show it like this:
     {{printf "%s : %s" .GREETING (.NAME | trim)}}
 ```
 
-see `## Human-Readable Output Example` in `/Users/tobiashochgurtel/work-dev/my-projects/task/docs/transparent-mode/05-OUTPUT-FORMAT.md` for more details.
+see `## Human-Readable Output Example` in `/Users/tobiashochgurtel/work-dev/my-projects/task/docs/transparent-mode/specs/05-OUTPUT-FORMAT.md` for more details.
 
 1. In the `Template Evaluation` section, we should show the steps of the template evaluation, like in the example:
 
@@ -404,7 +404,7 @@ Example:
 
 The template evaluation shows how the template is evaluated step by step, with the input, the operation, the output, and the final command that gets executed.
 
-see `## Human-Readable Output Example` in `/Users/tobiashochgurtel/work-dev/my-projects/task/docs/transparent-mode/05-OUTPUT-FORMAT.md` for more details.
+see `## Human-Readable Output Example` in `/Users/tobiashochgurtel/work-dev/my-projects/task/docs/transparent-mode/specs/05-OUTPUT-FORMAT.md` for more details.
 
 **Showing Errors**
 
