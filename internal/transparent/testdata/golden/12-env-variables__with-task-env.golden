@@ -5,24 +5,24 @@
 
 ── Global Variables
   Variables in scope:
-  ┌──────────────────┬───────────────┬────────┬─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┐
-  │ Name             │ Origin        │ Type   │ Value                                                                                                                       │ Shadows?                                     │
-  ├──────────────────┼───────────────┼────────┼─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────┤
-  │ ALIAS            │ special       │ string │ with-task-env                                                                                                               │                                              │
+  ┌──────────────────┬───────────────┬────────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┐
+  │ Name             │ Origin        │ Type   │ Value                                                                                                          │ Shadows?                                     │
+  ├──────────────────┼───────────────┼────────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼──────────────────────────────────────────────┤
+  │ ALIAS            │ special       │ string │ with-task-env                                                                                                  │                                              │
   │ ROOT_DIR         │ special       │ string │ <PATH>              │                                              │
   │ ROOT_TASKFILE    │ special       │ string │ <PATH> │                                              │
-  │ TASK             │ special       │ string │ with-task-env                                                                                                               │                                              │
+  │ TASK             │ special       │ string │ with-task-env                                                                                                  │                                              │
   │ TASKFILE         │ special       │ string │ <PATH> │                                              │
   │ TASKFILE_DIR     │ special       │ string │ <PATH>              │                                              │
   │ TASK_DIR         │ special       │ string │ <PATH>              │                                              │
   │ TASK_EXE         │ special       │ string │ <PATH>                                                     │                                              │
-  │ TASK_VERSION     │ special       │ string │ <TASK_VERSION>                                                                                                                      │                                              │
+  │ TASK_VERSION     │ special       │ string │ <TASK_VERSION>                                                                                                         │                                              │
   │ USER_WORKING_DIR │ special       │ string │ <PATH>                                         │                                              │
-  │ APP_ENV          │ taskfile-env  │ string │ staging                                                                                                                     │                                              │
-  │ LOG_LEVEL        │ taskfile-env  │ string │ info                                                                                                                        │                                              │
-  │ APP_ENV          │ taskfile-vars │ string │ production                                                                                                                  │ ⚠ SHADOWS APP_ENV="staging" [taskfile-env]   │
-  │ APP_NAME         │ taskfile-vars │ string │ my-app                                                                                                                      │                                              │
-  └──────────────────┴───────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────┘
+  │ APP_ENV          │ taskfile-env  │ string │ staging                                                                                                        │                                              │
+  │ LOG_LEVEL        │ taskfile-env  │ string │ info                                                                                                           │                                              │
+  │ APP_ENV          │ taskfile-vars │ string │ production                                                                                                     │ ⚠ SHADOWS APP_ENV="staging" [taskfile-env]   │
+  │ APP_NAME         │ taskfile-vars │ string │ my-app                                                                                                         │                                              │
+  └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────┘
   (7 environment variables hidden — use -v to show)
 
 ── Task: with-task-env
