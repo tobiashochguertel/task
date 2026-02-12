@@ -47,6 +47,21 @@
   ┌─ Input:
   │ echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PROJECT
+  │   Input:  myproject
+  │   Expr:   echo '{{printf "%s v%s built %s" "myproject" .VERSION .BUILD_DATE}}'
+  │ Step 2: Resolve a Variable — .VERSION
+  │   Input:  2.0.0
+  │   Expr:   echo '{{printf "%s v%s built %s" "myproject" "2.0.0" .BUILD_DATE}}'
+  │ Step 3: Resolve a Variable — .BUILD_DATE
+  │   Input:  2026-02-11
+  │   Expr:   echo '{{printf "%s v%s built %s" "myproject" "2.0.0" "2026-02-11"}}'
+  │ Step 4: Apply a Function — printf
+  │   Input:  printf "%s v%s built %s" myproject 2.0.0 2026-02-11
+  │   Output: myproject v2.0.0 built 2026-02-11
+  │   Expr:   echo 'myproject v2.0.0 built 2026-02-11'
+  └─
   ┌─ Output:
   │ echo 'myproject v2.0.0 built 2026-02-11'
   └─

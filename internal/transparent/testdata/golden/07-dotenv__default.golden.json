@@ -235,6 +235,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'DB Host: '",
+              "input": "localhost",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".DB_HOST"
+            }
+          ],
           "input": "echo 'DB Host: {{.DB_HOST}}'",
           "output": "echo 'DB Host: localhost'",
           "vars_used": [
@@ -243,6 +252,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'DB Port: '",
+              "input": "5432",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".DB_PORT"
+            }
+          ],
           "input": "echo 'DB Port: {{.DB_PORT}}'",
           "output": "echo 'DB Port: 5432'",
           "vars_used": [
@@ -251,6 +269,15 @@
         },
         {
           "context": "cmds[2]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'App: '",
+              "input": "my-dotenv-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "echo 'App: {{.APP_NAME}}'",
           "output": "echo 'App: my-dotenv-app'",
           "vars_used": [

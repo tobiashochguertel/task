@@ -36,6 +36,15 @@
   ┌─ Input:
   │ echo '{{printf "%s : %s" "NAME" .NAME}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .NAME
+  │   Input:    world  
+  │   Expr:   echo '{{printf "%s : %s" "NAME" "  world  "}}'
+  │ Step 2: Apply a Function — printf
+  │   Input:  printf "%s : %s" "NAME"   world  
+  │   Output: NAME :   world  
+  │   Expr:   echo 'NAME :   world  '
+  └─
   ┌─ Output:
   │ echo 'NAME :   world  '
   └─

@@ -97,6 +97,22 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo '{{\"Hello\"}} {{.NAME}}'",
+              "input": "Hello",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".GREETING"
+            },
+            {
+              "expression": "echo ''",
+              "input": "double-task",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".NAME"
+            }
+          ],
           "input": "echo '{{.GREETING}} {{.NAME}}'",
           "output": "echo 'Hello double-task'",
           "vars_used": [
@@ -106,6 +122,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'SHARED = '",
+              "input": "from-task",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".SHARED"
+            }
+          ],
           "input": "echo 'SHARED = {{.SHARED}}'",
           "output": "echo 'SHARED = from-task'",
           "vars_used": [

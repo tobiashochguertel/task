@@ -114,6 +114,22 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".PROJECT"
+            },
+            {
+              "expression": "echo 'Building '",
+              "input": "linux",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".ITEM"
+            }
+          ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
           "output": "echo 'Building my-app for linux'",
           "vars_used": [
@@ -123,6 +139,22 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".PROJECT"
+            },
+            {
+              "expression": "echo 'Building '",
+              "input": "darwin",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".ITEM"
+            }
+          ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
           "output": "echo 'Building my-app for darwin'",
           "vars_used": [
@@ -132,6 +164,22 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building {{\"my-app\"}} for {{.ITEM}}'",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".PROJECT"
+            },
+            {
+              "expression": "echo 'Building '",
+              "input": "windows",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".ITEM"
+            }
+          ],
           "input": "echo 'Building {{.PROJECT}} for {{.ITEM}}'",
           "output": "echo 'Building my-app for windows'",
           "vars_used": [

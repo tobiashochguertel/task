@@ -49,6 +49,11 @@
   ┌─ Input:
   │ echo 'DB Host: {{.DB_HOST}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .DB_HOST
+  │   Input:  localhost
+  │   Expr:   echo 'DB Host: '
+  └─
   ┌─ Output:
   │ echo 'DB Host: localhost'
   └─
@@ -59,6 +64,11 @@
   ┌─ Input:
   │ echo 'DB Port: {{.DB_PORT}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .DB_PORT
+  │   Input:  5432
+  │   Expr:   echo 'DB Port: '
+  └─
   ┌─ Output:
   │ echo 'DB Port: 5432'
   └─
@@ -68,6 +78,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-dotenv-app
+  │   Expr:   echo 'App: '
   └─
   ┌─ Output:
   │ echo 'App: my-dotenv-app'

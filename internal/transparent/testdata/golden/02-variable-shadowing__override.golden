@@ -37,6 +37,14 @@
   ┌─ Input:
   │ echo '{{.GREETING}} {{.NAME}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .GREETING
+  │   Input:  Hello
+  │   Expr:   echo '{{"Hello"}} {{.NAME}}'
+  │ Step 2: Resolve a Variable — .NAME
+  │   Input:  task-override
+  │   Expr:   echo ''
+  └─
   ┌─ Output:
   │ echo 'Hello task-override'
   └─
@@ -46,6 +54,11 @@
   Template Evaluation — cmds[1]:
   ┌─ Input:
   │ echo 'SHARED = {{.SHARED}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .SHARED
+  │   Input:  from-global
+  │   Expr:   echo 'SHARED = '
   └─
   ┌─ Output:
   │ echo 'SHARED = from-global'

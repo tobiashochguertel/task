@@ -86,6 +86,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Version  validated'",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".VERSION"
+            }
+          ],
           "input": "echo 'Version {{.VERSION}} validated'",
           "output": "echo 'Version 1.0.0 validated'",
           "vars_used": [
@@ -94,6 +103,15 @@
         },
         {
           "context": "preconditions",
+          "detailed_steps": [
+            {
+              "expression": "test '' != ''",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".VERSION"
+            }
+          ],
           "input": "test '{{.VERSION}}' != ''",
           "output": "test '1.0.0' != ''",
           "vars_used": [
@@ -102,6 +120,15 @@
         },
         {
           "context": "preconditions",
+          "detailed_steps": [
+            {
+              "expression": "VERSION must not be empty (got: '')",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".VERSION"
+            }
+          ],
           "input": "VERSION must not be empty (got: '{{.VERSION}}')",
           "output": "VERSION must not be empty (got: '1.0.0')",
           "vars_used": [

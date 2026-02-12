@@ -50,6 +50,11 @@
   ┌─ Input:
   │ echo 'Connection: {{.CONNECTION}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .CONNECTION
+  │   Input:  localhost:5432/mydb
+  │   Expr:   echo 'Connection: '
+  └─
   ┌─ Output:
   │ echo 'Connection: localhost:5432/mydb'
   └─

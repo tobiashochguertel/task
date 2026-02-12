@@ -36,6 +36,14 @@
   ┌─ Input:
   │ build-{{.APP_NAME}}-{{.VERSION}}
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   build-{{"my-app"}}-{{.VERSION}}
+  │ Step 2: Resolve a Variable — .VERSION
+  │   Input:  2.0.0
+  │   Expr:   build-
+  └─
   ┌─ Output:
   │ build-my-app-2.0.0
   └─
@@ -46,6 +54,11 @@
   ┌─ Input:
   │ Build {{.APP_NAME}}
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   Build 
+  └─
   ┌─ Output:
   │ Build my-app
   └─
@@ -55,6 +68,11 @@
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Building {{.APP_NAME}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building my-app'

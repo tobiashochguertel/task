@@ -36,6 +36,11 @@
   ┌─ Input:
   │ echo 'App: {{.APP_NAME}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   echo 'App: '
+  └─
   ┌─ Output:
   │ echo 'App: my-app'
   └─
@@ -46,6 +51,11 @@
   ┌─ Input:
   │ echo 'Version: {{.VERSION}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   echo 'Version: '
+  └─
   ┌─ Output:
   │ echo 'Version: 1.0.0'
   └─
@@ -55,6 +65,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'Environment: {{.ENV}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .ENV
+  │   Input:  development
+  │   Expr:   echo 'Environment: '
   └─
   ┌─ Output:
   │ echo 'Environment: development'

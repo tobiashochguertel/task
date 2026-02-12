@@ -80,6 +80,22 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo '{{\"hello\"}} {{.UNDEFINED_VAR}}'",
+              "input": "hello",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".DEFINED"
+            },
+            {
+              "expression": "echo ''",
+              "input": "<nil>",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".UNDEFINED_VAR"
+            }
+          ],
           "error": "warning: template produced <no value> for one or more variables (replaced with empty string)",
           "input": "echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'",
           "output": "echo 'hello '",

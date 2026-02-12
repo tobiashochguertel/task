@@ -38,6 +38,11 @@
   ┌─ Input:
   │ echo 'Local greeting: {{.LOCAL_GREETING}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .LOCAL_GREETING
+  │   Input:  hello-world
+  │   Expr:   echo 'Local greeting: '
+  └─
   ┌─ Output:
   │ echo 'Local greeting: hello-world'
   └─

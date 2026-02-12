@@ -136,6 +136,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Level1: '",
+              "input": "from-level1",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".LEVEL1_VAR"
+            }
+          ],
           "input": "echo 'Level1: {{.LEVEL1_VAR}}'",
           "output": "echo 'Level1: from-level1'",
           "vars_used": [
@@ -144,6 +153,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Parent: '",
+              "input": "from-root-include",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".PARENT_VAR"
+            }
+          ],
           "input": "echo 'Parent: {{.PARENT_VAR}}'",
           "output": "echo 'Parent: from-root-include'",
           "vars_used": [

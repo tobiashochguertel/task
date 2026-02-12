@@ -97,6 +97,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Output: '",
+              "input": "my-app-1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".OUTPUT"
+            }
+          ],
           "input": "echo 'Output: {{.OUTPUT}}'",
           "output": "echo 'Output: my-app-1.0.0'",
           "vars_used": [
@@ -105,6 +114,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Build dir: '",
+              "input": "./build",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".BUILD_DIR"
+            }
+          ],
           "input": "echo 'Build dir: {{.BUILD_DIR}}'",
           "output": "echo 'Build dir: ./build'",
           "vars_used": [

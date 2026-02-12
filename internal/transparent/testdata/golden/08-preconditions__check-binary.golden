@@ -35,6 +35,11 @@
   ┌─ Input:
   │ echo '{{.APP_NAME}} is ready'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   echo ' is ready'
+  └─
   ┌─ Output:
   │ echo 'my-app is ready'
   └─

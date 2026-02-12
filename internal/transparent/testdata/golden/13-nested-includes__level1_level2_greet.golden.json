@@ -147,6 +147,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Level2: '",
+              "input": "from-level2",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".LEVEL2_VAR"
+            }
+          ],
           "input": "echo 'Level2: {{.LEVEL2_VAR}}'",
           "output": "echo 'Level2: from-level2'",
           "vars_used": [
@@ -155,6 +164,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'L1 to L2: '",
+              "input": "from-level1-include",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".L1_TO_L2"
+            }
+          ],
           "input": "echo 'L1 to L2: {{.L1_TO_L2}}'",
           "output": "echo 'L1 to L2: from-level1-include'",
           "vars_used": [
@@ -163,6 +181,15 @@
         },
         {
           "context": "cmds[2]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Parent: '",
+              "input": "from-root-include",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".PARENT_VAR"
+            }
+          ],
           "input": "echo 'Parent: {{.PARENT_VAR}}'",
           "output": "echo 'Parent: from-root-include'",
           "vars_used": [

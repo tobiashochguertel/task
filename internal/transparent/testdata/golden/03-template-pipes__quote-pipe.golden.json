@@ -97,6 +97,22 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo {{\"hello world\" | quote}}",
+              "input": "hello world",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".TITLE"
+            },
+            {
+              "expression": "echo ",
+              "input": "quote",
+              "operation": "Apply a Function",
+              "step": 2,
+              "target": "quote"
+            }
+          ],
           "input": "echo {{.TITLE | quote}}",
           "output": "echo \"hello world\"",
           "pipe_steps": [
@@ -115,6 +131,29 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo '{{\"  world  \" | trim | quote}}'",
+              "input": "  world  ",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".NAME"
+            },
+            {
+              "input": "trim",
+              "operation": "Apply a Function",
+              "output": "<exec error: template: :1:2: executing \"\" at <trim>: wrong number of args for trim: want 1 got 0>",
+              "step": 2,
+              "target": "trim"
+            },
+            {
+              "expression": "echo ''",
+              "input": "quote",
+              "operation": "Apply a Function",
+              "step": 3,
+              "target": "quote"
+            }
+          ],
           "input": "echo '{{.NAME | trim | quote}}'",
           "output": "echo '\"world\"'",
           "pipe_steps": [

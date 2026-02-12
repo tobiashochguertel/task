@@ -106,6 +106,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Static: '",
+              "input": "static-value",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".STATIC_VAR"
+            }
+          ],
           "input": "echo 'Static: {{.STATIC_VAR}}'",
           "output": "echo 'Static: static-value'",
           "vars_used": [
@@ -114,6 +123,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Hostname: '",
+              "input": "test-host",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".HOSTNAME"
+            }
+          ],
           "input": "echo 'Hostname: {{.HOSTNAME}}'",
           "output": "echo 'Hostname: test-host'",
           "vars_used": [
@@ -122,6 +140,15 @@
         },
         {
           "context": "cmds[2]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Date: '",
+              "input": "2026-02-11",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".DATE"
+            }
+          ],
           "input": "echo 'Date: {{.DATE}}'",
           "output": "echo 'Date: 2026-02-11'",
           "vars_used": [

@@ -153,6 +153,99 @@ func lookupField(data map[string]any, ident []string) any {
 	return cur
 }
 
+// AnalyzeDetailedSteps produces fine-grained step-by-step evaluation traces
+// for a template expression. Each step shows either a variable resolution
+// or a function application, with the evolving expression state.
+func AnalyzeDetailedSteps(input string, data map[string]any, funcs template.FuncMap) []TemplateStep {
+	tpl, err := template.New("").Funcs(funcs).Parse(input)
+	if err != nil {
+		return nil
+	}
+	root := tpl.Root
+	if root == nil {
+		return nil
+	}
+
+	var steps []TemplateStep
+	stepNum := 0
+	expr := input // evolving expression
+
+	for _, node := range root.Nodes {
+		action, ok := node.(*parse.ActionNode)
+		if !ok || action.Pipe == nil {
+			continue
+		}
+
+		// Process each command in the pipe
+		for _, cmd := range action.Pipe.Cmds {
+			if len(cmd.Args) == 0 {
+				continue
+			}
+
+			// Check for variable/field references in arguments
+			for _, arg := range cmd.Args {
+				switch v := arg.(type) {
+				case *parse.FieldNode:
+					// Variable resolution: .VARNAME
+					varName := "." + strings.Join(v.Ident, ".")
+					val := lookupField(data, v.Ident)
+					valStr := fmt.Sprintf("%v", val)
+					stepNum++
+
+					// Build expression with variable substituted
+					newExpr := strings.Replace(expr, varName, fmt.Sprintf("%q", valStr), 1)
+
+					steps = append(steps, TemplateStep{
+						StepNum:    stepNum,
+						Operation:  "Resolve a Variable",
+						Target:     varName,
+						Input:      valStr,
+						Output:     "",
+						Expression: newExpr,
+					})
+					expr = newExpr
+				}
+			}
+
+			// Check if this is a function call
+			funcName := nodeString(cmd.Args[0])
+			if _, isField := cmd.Args[0].(*parse.FieldNode); !isField {
+				if _, isIdent := cmd.Args[0].(*parse.IdentifierNode); isIdent {
+					// Function application
+					// Evaluate partial to get intermediate output
+					partial := "{{" + cmd.String() + "}}"
+					output := evalPartial(partial, data, funcs)
+
+					// Build input description
+					var inputParts []string
+					inputParts = append(inputParts, funcName)
+					for _, a := range cmd.Args[1:] {
+						inputParts = append(inputParts, resolveNodeValue(a, data))
+					}
+					inputStr := strings.Join(inputParts, " ")
+
+					stepNum++
+					steps = append(steps, TemplateStep{
+						StepNum:   stepNum,
+						Operation: "Apply a Function",
+						Target:    funcName,
+						Input:     inputStr,
+						Output:    output,
+					})
+				}
+			}
+		}
+	}
+
+	// Set the final expression on the last step
+	if len(steps) > 0 {
+		steps[len(steps)-1].Expression = input[:strings.Index(input, "{{")] + steps[len(steps)-1].Output +
+			input[strings.LastIndex(input, "}}")+2:]
+	}
+
+	return steps
+}
+
 // multiArgFuncs lists template functions that accept multiple positional
 // arguments. When these appear as the first command in a pipe followed by
 // more pipe stages, the evaluation order may surprise users.

@@ -34,6 +34,11 @@
   ┌─ Input:
   │ echo '{{.DEFINED}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .DEFINED
+  │   Input:  hello
+  │   Expr:   echo ''
+  └─
   ┌─ Output:
   │ echo 'hello'
   └─

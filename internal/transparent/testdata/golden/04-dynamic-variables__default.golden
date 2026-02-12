@@ -36,6 +36,11 @@
   ┌─ Input:
   │ echo 'Static: {{.STATIC_VAR}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .STATIC_VAR
+  │   Input:  static-value
+  │   Expr:   echo 'Static: '
+  └─
   ┌─ Output:
   │ echo 'Static: static-value'
   └─
@@ -46,6 +51,11 @@
   ┌─ Input:
   │ echo 'Hostname: {{.HOSTNAME}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .HOSTNAME
+  │   Input:  test-host
+  │   Expr:   echo 'Hostname: '
+  └─
   ┌─ Output:
   │ echo 'Hostname: test-host'
   └─
@@ -55,6 +65,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'Date: {{.DATE}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .DATE
+  │   Input:  2026-02-11
+  │   Expr:   echo 'Date: '
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

@@ -108,6 +108,22 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Mode: {{\"debug\"}} for {{.PROJECT}}'",
+              "input": "debug",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".ITEM"
+            },
+            {
+              "expression": "echo 'Mode: '",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".PROJECT"
+            }
+          ],
           "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
           "output": "echo 'Mode: debug for my-app'",
           "vars_used": [
@@ -117,6 +133,22 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Mode: {{\"release\"}} for {{.PROJECT}}'",
+              "input": "release",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".ITEM"
+            },
+            {
+              "expression": "echo 'Mode: '",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".PROJECT"
+            }
+          ],
           "input": "echo 'Mode: {{.ITEM}} for {{.PROJECT}}'",
           "output": "echo 'Mode: release for my-app'",
           "vars_used": [

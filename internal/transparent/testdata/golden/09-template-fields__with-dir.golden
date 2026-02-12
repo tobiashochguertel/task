@@ -36,6 +36,11 @@
   ┌─ Input:
   │ <PATH>
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   /tmp/
+  └─
   ┌─ Output:
   │ <PATH>
   └─
@@ -45,6 +50,11 @@
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Working in {{.APP_NAME}} directory'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   echo 'Working in  directory'
   └─
   ┌─ Output:
   │ echo 'Working in my-app directory'

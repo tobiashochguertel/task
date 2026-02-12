@@ -40,6 +40,11 @@
   ┌─ Input:
   │ echo 'Included var: {{.INCLUDED_VAR}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .INCLUDED_VAR
+  │   Input:  from-included
+  │   Expr:   echo 'Included var: '
+  └─
   ┌─ Output:
   │ echo 'Included var: from-included'
   └─
@@ -50,6 +55,11 @@
   ┌─ Input:
   │ echo 'Shared: {{.SHARED}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .SHARED
+  │   Input:  included-shared
+  │   Expr:   echo 'Shared: '
+  └─
   ┌─ Output:
   │ echo 'Shared: included-shared'
   └─
@@ -59,6 +69,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'Parent var: {{.PARENT_VAR}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PARENT_VAR
+  │   Input:  from-parent
+  │   Expr:   echo 'Parent var: '
   └─
   ┌─ Output:
   │ echo 'Parent var: from-parent'

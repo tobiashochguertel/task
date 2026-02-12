@@ -38,6 +38,11 @@
   ┌─ Input:
   │ echo 'Building {{.ARTIFACT}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .ARTIFACT
+  │   Input:  myproject-2.0.0
+  │   Expr:   echo 'Building '
+  └─
   ┌─ Output:
   │ echo 'Building myproject-2.0.0'
   └─
@@ -48,6 +53,11 @@
   ┌─ Input:
   │ echo 'Tag: {{.TAG}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .TAG
+  │   Input:  myproject/2-0-0
+  │   Expr:   echo 'Tag: '
+  └─
   ┌─ Output:
   │ echo 'Tag: myproject/2-0-0'
   └─
@@ -57,6 +67,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'Date: {{.BUILD_DATE}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .BUILD_DATE
+  │   Input:  2026-02-11
+  │   Expr:   echo 'Date: '
   └─
   ┌─ Output:
   │ echo 'Date: 2026-02-11'

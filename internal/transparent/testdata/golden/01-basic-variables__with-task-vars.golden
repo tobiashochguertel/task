@@ -38,6 +38,11 @@
   ┌─ Input:
   │ echo 'Output: {{.OUTPUT}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .OUTPUT
+  │   Input:  my-app-1.0.0
+  │   Expr:   echo 'Output: '
+  └─
   ┌─ Output:
   │ echo 'Output: my-app-1.0.0'
   └─
@@ -47,6 +52,11 @@
   Template Evaluation — cmds[1]:
   ┌─ Input:
   │ echo 'Build dir: {{.BUILD_DIR}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .BUILD_DIR
+  │   Input:  ./build
+  │   Expr:   echo 'Build dir: '
   └─
   ┌─ Output:
   │ echo 'Build dir: ./build'

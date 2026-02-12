@@ -36,6 +36,16 @@
   ┌─ Input:
   │ {{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .BUILD_DIR
+  │   Input:  ./build
+  │   Expr:   {{"./build"}}/{{.APP_NAME}}-{{.VERSION}}
+  │ Step 2: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   {{"./build"}}/{{"my-app"}}-{{.VERSION}}
+  │ Step 3: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  └─
   ┌─ Output:
   │ ./build/my-app-1.0.0
   └─
@@ -45,6 +55,10 @@
   Template Evaluation — fields:
   ┌─ Input:
   │ {{.BUILD_DIR}}
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .BUILD_DIR
+  │   Input:  ./build
   └─
   ┌─ Output:
   │ ./build
@@ -56,6 +70,14 @@
   ┌─ Input:
   │ echo 'Building {{.APP_NAME}} v{{.VERSION}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   echo 'Building {{"my-app"}} v{{.VERSION}}'
+  │ Step 2: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   echo 'Building '
+  └─
   ┌─ Output:
   │ echo 'Building my-app v1.0.0'
   └─
@@ -65,6 +87,14 @@
   Template Evaluation — status:
   ┌─ Input:
   │ test -f "{{.APP_NAME}}-{{.VERSION}}"
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   test -f "{{"my-app"}}-{{.VERSION}}"
+  │ Step 2: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   test -f ""
   └─
   ┌─ Output:
   │ test -f "my-app-1.0.0"

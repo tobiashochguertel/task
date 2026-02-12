@@ -101,6 +101,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Task ID: '",
+              "input": "task-123",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".TASK_ID"
+            }
+          ],
           "input": "echo 'Task ID: {{.TASK_ID}}'",
           "output": "echo 'Task ID: task-123'",
           "vars_used": [
@@ -109,6 +118,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Combined: '",
+              "input": "test-host-task-123",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".COMBINED"
+            }
+          ],
           "input": "echo 'Combined: {{.COMBINED}}'",
           "output": "echo 'Combined: test-host-task-123'",
           "vars_used": [

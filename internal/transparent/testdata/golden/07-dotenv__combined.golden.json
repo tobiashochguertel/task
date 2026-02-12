@@ -225,6 +225,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Connection: '",
+              "input": "localhost:5432/mydb",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".CONNECTION"
+            }
+          ],
           "input": "echo 'Connection: {{.CONNECTION}}'",
           "output": "echo 'Connection: localhost:5432/mydb'",
           "vars_used": [

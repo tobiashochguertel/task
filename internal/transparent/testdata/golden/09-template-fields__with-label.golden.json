@@ -92,6 +92,22 @@
       "templates": [
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "expression": "build-{{\"my-app\"}}-{{.VERSION}}",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            },
+            {
+              "expression": "build-",
+              "input": "2.0.0",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".VERSION"
+            }
+          ],
           "input": "build-{{.APP_NAME}}-{{.VERSION}}",
           "output": "build-my-app-2.0.0",
           "vars_used": [
@@ -101,6 +117,15 @@
         },
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "expression": "Build ",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "Build {{.APP_NAME}}",
           "output": "Build my-app",
           "vars_used": [
@@ -109,6 +134,15 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building '",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "echo 'Building {{.APP_NAME}}'",
           "output": "echo 'Building my-app'",
           "vars_used": [

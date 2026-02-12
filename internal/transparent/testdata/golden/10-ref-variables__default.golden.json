@@ -98,6 +98,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Greeting: '",
+              "input": "hello-world",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".GREETING"
+            }
+          ],
           "input": "echo 'Greeting: {{.GREETING}}'",
           "output": "echo 'Greeting: hello-world'",
           "vars_used": [
@@ -106,6 +115,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Alias: '",
+              "input": "hello-world",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".ALIAS"
+            }
+          ],
           "input": "echo 'Alias: {{.ALIAS}}'",
           "output": "echo 'Alias: hello-world'",
           "vars_used": [

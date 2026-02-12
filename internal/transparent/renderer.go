@@ -317,8 +317,31 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 		// Input box
 		renderBoxContent(w, "Input", t.Input)
 
-		// Pipe steps box (if any)
-		if len(t.Steps) > 0 {
+		// Detailed step-by-step evaluation (if available)
+		if len(t.DetailedSteps) > 0 {
+			renderBoxStart(w, "Evaluation Steps")
+			for _, ds := range t.DetailedSteps {
+				opColor := cCyan
+				if ds.Operation == "Apply a Function" {
+					opColor = cYellow
+				}
+				renderBoxLine(w, fmt.Sprintf("%sStep %d:%s %s%s%s — %s%s%s",
+					cBold, ds.StepNum, cReset,
+					opColor, ds.Operation, cReset,
+					cDim, ds.Target, cReset))
+				if ds.Input != "" {
+					renderBoxLine(w, fmt.Sprintf("  Input:  %s", ds.Input))
+				}
+				if ds.Output != "" {
+					renderBoxLine(w, fmt.Sprintf("  Output: %s%s%s", cGreen, ds.Output, cReset))
+				}
+				if ds.Expression != "" {
+					renderBoxLine(w, fmt.Sprintf("  Expr:   %s%s%s", cDim, ds.Expression, cReset))
+				}
+			}
+			renderBoxEnd(w)
+		} else if len(t.Steps) > 0 {
+			// Fallback: show pipe steps if detailed steps not available
 			renderBoxStart(w, "Pipe Steps")
 			for j, step := range t.Steps {
 				argsStr := strings.Join(step.Args, ", ")

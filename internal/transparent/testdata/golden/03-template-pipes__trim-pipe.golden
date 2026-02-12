@@ -36,9 +36,14 @@
   ┌─ Input:
   │ echo '{{.NAME | trim}}'
   └─
-  ┌─ Pipe Steps:
-  │ Step 1: .NAME() →   world  
-  │ Step 2: trim() → world
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .NAME
+  │   Input:    world  
+  │   Expr:   echo '{{"  world  " | trim}}'
+  │ Step 2: Apply a Function — trim
+  │   Input:  trim
+  │   Output: <exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>
+  │   Expr:   echo '<exec error: template: :1:2: executing "" at <trim>: wrong number of args for trim: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'world'
@@ -49,6 +54,12 @@
   Template Evaluation — cmds[1]:
   ┌─ Input:
   │ echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Apply a Function — printf
+  │   Input:  printf "%s:%s" "NAME" .NAME | trim
+  │   Output: NAME:world
+  │   Expr:   echo 'NAME:world'
   └─
   ┌─ Output:
   │ echo 'NAME:world'

@@ -102,6 +102,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'App: '",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "echo 'App: {{.APP_NAME}}'",
           "output": "echo 'App: my-app'",
           "vars_used": [
@@ -110,6 +119,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Version: '",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".VERSION"
+            }
+          ],
           "input": "echo 'Version: {{.VERSION}}'",
           "output": "echo 'Version: 1.0.0'",
           "vars_used": [
@@ -118,6 +136,15 @@
         },
         {
           "context": "cmds[2]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Environment: '",
+              "input": "development",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".ENV"
+            }
+          ],
           "input": "echo 'Environment: {{.ENV}}'",
           "output": "echo 'Environment: development'",
           "vars_used": [

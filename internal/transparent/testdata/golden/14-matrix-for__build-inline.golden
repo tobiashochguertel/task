@@ -38,6 +38,14 @@
   ┌─ Input:
   │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .ITEM
+  │   Input:  debug
+  │   Expr:   echo 'Mode: {{"debug"}} for {{.PROJECT}}'
+  │ Step 2: Resolve a Variable — .PROJECT
+  │   Input:  my-app
+  │   Expr:   echo 'Mode: '
+  └─
   ┌─ Output:
   │ echo 'Mode: debug for my-app'
   └─
@@ -47,6 +55,14 @@
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .ITEM
+  │   Input:  release
+  │   Expr:   echo 'Mode: {{"release"}} for {{.PROJECT}}'
+  │ Step 2: Resolve a Variable — .PROJECT
+  │   Input:  my-app
+  │   Expr:   echo 'Mode: '
   └─
   ┌─ Output:
   │ echo 'Mode: release for my-app'

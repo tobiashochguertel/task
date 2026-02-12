@@ -36,6 +36,11 @@
   ┌─ Input:
   │ [{{.APP_NAME}}]
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .APP_NAME
+  │   Input:  my-app
+  │   Expr:   []
+  └─
   ┌─ Output:
   │ [my-app]
   └─

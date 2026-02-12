@@ -92,6 +92,15 @@
       "templates": [
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "expression": "/tmp/",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "<PATH>",
           "output": "<PATH>",
           "vars_used": [
@@ -100,6 +109,15 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Working in  directory'",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "echo 'Working in {{.APP_NAME}} directory'",
           "output": "echo 'Working in my-app directory'",
           "vars_used": [

@@ -38,6 +38,14 @@
   ┌─ Input:
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PROJECT
+  │   Input:  my-app
+  │   Expr:   echo 'Building {{"my-app"}} for {{.ITEM}}'
+  │ Step 2: Resolve a Variable — .ITEM
+  │   Input:  linux
+  │   Expr:   echo 'Building '
+  └─
   ┌─ Output:
   │ echo 'Building my-app for linux'
   └─
@@ -48,6 +56,14 @@
   ┌─ Input:
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PROJECT
+  │   Input:  my-app
+  │   Expr:   echo 'Building {{"my-app"}} for {{.ITEM}}'
+  │ Step 2: Resolve a Variable — .ITEM
+  │   Input:  darwin
+  │   Expr:   echo 'Building '
+  └─
   ┌─ Output:
   │ echo 'Building my-app for darwin'
   └─
@@ -57,6 +73,14 @@
   Template Evaluation — cmds[0]:
   ┌─ Input:
   │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PROJECT
+  │   Input:  my-app
+  │   Expr:   echo 'Building {{"my-app"}} for {{.ITEM}}'
+  │ Step 2: Resolve a Variable — .ITEM
+  │   Input:  windows
+  │   Expr:   echo 'Building '
   └─
   ┌─ Output:
   │ echo 'Building my-app for windows'

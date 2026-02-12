@@ -92,6 +92,15 @@
       "templates": [
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "expression": "[]",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            }
+          ],
           "input": "[{{.APP_NAME}}]",
           "output": "[my-app]",
           "vars_used": [

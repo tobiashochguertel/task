@@ -41,6 +41,11 @@
   ┌─ Input:
   │ echo 'Level2: {{.LEVEL2_VAR}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .LEVEL2_VAR
+  │   Input:  from-level2
+  │   Expr:   echo 'Level2: '
+  └─
   ┌─ Output:
   │ echo 'Level2: from-level2'
   └─
@@ -51,6 +56,11 @@
   ┌─ Input:
   │ echo 'L1 to L2: {{.L1_TO_L2}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .L1_TO_L2
+  │   Input:  from-level1-include
+  │   Expr:   echo 'L1 to L2: '
+  └─
   ┌─ Output:
   │ echo 'L1 to L2: from-level1-include'
   └─
@@ -60,6 +70,11 @@
   Template Evaluation — cmds[2]:
   ┌─ Input:
   │ echo 'Parent: {{.PARENT_VAR}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PARENT_VAR
+  │   Input:  from-root-include
+  │   Expr:   echo 'Parent: '
   └─
   ┌─ Output:
   │ echo 'Parent: from-root-include'

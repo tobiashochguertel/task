@@ -104,6 +104,15 @@
       "templates": [
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building '",
+              "input": "myproject-2.0.0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".ARTIFACT"
+            }
+          ],
           "input": "echo 'Building {{.ARTIFACT}}'",
           "output": "echo 'Building myproject-2.0.0'",
           "vars_used": [
@@ -112,6 +121,15 @@
         },
         {
           "context": "cmds[1]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Tag: '",
+              "input": "myproject/2-0-0",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".TAG"
+            }
+          ],
           "input": "echo 'Tag: {{.TAG}}'",
           "output": "echo 'Tag: myproject/2-0-0'",
           "vars_used": [
@@ -120,6 +138,15 @@
         },
         {
           "context": "cmds[2]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Date: '",
+              "input": "2026-02-11",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".BUILD_DATE"
+            }
+          ],
           "input": "echo 'Date: {{.BUILD_DATE}}'",
           "output": "echo 'Date: 2026-02-11'",
           "vars_used": [

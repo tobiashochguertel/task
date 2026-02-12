@@ -92,6 +92,28 @@
       "templates": [
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "expression": "{{\"./build\"}}/{{.APP_NAME}}-{{.VERSION}}",
+              "input": "./build",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".BUILD_DIR"
+            },
+            {
+              "expression": "{{\"./build\"}}/{{\"my-app\"}}-{{.VERSION}}",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".APP_NAME"
+            },
+            {
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 3,
+              "target": ".VERSION"
+            }
+          ],
           "input": "{{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}",
           "output": "./build/my-app-1.0.0",
           "vars_used": [
@@ -102,6 +124,14 @@
         },
         {
           "context": "fields",
+          "detailed_steps": [
+            {
+              "input": "./build",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".BUILD_DIR"
+            }
+          ],
           "input": "{{.BUILD_DIR}}",
           "output": "./build",
           "vars_used": [
@@ -110,6 +140,22 @@
         },
         {
           "context": "cmds[0]",
+          "detailed_steps": [
+            {
+              "expression": "echo 'Building {{\"my-app\"}} v{{.VERSION}}'",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            },
+            {
+              "expression": "echo 'Building '",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".VERSION"
+            }
+          ],
           "input": "echo 'Building {{.APP_NAME}} v{{.VERSION}}'",
           "output": "echo 'Building my-app v1.0.0'",
           "vars_used": [
@@ -119,6 +165,22 @@
         },
         {
           "context": "status",
+          "detailed_steps": [
+            {
+              "expression": "test -f \"{{\"my-app\"}}-{{.VERSION}}\"",
+              "input": "my-app",
+              "operation": "Resolve a Variable",
+              "step": 1,
+              "target": ".APP_NAME"
+            },
+            {
+              "expression": "test -f \"\"",
+              "input": "1.0.0",
+              "operation": "Resolve a Variable",
+              "step": 2,
+              "target": ".VERSION"
+            }
+          ],
           "input": "test -f \"{{.APP_NAME}}-{{.VERSION}}\"",
           "output": "test -f \"my-app-1.0.0\"",
           "vars_used": [

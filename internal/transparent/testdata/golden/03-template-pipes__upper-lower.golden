@@ -36,9 +36,14 @@
   ┌─ Input:
   │ echo '{{.TITLE | upper}}'
   └─
-  ┌─ Pipe Steps:
-  │ Step 1: .TITLE() → hello world
-  │ Step 2: upper() → HELLO WORLD
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .TITLE
+  │   Input:  hello world
+  │   Expr:   echo '{{"hello world" | upper}}'
+  │ Step 2: Apply a Function — upper
+  │   Input:  upper
+  │   Output: <exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>
+  │   Expr:   echo '<exec error: template: :1:2: executing "" at <upper>: wrong number of args for upper: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'HELLO WORLD'
@@ -50,9 +55,14 @@
   ┌─ Input:
   │ echo '{{.TITLE | title}}'
   └─
-  ┌─ Pipe Steps:
-  │ Step 1: .TITLE() → hello world
-  │ Step 2: title() → Hello World
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .TITLE
+  │   Input:  hello world
+  │   Expr:   echo '{{"hello world" | title}}'
+  │ Step 2: Apply a Function — title
+  │   Input:  title
+  │   Output: <exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>
+  │   Expr:   echo '<exec error: template: :1:2: executing "" at <title>: wrong number of args for title: want 1 got 0>'
   └─
   ┌─ Output:
   │ echo 'Hello World'

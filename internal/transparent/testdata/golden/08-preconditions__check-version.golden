@@ -35,6 +35,11 @@
   ┌─ Input:
   │ echo 'Version {{.VERSION}} validated'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   echo 'Version  validated'
+  └─
   ┌─ Output:
   │ echo 'Version 1.0.0 validated'
   └─
@@ -45,6 +50,11 @@
   ┌─ Input:
   │ test '{{.VERSION}}' != ''
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   test '' != ''
+  └─
   ┌─ Output:
   │ test '1.0.0' != ''
   └─
@@ -54,6 +64,11 @@
   Template Evaluation — preconditions:
   ┌─ Input:
   │ VERSION must not be empty (got: '{{.VERSION}}')
+  └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .VERSION
+  │   Input:  1.0.0
+  │   Expr:   VERSION must not be empty (got: '')
   └─
   ┌─ Output:
   │ VERSION must not be empty (got: '1.0.0')

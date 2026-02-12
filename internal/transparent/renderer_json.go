@@ -43,14 +43,24 @@ type jsonShadowInfo struct {
 }
 
 type jsonTemplateTrace struct {
-	Input    string         `json:"input"`
-	Output   string         `json:"output"`
-	Context  string         `json:"context,omitempty"`
-	VarsUsed []string       `json:"vars_used,omitempty"`
-	Steps    []jsonPipeStep `json:"pipe_steps,omitempty"`
-	Tips     []string       `json:"tips,omitempty"`
-	Notes    []string       `json:"notes,omitempty"`
-	Error    string         `json:"error,omitempty"`
+	Input         string             `json:"input"`
+	Output        string             `json:"output"`
+	Context       string             `json:"context,omitempty"`
+	VarsUsed      []string           `json:"vars_used,omitempty"`
+	Steps         []jsonPipeStep     `json:"pipe_steps,omitempty"`
+	DetailedSteps []jsonTemplateStep `json:"detailed_steps,omitempty"`
+	Tips          []string           `json:"tips,omitempty"`
+	Notes         []string           `json:"notes,omitempty"`
+	Error         string             `json:"error,omitempty"`
+}
+
+type jsonTemplateStep struct {
+	StepNum    int    `json:"step"`
+	Operation  string `json:"operation"`
+	Target     string `json:"target"`
+	Input      string `json:"input,omitempty"`
+	Output     string `json:"output,omitempty"`
+	Expression string `json:"expression,omitempty"`
 }
 
 type jsonPipeStep struct {
@@ -117,6 +127,16 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 			}
 			for _, step := range tmpl.Steps {
 				jtt.Steps = append(jtt.Steps, jsonPipeStep(step))
+			}
+			for _, ds := range tmpl.DetailedSteps {
+				jtt.DetailedSteps = append(jtt.DetailedSteps, jsonTemplateStep{
+					StepNum:    ds.StepNum,
+					Operation:  ds.Operation,
+					Target:     ds.Target,
+					Input:      ds.Input,
+					Output:     ds.Output,
+					Expression: ds.Expression,
+				})
 			}
 			jt.Templates = append(jt.Templates, jtt)
 		}

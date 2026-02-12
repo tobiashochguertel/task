@@ -37,6 +37,14 @@
   ┌─ Input:
   │ echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .PROJECT
+  │   Input:  myproject
+  │   Expr:   echo 'Deploying {{"myproject"}} to {{.TARGET}}'
+  │ Step 2: Resolve a Variable — .TARGET
+  │   Input:  production
+  │   Expr:   echo 'Deploying '
+  └─
   ┌─ Output:
   │ echo 'Deploying myproject to production'
   └─

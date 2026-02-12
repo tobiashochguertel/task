@@ -34,6 +34,14 @@
   ┌─ Input:
   │ echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
   └─
+  ┌─ Evaluation Steps:
+  │ Step 1: Resolve a Variable — .DEFINED
+  │   Input:  hello
+  │   Expr:   echo '{{"hello"}} {{.UNDEFINED_VAR}}'
+  │ Step 2: Resolve a Variable — .UNDEFINED_VAR
+  │   Input:  <nil>
+  │   Expr:   echo ''
+  └─
   ┌─ Output:
   │ echo 'hello '
   └─
