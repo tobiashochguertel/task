@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -39,22 +41,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'DB Host: {{.DB_HOST}}'
-       Output: echo 'DB Host: localhost'
-       Vars used: DB_HOST
-  [2] (cmds[1]) Input:  echo 'DB Port: {{.DB_PORT}}'
-       Output: echo 'DB Port: 5432'
-       Vars used: DB_PORT
-  [3] (cmds[2]) Input:  echo 'App: {{.APP_NAME}}'
-       Output: echo 'App: my-dotenv-app'
-       Vars used: APP_NAME
-  Commands:
-  [0] raw:      echo 'DB Host: {{.DB_HOST}}'
-       resolved: echo 'DB Host: localhost'
-  [1] raw:      echo 'DB Port: {{.DB_PORT}}'
-       resolved: echo 'DB Port: 5432'
-  [2] raw:      echo 'App: {{.APP_NAME}}'
-       resolved: echo 'App: my-dotenv-app'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'DB Host: {{.DB_HOST}}'
+  └─
+  ┌─ Output:
+  │ echo 'DB Host: localhost'
+  └─
+  ┌─ Vars used:
+  │ DB_HOST
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'DB Port: {{.DB_PORT}}'
+  └─
+  ┌─ Output:
+  │ echo 'DB Port: 5432'
+  └─
+  ┌─ Vars used:
+  │ DB_PORT
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'App: my-dotenv-app'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'DB Host: {{.DB_HOST}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'DB Host: localhost'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'DB Port: {{.DB_PORT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'DB Port: 5432'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'App: my-dotenv-app'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

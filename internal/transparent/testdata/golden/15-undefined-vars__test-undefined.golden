@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -24,13 +26,23 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
-       Output: echo 'hello '
-       Vars used: DEFINED, UNDEFINED_VAR
-       ⚠  warning: template produced <no value> for one or more variables (replaced with empty string)
-  Commands:
-  [0] raw:      echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
-       resolved: echo 'hello '
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'hello '
+  └─
+  ┌─ Vars used:
+  │ DEFINED, UNDEFINED_VAR
+  └─
+  ⚠ warning: template produced <no value> for one or more variables (replaced with empty string)
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.DEFINED}} {{.UNDEFINED_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'hello '
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

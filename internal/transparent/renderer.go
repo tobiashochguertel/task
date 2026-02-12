@@ -62,7 +62,11 @@ func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 		opts = &RenderOptions{}
 	}
 	resolveColors()
-	fmt.Fprintf(w, "\n%s%s══════ Transparent Mode Report ══════%s\n\n", cBold, cCyan, cReset)
+	headerText := "TRANSPARENT MODE — Variable & Template Diagnostics"
+	borderLen := len(headerText) + 4
+	fmt.Fprintf(w, "\n%s%s╔%s╗%s\n", cBold, cCyan, strings.Repeat("═", borderLen), cReset)
+	fmt.Fprintf(w, "%s%s║  %s  ║%s\n", cBold, cCyan, headerText, cReset)
+	fmt.Fprintf(w, "%s%s╚%s╝%s\n\n", cBold, cCyan, strings.Repeat("═", borderLen), cReset)
 
 	// Render global variables section (if any)
 	globals := filterGlobals(report.GlobalVars, opts.Verbose)
@@ -80,7 +84,7 @@ func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 		renderTask(w, *task)
 	}
 
-	fmt.Fprintf(w, "%s%s══════ End Report ══════%s\n", cBold, cCyan, cReset)
+	fmt.Fprintf(w, "%s%s╚══ End of Transparent Mode Report ══╝%s\n", cBold, cCyan, cReset)
 }
 
 // filterGlobals returns global vars, optionally filtering out noisy vars.
@@ -159,11 +163,11 @@ func renderVars(w io.Writer, vars []VarTrace) {
 			refStr = fmt.Sprintf("%s ref%s", cRed, cReset)
 		}
 
-		valStr := truncate(fmt.Sprintf("%v", v.Value), 60)
+		valStr := fmt.Sprintf("%v", v.Value)
 		if v.IsDynamic {
 			shInfo := ""
 			if v.ShCmd != "" {
-				shInfo = fmt.Sprintf(" %s(sh: %s)%s", cDim, truncate(v.ShCmd, 40), cReset)
+				shInfo = fmt.Sprintf(" %s(sh: %s)%s", cDim, v.ShCmd, cReset)
 			}
 			valStr = fmt.Sprintf("%s(sh)%s %s%s", cBlue, cReset, valStr, shInfo)
 			// Feature 2: Warn when dynamic var is empty (likely not evaluated)
@@ -175,7 +179,7 @@ func renderVars(w io.Writer, vars []VarTrace) {
 		shadowFlag := ""
 		if v.ShadowsVar != nil {
 			shadowFlag = fmt.Sprintf(" %s⚠ SHADOWS %s=%q [%s]%s",
-				cRed, v.ShadowsVar.Name, truncate(fmt.Sprintf("%v", v.ShadowsVar.Value), 30),
+				cRed, v.ShadowsVar.Name, fmt.Sprintf("%v", v.ShadowsVar.Value),
 				originLabel(v.ShadowsVar.Origin), cReset)
 		}
 
@@ -193,51 +197,101 @@ func renderVars(w io.Writer, vars []VarTrace) {
 	}
 }
 
-func renderTemplates(w io.Writer, templates []TemplateTrace) {
-	fmt.Fprintf(w, "  %s%sTemplate Evaluations:%s\n", cBold, cYellow, cReset)
+// --- Box-drawing helpers ---
 
-	for i, t := range templates {
-		contextLabel := ""
-		if t.Context != "" {
-			contextLabel = fmt.Sprintf(" %s(%s)%s", cDim, t.Context, cReset)
+func renderBoxStart(w io.Writer, label string) {
+	fmt.Fprintf(w, "  %s┌─ %s:%s\n", cDim, label, cReset)
+}
+
+func renderBoxLine(w io.Writer, line string) {
+	fmt.Fprintf(w, "  %s│%s %s\n", cDim, cReset, line)
+}
+
+func renderBoxEnd(w io.Writer) {
+	fmt.Fprintf(w, "  %s└─%s\n", cDim, cReset)
+}
+
+func renderBoxContent(w io.Writer, label string, content string) {
+	renderBoxStart(w, label)
+	for _, line := range strings.Split(content, "\n") {
+		renderBoxLine(w, line)
+	}
+	renderBoxEnd(w)
+}
+
+// highlightErrors wraps known Go template error patterns with red ANSI codes.
+func highlightErrors(s string) string {
+	patterns := []string{
+		"%!s(MISSING)", "%!d(MISSING)", "%!v(MISSING)", "%!f(MISSING)",
+		"%!q(MISSING)", "%!t(MISSING)", "%!x(MISSING)", "%!b(MISSING)",
+		"%!e(MISSING)", "%!g(MISSING)", "%!c(MISSING)",
+	}
+	for _, p := range patterns {
+		if strings.Contains(s, p) {
+			s = strings.ReplaceAll(s, p, cRed+cBold+p+cReset)
 		}
-		fmt.Fprintf(w, "  %s[%d]%s%s Input:  %s%s%s\n",
-			cDim, i+1, cReset, contextLabel, cWhite, t.Input, cReset)
-		fmt.Fprintf(w, "       Output: %s%s%s\n",
-			cGreen, t.Output, cReset)
-		if len(t.VarsUsed) > 0 {
-			fmt.Fprintf(w, "       %sVars used: %s%s\n",
-				cDim, strings.Join(t.VarsUsed, ", "), cReset)
+	}
+	return s
+}
+
+func renderTemplates(w io.Writer, templates []TemplateTrace) {
+	for _, t := range templates {
+		contextLabel := t.Context
+		if contextLabel == "" {
+			contextLabel = "expression"
 		}
+		fmt.Fprintf(w, "  %s%sTemplate Evaluation — %s:%s\n", cBold, cYellow, contextLabel, cReset)
+
+		// Input box
+		renderBoxContent(w, "Input", t.Input)
+
+		// Pipe steps box (if any)
 		if len(t.Steps) > 0 {
+			renderBoxStart(w, "Pipe Steps")
 			for j, step := range t.Steps {
-				fmt.Fprintf(w, "       %s  pipe[%d]: %s(%s) → %q%s\n",
-					cDim, j, step.FuncName, step.Args, step.Output, cReset)
+				argsStr := strings.Join(step.Args, ", ")
+				if len(step.ArgsValues) > 0 {
+					argsStr = strings.Join(step.ArgsValues, ", ")
+				}
+				renderBoxLine(w, fmt.Sprintf("Step %d: %s(%s) → %s%s%s",
+					j+1, step.FuncName, argsStr, cGreen, step.Output, cReset))
 			}
+			renderBoxEnd(w)
 		}
+
+		// Output box
+		renderBoxContent(w, "Output", highlightErrors(t.Output))
+
+		// Vars used box
+		if len(t.VarsUsed) > 0 {
+			renderBoxContent(w, "Vars used", strings.Join(t.VarsUsed, ", "))
+		}
+
+		// Error
 		if t.Error != "" {
-			fmt.Fprintf(w, "       %s⚠  %s%s\n", cRed, t.Error, cReset)
+			fmt.Fprintf(w, "  %s⚠ %s%s\n", cRed, t.Error, cReset)
 		}
+
+		// Notes / Tips
 		for _, tip := range t.Tips {
-			fmt.Fprintf(w, "       %s💡 %s%s\n", cCyan, tip, cReset)
+			fmt.Fprintf(w, "  %sℹ Note: %s%s\n", cCyan, tip, cReset)
 		}
 	}
 }
 
 func renderCmds(w io.Writer, cmds []CmdTrace) {
-	fmt.Fprintf(w, "  %s%sCommands:%s\n", cBold, cYellow, cReset)
-
 	for _, c := range cmds {
-		fmt.Fprintf(w, "  %s[%d]%s", cDim, c.Index, cReset)
+		header := fmt.Sprintf("cmds[%d]", c.Index)
 		if c.IterationLabel != "" {
-			fmt.Fprintf(w, " %s(%s)%s", cDim, c.IterationLabel, cReset)
+			header = fmt.Sprintf("cmds[%d] (%s)", c.Index, c.IterationLabel)
 		}
+		fmt.Fprintf(w, "  %s%sCommands — %s:%s\n", cBold, cYellow, header, cReset)
+
 		if c.RawCmd == c.ResolvedCmd {
-			fmt.Fprintf(w, " %s\n", c.ResolvedCmd)
+			renderBoxContent(w, "Command", c.ResolvedCmd)
 		} else {
-			fmt.Fprintf(w, " %sraw:%s      %s\n", cDim, cReset, c.RawCmd)
-			fmt.Fprintf(w, "       %sresolved:%s %s%s%s\n",
-				cDim, cReset, cGreen, c.ResolvedCmd, cReset)
+			renderBoxContent(w, "Raw", c.RawCmd)
+			renderBoxContent(w, "Resolved", highlightErrors(c.ResolvedCmd))
 		}
 	}
 }

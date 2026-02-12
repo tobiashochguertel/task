@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,21 +28,47 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.TITLE | upper}}'
-       Output: echo 'HELLO WORLD'
-       Vars used: TITLE
-         pipe[0]: .TITLE([]) → "hello world"
-         pipe[1]: upper([]) → "HELLO WORLD"
-  [2] (cmds[1]) Input:  echo '{{.TITLE | title}}'
-       Output: echo 'Hello World'
-       Vars used: TITLE
-         pipe[0]: .TITLE([]) → "hello world"
-         pipe[1]: title([]) → "Hello World"
-  Commands:
-  [0] raw:      echo '{{.TITLE | upper}}'
-       resolved: echo 'HELLO WORLD'
-  [1] raw:      echo '{{.TITLE | title}}'
-       resolved: echo 'Hello World'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.TITLE | upper}}'
+  └─
+  ┌─ Pipe Steps:
+  │ Step 1: .TITLE() → hello world
+  │ Step 2: upper() → HELLO WORLD
+  └─
+  ┌─ Output:
+  │ echo 'HELLO WORLD'
+  └─
+  ┌─ Vars used:
+  │ TITLE
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo '{{.TITLE | title}}'
+  └─
+  ┌─ Pipe Steps:
+  │ Step 1: .TITLE() → hello world
+  │ Step 2: title() → Hello World
+  └─
+  ┌─ Output:
+  │ echo 'Hello World'
+  └─
+  ┌─ Vars used:
+  │ TITLE
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.TITLE | upper}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'HELLO WORLD'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo '{{.TITLE | title}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Hello World'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

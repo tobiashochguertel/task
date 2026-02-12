@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,22 +28,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'App: {{.APP_NAME}}'
-       Output: echo 'App: my-app'
-       Vars used: APP_NAME
-  [2] (cmds[1]) Input:  echo 'Version: {{.VERSION}}'
-       Output: echo 'Version: 1.0.0'
-       Vars used: VERSION
-  [3] (cmds[2]) Input:  echo 'Environment: {{.ENV}}'
-       Output: echo 'Environment: development'
-       Vars used: ENV
-  Commands:
-  [0] raw:      echo 'App: {{.APP_NAME}}'
-       resolved: echo 'App: my-app'
-  [1] raw:      echo 'Version: {{.VERSION}}'
-       resolved: echo 'Version: 1.0.0'
-  [2] raw:      echo 'Environment: {{.ENV}}'
-       resolved: echo 'Environment: development'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'App: my-app'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Version: {{.VERSION}}'
+  └─
+  ┌─ Output:
+  │ echo 'Version: 1.0.0'
+  └─
+  ┌─ Vars used:
+  │ VERSION
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Environment: {{.ENV}}'
+  └─
+  ┌─ Output:
+  │ echo 'Environment: development'
+  └─
+  ┌─ Vars used:
+  │ ENV
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'App: my-app'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Version: {{.VERSION}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Version: 1.0.0'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Environment: {{.ENV}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Environment: development'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

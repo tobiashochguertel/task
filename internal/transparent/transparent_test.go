@@ -344,15 +344,15 @@ func TestRenderText(t *testing.T) {
 	output := buf.String()
 
 	checks := []string{
-		"Transparent Mode Report",
+		"TRANSPARENT MODE",
 		"Task: build",
 		"Variables:",
 		"NAME",
 		"taskfile-vars",
 		"World",
-		"Template Evaluations:",
+		"Template Evaluation",
 		"{{.NAME}}",
-		"Commands:",
+		"Commands",
 		"echo {{.NAME}}",
 		"echo World",
 	}
@@ -480,9 +480,12 @@ func TestRenderTextUnchangedCmd(t *testing.T) {
 	var buf bytes.Buffer
 	RenderText(&buf, report, nil)
 	output := buf.String()
-	// Unchanged cmd should show inline, not raw/resolved split
-	if strings.Contains(output, "raw:") {
-		t.Error("unchanged cmd should not show raw/resolved split")
+	// Unchanged cmd should show single "Command:" box, not "Raw:"/"Resolved:" split
+	if strings.Contains(output, "Raw:") {
+		t.Error("unchanged cmd should not show Raw:/Resolved: split")
+	}
+	if !strings.Contains(output, "Command:") {
+		t.Error("unchanged cmd should show Command: box")
 	}
 }
 
@@ -508,7 +511,7 @@ func TestRenderTextPipeSteps(t *testing.T) {
 	var buf bytes.Buffer
 	RenderText(&buf, report, nil)
 	output := buf.String()
-	if !strings.Contains(output, "pipe[0]") {
+	if !strings.Contains(output, "Step 1") {
 		t.Error("expected pipe step output")
 	}
 	if !strings.Contains(output, "trim") {

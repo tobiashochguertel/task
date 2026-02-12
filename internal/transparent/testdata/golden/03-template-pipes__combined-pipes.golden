@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,20 +28,44 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.NAME | trim | upper}}'
-       Output: echo 'WORLD'
-       Vars used: NAME
-         pipe[0]: .NAME([]) → "  world  "
-         pipe[1]: trim([]) → "world"
-         pipe[2]: upper([]) → "WORLD"
-  [2] (cmds[1]) Input:  echo '{{printf "APP_%s" (.NAME | trim | upper)}}'
-       Output: echo 'APP_WORLD'
-       Vars used: NAME
-  Commands:
-  [0] raw:      echo '{{.NAME | trim | upper}}'
-       resolved: echo 'WORLD'
-  [1] raw:      echo '{{printf "APP_%s" (.NAME | trim | upper)}}'
-       resolved: echo 'APP_WORLD'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.NAME | trim | upper}}'
+  └─
+  ┌─ Pipe Steps:
+  │ Step 1: .NAME() →   world  
+  │ Step 2: trim() → world
+  │ Step 3: upper() → WORLD
+  └─
+  ┌─ Output:
+  │ echo 'WORLD'
+  └─
+  ┌─ Vars used:
+  │ NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo '{{printf "APP_%s" (.NAME | trim | upper)}}'
+  └─
+  ┌─ Output:
+  │ echo 'APP_WORLD'
+  └─
+  ┌─ Vars used:
+  │ NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.NAME | trim | upper}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'WORLD'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo '{{printf "APP_%s" (.NAME | trim | upper)}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'APP_WORLD'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

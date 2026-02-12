@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,17 +30,39 @@
           ptr: <PTR>
   NAME    task-vars       string      ·     double-task ⚠ SHADOWS NAME="global-value" [taskfile-vars]
   SHARED  task-vars       string      ·     from-task ⚠ SHADOWS SHARED="from-global" [taskfile-vars]
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.GREETING}} {{.NAME}}'
-       Output: echo 'Hello double-task'
-       Vars used: GREETING, NAME
-  [2] (cmds[1]) Input:  echo 'SHARED = {{.SHARED}}'
-       Output: echo 'SHARED = from-task'
-       Vars used: SHARED
-  Commands:
-  [0] raw:      echo '{{.GREETING}} {{.NAME}}'
-       resolved: echo 'Hello double-task'
-  [1] raw:      echo 'SHARED = {{.SHARED}}'
-       resolved: echo 'SHARED = from-task'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.GREETING}} {{.NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'Hello double-task'
+  └─
+  ┌─ Vars used:
+  │ GREETING, NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'SHARED = {{.SHARED}}'
+  └─
+  ┌─ Output:
+  │ echo 'SHARED = from-task'
+  └─
+  ┌─ Vars used:
+  │ SHARED
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.GREETING}} {{.NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Hello double-task'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'SHARED = {{.SHARED}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'SHARED = from-task'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

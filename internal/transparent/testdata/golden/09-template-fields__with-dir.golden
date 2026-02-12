@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,15 +28,32 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (fields) Input:  <PATH>
-       Output: <PATH>
-       Vars used: APP_NAME
-  [2] (cmds[0]) Input:  echo 'Working in {{.APP_NAME}} directory'
-       Output: echo 'Working in my-app directory'
-       Vars used: APP_NAME
-  Commands:
-  [0] raw:      echo 'Working in {{.APP_NAME}} directory'
-       resolved: echo 'Working in my-app directory'
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ <PATH>
+  └─
+  ┌─ Output:
+  │ <PATH>
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Working in {{.APP_NAME}} directory'
+  └─
+  ┌─ Output:
+  │ echo 'Working in my-app directory'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Working in {{.APP_NAME}} directory'
+  └─
+  ┌─ Resolved:
+  │ echo 'Working in my-app directory'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,12 +29,22 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Task env: {{.APP_ENV}}'
-       Output: echo 'Task env: production'
-       Vars used: APP_ENV
-  Commands:
-  [0] raw:      echo 'Task env: {{.APP_ENV}}'
-       resolved: echo 'Task env: production'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Task env: {{.APP_ENV}}'
+  └─
+  ┌─ Output:
+  │ echo 'Task env: production'
+  └─
+  ┌─ Vars used:
+  │ APP_ENV
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Task env: {{.APP_ENV}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Task env: production'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -25,12 +27,22 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.APP_NAME}} is ready'
-       Output: echo 'my-app is ready'
-       Vars used: APP_NAME
-  Commands:
-  [0] raw:      echo '{{.APP_NAME}} is ready'
-       resolved: echo 'my-app is ready'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.APP_NAME}} is ready'
+  └─
+  ┌─ Output:
+  │ echo 'my-app is ready'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.APP_NAME}} is ready'
+  └─
+  ┌─ Resolved:
+  │ echo 'my-app is ready'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

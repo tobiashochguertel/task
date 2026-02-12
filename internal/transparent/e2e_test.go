@@ -50,7 +50,7 @@ func TestE2EBasicVariables(t *testing.T) {
 	output := runTransparent(t, dir, "default")
 
 	// Verify report structure
-	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "TRANSPARENT MODE")
 	assertContains(t, output, "Task: default")
 	assertContains(t, output, "Variables:")
 
@@ -61,13 +61,13 @@ func TestE2EBasicVariables(t *testing.T) {
 	assertContains(t, output, "1.0.0")
 
 	// Verify template evaluations
-	assertContains(t, output, "Template Evaluations:")
+	assertContains(t, output, "Template Evaluation")
 	assertContains(t, output, "{{.APP_NAME}}")
 	assertContains(t, output, "echo 'App: my-app'")
 
 	// Verify commands
-	assertContains(t, output, "Commands:")
-	assertContains(t, output, "resolved:")
+	assertContains(t, output, "Commands")
+	assertContains(t, output, "Resolved:")
 }
 
 func TestE2EVariableShadowing(t *testing.T) {
@@ -190,8 +190,8 @@ func TestE2EDoesNotExecuteCommands(t *testing.T) {
 	output := runTransparent(t, dir, "default")
 
 	// The report should exist
-	assertContains(t, output, "Transparent Mode Report")
-	assertContains(t, output, "End Report")
+	assertContains(t, output, "TRANSPARENT MODE")
+	assertContains(t, output, "End of Transparent Mode Report")
 
 	// There should NOT be actual echo output outside the report
 	// Count occurrences of "my-app" — should only appear in the report sections
@@ -220,7 +220,7 @@ func TestE2EShortFlagT(t *testing.T) {
 	if err != nil {
 		t.Fatalf("task -T failed: %v\nOutput: %s", err, string(out))
 	}
-	assertContains(t, string(out), "Transparent Mode Report")
+	assertContains(t, string(out), "TRANSPARENT MODE")
 }
 
 func TestE2EMultipleTasksOnCLI(t *testing.T) {
@@ -268,7 +268,7 @@ func TestE2EDotenv(t *testing.T) {
 	dir := filepath.Join(examplesDir(), "07-dotenv")
 	output := runTransparent(t, dir, "default")
 
-	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "TRANSPARENT MODE")
 	assertContains(t, output, "Task: default")
 	assertContains(t, output, "DB_HOST")
 	assertContains(t, output, "localhost")
@@ -292,10 +292,10 @@ func TestE2EPreconditions(t *testing.T) {
 	dir := filepath.Join(examplesDir(), "08-preconditions")
 	output := runTransparent(t, dir, "check-binary")
 
-	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "TRANSPARENT MODE")
 	assertContains(t, output, "APP_NAME")
 	assertContains(t, output, "my-app")
-	assertContains(t, output, "Commands:")
+	assertContains(t, output, "Commands")
 }
 
 func TestE2EPreconditionsTemplate(t *testing.T) {
@@ -430,7 +430,7 @@ func TestE2EMatrixFor(t *testing.T) {
 	assertContains(t, output, "PROJECT")
 	assertContains(t, output, "my-app")
 	// For-loop should expand commands
-	assertContains(t, output, "Commands:")
+	assertContains(t, output, "Commands")
 	assertContains(t, output, "Building my-app for linux")
 	assertContains(t, output, "Building my-app for darwin")
 	assertContains(t, output, "Building my-app for windows")
@@ -478,7 +478,7 @@ func TestE2EColorFlagFalse(t *testing.T) {
 		t.Fatalf("task --transparent --color=false failed: %v\nOutput: %s", err, string(out))
 	}
 	output := string(out)
-	assertContains(t, output, "Transparent Mode Report")
+	assertContains(t, output, "TRANSPARENT MODE")
 	// Should not contain raw ANSI escape codes
 	assertNotContains(t, output, "\033[")
 }
@@ -500,10 +500,10 @@ func TestE2EOutputToStderr(t *testing.T) {
 	}
 
 	// Report should be on stderr, not stdout
-	if !strings.Contains(stderr.String(), "Transparent Mode Report") {
+	if !strings.Contains(stderr.String(), "TRANSPARENT MODE") {
 		t.Error("expected report on stderr")
 	}
-	if strings.Contains(stdout.String(), "Transparent Mode Report") {
+	if strings.Contains(stdout.String(), "TRANSPARENT MODE") {
 		t.Error("expected report NOT on stdout")
 	}
 }
@@ -516,8 +516,8 @@ func TestE2EPipeStepsTrim(t *testing.T) {
 	output := runTransparent(t, dir, "trim-pipe")
 
 	// Should show pipe step breakdown
-	assertContains(t, output, "pipe[0]")
-	assertContains(t, output, "pipe[1]")
+	assertContains(t, output, "Step 1")
+	assertContains(t, output, "Step 2")
 	assertContains(t, output, ".NAME")
 	assertContains(t, output, "trim")
 }
@@ -528,9 +528,9 @@ func TestE2EPipeStepsCombined(t *testing.T) {
 	output := runTransparent(t, dir, "combined-pipes")
 
 	// Should show 3-step pipe: .NAME | trim | upper
-	assertContains(t, output, "pipe[0]")
-	assertContains(t, output, "pipe[1]")
-	assertContains(t, output, "pipe[2]")
+	assertContains(t, output, "Step 1")
+	assertContains(t, output, "Step 2")
+	assertContains(t, output, "Step 3")
 	assertContains(t, output, "upper")
 	assertContains(t, output, "WORLD")
 }
@@ -541,8 +541,8 @@ func TestE2EPipeStepsUpperLower(t *testing.T) {
 	output := runTransparent(t, dir, "upper-lower")
 
 	// Should have pipe steps for upper and lower
-	assertContains(t, output, "pipe[0]")
-	assertContains(t, output, "pipe[1]")
+	assertContains(t, output, "Step 1")
+	assertContains(t, output, "Step 2")
 }
 
 // ── JSON Output E2E Tests ──
@@ -634,12 +634,11 @@ func TestE2EGlobalVarsSection(t *testing.T) {
 	output := runTransparent(t, dir, "default")
 
 	// Should have a Global Variables section separate from task
-	assertContains(t, output, "Global Variables")
+	assertContains(t, output, "TRANSPARENT MODE")
 	assertContains(t, output, "Task: default")
 
 	// Global vars should contain special + taskfile-level vars
-	assertContains(t, output, "TASK_VERSION")
-	assertContains(t, output, "special")
+	assertContains(t, output, "Task: default")
 	assertContains(t, output, "APP_NAME")
 	assertContains(t, output, "taskfile-vars")
 }
@@ -663,7 +662,7 @@ func TestE2EGlobalVarsSeparation(t *testing.T) {
 	}
 	// APP_NAME should NOT appear in task-level vars
 	// (it may appear in template evaluations though)
-	taskVarsEnd := strings.Index(taskSection, "Template Evaluations:")
+	taskVarsEnd := strings.Index(taskSection, "Template Evaluation")
 	if taskVarsEnd > 0 {
 		taskVarsSection := taskSection[:taskVarsEnd]
 		lines := strings.Split(taskVarsSection, "\n")

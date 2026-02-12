@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,22 +29,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'App: {{.APP_NAME}}'
-       Output: echo 'App: my-app'
-       Vars used: APP_NAME
-  [2] (cmds[1]) Input:  echo 'Env: {{.APP_ENV}}'
-       Output: echo 'Env: production'
-       Vars used: APP_ENV
-  [3] (cmds[2]) Input:  echo 'Log: {{.LOG_LEVEL}}'
-       Output: echo 'Log: info'
-       Vars used: LOG_LEVEL
-  Commands:
-  [0] raw:      echo 'App: {{.APP_NAME}}'
-       resolved: echo 'App: my-app'
-  [1] raw:      echo 'Env: {{.APP_ENV}}'
-       resolved: echo 'Env: production'
-  [2] raw:      echo 'Log: {{.LOG_LEVEL}}'
-       resolved: echo 'Log: info'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'App: my-app'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Env: {{.APP_ENV}}'
+  └─
+  ┌─ Output:
+  │ echo 'Env: production'
+  └─
+  ┌─ Vars used:
+  │ APP_ENV
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Log: {{.LOG_LEVEL}}'
+  └─
+  ┌─ Output:
+  │ echo 'Log: info'
+  └─
+  ┌─ Vars used:
+  │ LOG_LEVEL
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'App: {{.APP_NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'App: my-app'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Env: {{.APP_ENV}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Env: production'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Log: {{.LOG_LEVEL}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Log: info'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,12 +30,22 @@
                   ptr: <PTR>
   LOCAL_GREETING  task-vars       string     ref    hello-world
                   → aliases: .GREETING
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Local greeting: {{.LOCAL_GREETING}}'
-       Output: echo 'Local greeting: hello-world'
-       Vars used: LOCAL_GREETING
-  Commands:
-  [0] raw:      echo 'Local greeting: {{.LOCAL_GREETING}}'
-       resolved: echo 'Local greeting: hello-world'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Local greeting: {{.LOCAL_GREETING}}'
+  └─
+  ┌─ Output:
+  │ echo 'Local greeting: hello-world'
+  └─
+  ┌─ Vars used:
+  │ LOCAL_GREETING
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Local greeting: {{.LOCAL_GREETING}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Local greeting: hello-world'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

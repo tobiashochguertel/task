@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -30,17 +32,39 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Level1: {{.LEVEL1_VAR}}'
-       Output: echo 'Level1: from-level1'
-       Vars used: LEVEL1_VAR
-  [2] (cmds[1]) Input:  echo 'Parent: {{.PARENT_VAR}}'
-       Output: echo 'Parent: from-root-include'
-       Vars used: PARENT_VAR
-  Commands:
-  [0] raw:      echo 'Level1: {{.LEVEL1_VAR}}'
-       resolved: echo 'Level1: from-level1'
-  [1] raw:      echo 'Parent: {{.PARENT_VAR}}'
-       resolved: echo 'Parent: from-root-include'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Level1: {{.LEVEL1_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Level1: from-level1'
+  └─
+  ┌─ Vars used:
+  │ LEVEL1_VAR
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Parent: {{.PARENT_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Parent: from-root-include'
+  └─
+  ┌─ Vars used:
+  │ PARENT_VAR
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Level1: {{.LEVEL1_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Level1: from-level1'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Parent: {{.PARENT_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Parent: from-root-include'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

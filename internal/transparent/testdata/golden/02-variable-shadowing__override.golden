@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,17 +29,39 @@
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
   NAME   task-vars       string      ·     task-override ⚠ SHADOWS NAME="global-value" [taskfile-vars]
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.GREETING}} {{.NAME}}'
-       Output: echo 'Hello task-override'
-       Vars used: GREETING, NAME
-  [2] (cmds[1]) Input:  echo 'SHARED = {{.SHARED}}'
-       Output: echo 'SHARED = from-global'
-       Vars used: SHARED
-  Commands:
-  [0] raw:      echo '{{.GREETING}} {{.NAME}}'
-       resolved: echo 'Hello task-override'
-  [1] raw:      echo 'SHARED = {{.SHARED}}'
-       resolved: echo 'SHARED = from-global'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.GREETING}} {{.NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'Hello task-override'
+  └─
+  ┌─ Vars used:
+  │ GREETING, NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'SHARED = {{.SHARED}}'
+  └─
+  ┌─ Output:
+  │ echo 'SHARED = from-global'
+  └─
+  ┌─ Vars used:
+  │ SHARED
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.GREETING}} {{.NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Hello task-override'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'SHARED = {{.SHARED}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'SHARED = from-global'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

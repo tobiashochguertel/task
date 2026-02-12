@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -25,18 +27,42 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Version {{.VERSION}} validated'
-       Output: echo 'Version 1.0.0 validated'
-       Vars used: VERSION
-  [2] (preconditions) Input:  test '{{.VERSION}}' != ''
-       Output: test '1.0.0' != ''
-       Vars used: VERSION
-  [3] (preconditions) Input:  VERSION must not be empty (got: '{{.VERSION}}')
-       Output: VERSION must not be empty (got: '1.0.0')
-       Vars used: VERSION
-  Commands:
-  [0] raw:      echo 'Version {{.VERSION}} validated'
-       resolved: echo 'Version 1.0.0 validated'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Version {{.VERSION}} validated'
+  └─
+  ┌─ Output:
+  │ echo 'Version 1.0.0 validated'
+  └─
+  ┌─ Vars used:
+  │ VERSION
+  └─
+  Template Evaluation — preconditions:
+  ┌─ Input:
+  │ test '{{.VERSION}}' != ''
+  └─
+  ┌─ Output:
+  │ test '1.0.0' != ''
+  └─
+  ┌─ Vars used:
+  │ VERSION
+  └─
+  Template Evaluation — preconditions:
+  ┌─ Input:
+  │ VERSION must not be empty (got: '{{.VERSION}}')
+  └─
+  ┌─ Output:
+  │ VERSION must not be empty (got: '1.0.0')
+  └─
+  ┌─ Vars used:
+  │ VERSION
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Version {{.VERSION}} validated'
+  └─
+  ┌─ Resolved:
+  │ echo 'Version 1.0.0 validated'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

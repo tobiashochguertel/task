@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -24,12 +26,22 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.DEFINED}}'
-       Output: echo 'hello'
-       Vars used: DEFINED
-  Commands:
-  [0] raw:      echo '{{.DEFINED}}'
-       resolved: echo 'hello'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.DEFINED}}'
+  └─
+  ┌─ Output:
+  │ echo 'hello'
+  └─
+  ┌─ Vars used:
+  │ DEFINED
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.DEFINED}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'hello'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

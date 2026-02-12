@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,19 +28,36 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (fields) Input:  Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.
-This task handles the full deployment pipeline.
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ Deploy {{.APP_NAME}} version {{.VERSION}} to {{.ENV}}.
+  │ This task handles the full deployment pipeline.
+  │ 
+  └─
+  ┌─ Output:
+  │ Deploy my-app version 2.0.0 to production.
+  │ This task handles the full deployment pipeline.
+  │ 
+  └─
+  ┌─ Vars used:
+  │ APP_NAME, VERSION, ENV
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
+  └─
+  ┌─ Output:
+  │ echo 'Deploying my-app v2.0.0 to production'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME, VERSION, ENV
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Deploying my-app v2.0.0 to production'
+  └─
 
-       Output: Deploy my-app version 2.0.0 to production.
-This task handles the full deployment pipeline.
-
-       Vars used: APP_NAME, VERSION, ENV
-  [2] (cmds[0]) Input:  echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
-       Output: echo 'Deploying my-app v2.0.0 to production'
-       Vars used: APP_NAME, VERSION, ENV
-  Commands:
-  [0] raw:      echo 'Deploying {{.APP_NAME}} v{{.VERSION}} to {{.ENV}}'
-       resolved: echo 'Deploying my-app v2.0.0 to production'
-
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

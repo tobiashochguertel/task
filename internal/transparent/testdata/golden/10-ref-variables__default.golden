@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,17 +28,39 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Greeting: {{.GREETING}}'
-       Output: echo 'Greeting: hello-world'
-       Vars used: GREETING
-  [2] (cmds[1]) Input:  echo 'Alias: {{.ALIAS}}'
-       Output: echo 'Alias: hello-world'
-       Vars used: ALIAS
-  Commands:
-  [0] raw:      echo 'Greeting: {{.GREETING}}'
-       resolved: echo 'Greeting: hello-world'
-  [1] raw:      echo 'Alias: {{.ALIAS}}'
-       resolved: echo 'Alias: hello-world'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Greeting: {{.GREETING}}'
+  └─
+  ┌─ Output:
+  │ echo 'Greeting: hello-world'
+  └─
+  ┌─ Vars used:
+  │ GREETING
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Alias: {{.ALIAS}}'
+  └─
+  ┌─ Output:
+  │ echo 'Alias: hello-world'
+  └─
+  ┌─ Vars used:
+  │ ALIAS
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Greeting: {{.GREETING}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Greeting: hello-world'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Alias: {{.ALIAS}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Alias: hello-world'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

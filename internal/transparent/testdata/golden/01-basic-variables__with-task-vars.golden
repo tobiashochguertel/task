@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,17 +30,39 @@
              ptr: <PTR>
   BUILD_DIR  task-vars       string      ·     ./build
   OUTPUT     task-vars       string      ·     my-app-1.0.0
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Output: {{.OUTPUT}}'
-       Output: echo 'Output: my-app-1.0.0'
-       Vars used: OUTPUT
-  [2] (cmds[1]) Input:  echo 'Build dir: {{.BUILD_DIR}}'
-       Output: echo 'Build dir: ./build'
-       Vars used: BUILD_DIR
-  Commands:
-  [0] raw:      echo 'Output: {{.OUTPUT}}'
-       resolved: echo 'Output: my-app-1.0.0'
-  [1] raw:      echo 'Build dir: {{.BUILD_DIR}}'
-       resolved: echo 'Build dir: ./build'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Output: {{.OUTPUT}}'
+  └─
+  ┌─ Output:
+  │ echo 'Output: my-app-1.0.0'
+  └─
+  ┌─ Vars used:
+  │ OUTPUT
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Build dir: {{.BUILD_DIR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build dir: ./build'
+  └─
+  ┌─ Vars used:
+  │ BUILD_DIR
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Output: {{.OUTPUT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Output: my-app-1.0.0'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Build dir: {{.BUILD_DIR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build dir: ./build'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

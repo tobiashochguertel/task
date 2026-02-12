@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,19 +28,43 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{.NAME | trim}}'
-       Output: echo 'world'
-       Vars used: NAME
-         pipe[0]: .NAME([]) → "  world  "
-         pipe[1]: trim([]) → "world"
-  [2] (cmds[1]) Input:  echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
-       Output: echo 'NAME:world'
-       Vars used: NAME
-  Commands:
-  [0] raw:      echo '{{.NAME | trim}}'
-       resolved: echo 'world'
-  [1] raw:      echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
-       resolved: echo 'NAME:world'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{.NAME | trim}}'
+  └─
+  ┌─ Pipe Steps:
+  │ Step 1: .NAME() →   world  
+  │ Step 2: trim() → world
+  └─
+  ┌─ Output:
+  │ echo 'world'
+  └─
+  ┌─ Vars used:
+  │ NAME
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
+  └─
+  ┌─ Output:
+  │ echo 'NAME:world'
+  └─
+  ┌─ Vars used:
+  │ NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{.NAME | trim}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'world'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo '{{printf "%s:%s" "NAME" (.NAME | trim)}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'NAME:world'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

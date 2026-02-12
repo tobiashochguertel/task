@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,18 +28,42 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (fields) Input:  build-{{.APP_NAME}}-{{.VERSION}}
-       Output: build-my-app-2.0.0
-       Vars used: APP_NAME, VERSION
-  [2] (fields) Input:  Build {{.APP_NAME}}
-       Output: Build my-app
-       Vars used: APP_NAME
-  [3] (cmds[0]) Input:  echo 'Building {{.APP_NAME}}'
-       Output: echo 'Building my-app'
-       Vars used: APP_NAME
-  Commands:
-  [0] raw:      echo 'Building {{.APP_NAME}}'
-       resolved: echo 'Building my-app'
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ build-{{.APP_NAME}}-{{.VERSION}}
+  └─
+  ┌─ Output:
+  │ build-my-app-2.0.0
+  └─
+  ┌─ Vars used:
+  │ APP_NAME, VERSION
+  └─
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ Build {{.APP_NAME}}
+  └─
+  ┌─ Output:
+  │ Build my-app
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.APP_NAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building my-app'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Building {{.APP_NAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building my-app'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

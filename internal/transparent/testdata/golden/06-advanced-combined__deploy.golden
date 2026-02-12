@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,13 +29,23 @@
   MATCH   call-vars       []string    ·     []
           ptr: <PTR>
   TARGET  task-vars       string      ·     production
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
-       Output: echo 'Deploying myproject to production'
-       Vars used: PROJECT, TARGET
-  Commands:
-  [0] raw:      echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
-       resolved: echo 'Deploying myproject to production'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
+  └─
+  ┌─ Output:
+  │ echo 'Deploying myproject to production'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, TARGET
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Deploying {{.PROJECT}} to {{.TARGET}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Deploying myproject to production'
+  └─
   Dependencies: build
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

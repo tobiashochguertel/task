@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,11 +28,19 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (fields) Input:  [{{.APP_NAME}}]
-       Output: [my-app]
-       Vars used: APP_NAME
-  Commands:
-  [0] echo 'Running with prefix'
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ [{{.APP_NAME}}]
+  └─
+  ┌─ Output:
+  │ [my-app]
+  └─
+  ┌─ Vars used:
+  │ APP_NAME
+  └─
+  Commands — cmds[0]:
+  ┌─ Command:
+  │ echo 'Running with prefix'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

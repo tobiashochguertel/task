@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,37 +30,107 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-linux-amd64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  [2] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-linux-arm64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  [3] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-darwin-amd64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  [4] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-darwin-arm64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  [5] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-windows-amd64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  [6] (cmds[0]) Input:  echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       Output: echo 'Build: my-app-windows-arm64'
-       Vars used: PROJECT, ITEM, PLATFORM, ARCH
-  Commands:
-  [0] (ITEM=map[ARCH:amd64 PLATFORM:linux]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-linux-amd64'
-  [1] (ITEM=map[ARCH:arm64 PLATFORM:linux]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-linux-arm64'
-  [2] (ITEM=map[ARCH:amd64 PLATFORM:darwin]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-darwin-amd64'
-  [3] (ITEM=map[ARCH:arm64 PLATFORM:darwin]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-darwin-arm64'
-  [4] (ITEM=map[ARCH:amd64 PLATFORM:windows]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-windows-amd64'
-  [5] (ITEM=map[ARCH:arm64 PLATFORM:windows]) raw:      echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
-       resolved: echo 'Build: my-app-windows-arm64'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-linux-amd64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-linux-arm64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-darwin-amd64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-darwin-arm64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-windows-amd64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Output:
+  │ echo 'Build: my-app-windows-arm64'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM, PLATFORM, ARCH
+  └─
+  Commands — cmds[0] (ITEM=map[ARCH:amd64 PLATFORM:linux]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-linux-amd64'
+  └─
+  Commands — cmds[1] (ITEM=map[ARCH:arm64 PLATFORM:linux]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-linux-arm64'
+  └─
+  Commands — cmds[2] (ITEM=map[ARCH:amd64 PLATFORM:darwin]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-darwin-amd64'
+  └─
+  Commands — cmds[3] (ITEM=map[ARCH:arm64 PLATFORM:darwin]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-darwin-arm64'
+  └─
+  Commands — cmds[4] (ITEM=map[ARCH:amd64 PLATFORM:windows]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-windows-amd64'
+  └─
+  Commands — cmds[5] (ITEM=map[ARCH:arm64 PLATFORM:windows]):
+  ┌─ Raw:
+  │ echo 'Build: {{.PROJECT}}-{{.ITEM.PLATFORM}}-{{.ITEM.ARCH}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Build: my-app-windows-arm64'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

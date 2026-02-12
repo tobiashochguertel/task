@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -30,22 +32,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Included var: {{.INCLUDED_VAR}}'
-       Output: echo 'Included var: from-included'
-       Vars used: INCLUDED_VAR
-  [2] (cmds[1]) Input:  echo 'Shared: {{.SHARED}}'
-       Output: echo 'Shared: included-shared'
-       Vars used: SHARED
-  [3] (cmds[2]) Input:  echo 'Parent var: {{.PARENT_VAR}}'
-       Output: echo 'Parent var: from-parent'
-       Vars used: PARENT_VAR
-  Commands:
-  [0] raw:      echo 'Included var: {{.INCLUDED_VAR}}'
-       resolved: echo 'Included var: from-included'
-  [1] raw:      echo 'Shared: {{.SHARED}}'
-       resolved: echo 'Shared: included-shared'
-  [2] raw:      echo 'Parent var: {{.PARENT_VAR}}'
-       resolved: echo 'Parent var: from-parent'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Included var: {{.INCLUDED_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Included var: from-included'
+  └─
+  ┌─ Vars used:
+  │ INCLUDED_VAR
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Shared: {{.SHARED}}'
+  └─
+  ┌─ Output:
+  │ echo 'Shared: included-shared'
+  └─
+  ┌─ Vars used:
+  │ SHARED
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Parent var: {{.PARENT_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Parent var: from-parent'
+  └─
+  ┌─ Vars used:
+  │ PARENT_VAR
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Included var: {{.INCLUDED_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Included var: from-included'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Shared: {{.SHARED}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Shared: included-shared'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Parent var: {{.PARENT_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Parent var: from-parent'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

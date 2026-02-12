@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,21 +28,52 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (fields) Input:  {{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}
-       Output: ./build/my-app-1.0.0
-       Vars used: BUILD_DIR, APP_NAME, VERSION
-  [2] (fields) Input:  {{.BUILD_DIR}}
-       Output: ./build
-       Vars used: BUILD_DIR
-  [3] (cmds[0]) Input:  echo 'Building {{.APP_NAME}} v{{.VERSION}}'
-       Output: echo 'Building my-app v1.0.0'
-       Vars used: APP_NAME, VERSION
-  [4] (status) Input:  test -f "{{.APP_NAME}}-{{.VERSION}}"
-       Output: test -f "my-app-1.0.0"
-       Vars used: APP_NAME, VERSION
-  Commands:
-  [0] raw:      echo 'Building {{.APP_NAME}} v{{.VERSION}}'
-       resolved: echo 'Building my-app v1.0.0'
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ {{.BUILD_DIR}}/{{.APP_NAME}}-{{.VERSION}}
+  └─
+  ┌─ Output:
+  │ ./build/my-app-1.0.0
+  └─
+  ┌─ Vars used:
+  │ BUILD_DIR, APP_NAME, VERSION
+  └─
+  Template Evaluation — fields:
+  ┌─ Input:
+  │ {{.BUILD_DIR}}
+  └─
+  ┌─ Output:
+  │ ./build
+  └─
+  ┌─ Vars used:
+  │ BUILD_DIR
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.APP_NAME}} v{{.VERSION}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building my-app v1.0.0'
+  └─
+  ┌─ Vars used:
+  │ APP_NAME, VERSION
+  └─
+  Template Evaluation — status:
+  ┌─ Input:
+  │ test -f "{{.APP_NAME}}-{{.VERSION}}"
+  └─
+  ┌─ Output:
+  │ test -f "my-app-1.0.0"
+  └─
+  ┌─ Vars used:
+  │ APP_NAME, VERSION
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Building {{.APP_NAME}} v{{.VERSION}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building my-app v1.0.0'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

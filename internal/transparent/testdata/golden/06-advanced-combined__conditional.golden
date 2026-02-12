@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,17 +29,39 @@
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
   DEBUG  task-vars       string      ·     true
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
-       Output: echo 'Debug mode ON'
-       Vars used: DEBUG
-  [2] (cmds[1]) Input:  echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
-       Output: echo 'myproject v2.0.0 built 2026-02-11'
-       Vars used: PROJECT, VERSION, BUILD_DATE
-  Commands:
-  [0] raw:      echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
-       resolved: echo 'Debug mode ON'
-  [1] raw:      echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
-       resolved: echo 'myproject v2.0.0 built 2026-02-11'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
+  └─
+  ┌─ Output:
+  │ echo 'Debug mode ON'
+  └─
+  ┌─ Vars used:
+  │ DEBUG
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
+  └─
+  ┌─ Output:
+  │ echo 'myproject v2.0.0 built 2026-02-11'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, VERSION, BUILD_DATE
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo '{{if eq .DEBUG "true"}}Debug mode ON{{else}}Debug mode OFF{{end}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Debug mode ON'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo '{{printf "%s v%s built %s" .PROJECT .VERSION .BUILD_DATE}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'myproject v2.0.0 built 2026-02-11'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

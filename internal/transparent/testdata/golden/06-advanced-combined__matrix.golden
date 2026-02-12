@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -27,22 +29,56 @@
   MATCH      call-vars       []string    ·     []
              ptr: <PTR>
   PLATFORMS  task-vars       string      ·     linux darwin windows
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       Output: echo 'Building myproject for linux'
-       Vars used: PROJECT, ITEM
-  [2] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       Output: echo 'Building myproject for darwin'
-       Vars used: PROJECT, ITEM
-  [3] (cmds[0]) Input:  echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       Output: echo 'Building myproject for windows'
-       Vars used: PROJECT, ITEM
-  Commands:
-  [0] (ITEM=linux) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       resolved: echo 'Building myproject for linux'
-  [1] (ITEM=darwin) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       resolved: echo 'Building myproject for darwin'
-  [2] (ITEM=windows) raw:      echo 'Building {{.PROJECT}} for {{.ITEM}}'
-       resolved: echo 'Building myproject for windows'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building myproject for linux'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building myproject for darwin'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building myproject for windows'
+  └─
+  ┌─ Vars used:
+  │ PROJECT, ITEM
+  └─
+  Commands — cmds[0] (ITEM=linux):
+  ┌─ Raw:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building myproject for linux'
+  └─
+  Commands — cmds[1] (ITEM=darwin):
+  ┌─ Raw:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building myproject for darwin'
+  └─
+  Commands — cmds[2] (ITEM=windows):
+  ┌─ Raw:
+  │ echo 'Building {{.PROJECT}} for {{.ITEM}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building myproject for windows'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

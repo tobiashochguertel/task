@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,22 +30,56 @@
             ptr: <PTR>
   ARTIFACT  task-vars       string      ·     myproject-2.0.0
   TAG       task-vars       string      ·     myproject/2-0-0
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Building {{.ARTIFACT}}'
-       Output: echo 'Building myproject-2.0.0'
-       Vars used: ARTIFACT
-  [2] (cmds[1]) Input:  echo 'Tag: {{.TAG}}'
-       Output: echo 'Tag: myproject/2-0-0'
-       Vars used: TAG
-  [3] (cmds[2]) Input:  echo 'Date: {{.BUILD_DATE}}'
-       Output: echo 'Date: 2026-02-11'
-       Vars used: BUILD_DATE
-  Commands:
-  [0] raw:      echo 'Building {{.ARTIFACT}}'
-       resolved: echo 'Building myproject-2.0.0'
-  [1] raw:      echo 'Tag: {{.TAG}}'
-       resolved: echo 'Tag: myproject/2-0-0'
-  [2] raw:      echo 'Date: {{.BUILD_DATE}}'
-       resolved: echo 'Date: 2026-02-11'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.ARTIFACT}}'
+  └─
+  ┌─ Output:
+  │ echo 'Building myproject-2.0.0'
+  └─
+  ┌─ Vars used:
+  │ ARTIFACT
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Tag: {{.TAG}}'
+  └─
+  ┌─ Output:
+  │ echo 'Tag: myproject/2-0-0'
+  └─
+  ┌─ Vars used:
+  │ TAG
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Date: {{.BUILD_DATE}}'
+  └─
+  ┌─ Output:
+  │ echo 'Date: 2026-02-11'
+  └─
+  ┌─ Vars used:
+  │ BUILD_DATE
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Building {{.ARTIFACT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building myproject-2.0.0'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Tag: {{.TAG}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Tag: myproject/2-0-0'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Date: {{.BUILD_DATE}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Date: 2026-02-11'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

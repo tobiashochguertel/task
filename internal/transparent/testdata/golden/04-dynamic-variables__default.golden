@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -26,22 +28,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Static: {{.STATIC_VAR}}'
-       Output: echo 'Static: static-value'
-       Vars used: STATIC_VAR
-  [2] (cmds[1]) Input:  echo 'Hostname: {{.HOSTNAME}}'
-       Output: echo 'Hostname: test-host'
-       Vars used: HOSTNAME
-  [3] (cmds[2]) Input:  echo 'Date: {{.DATE}}'
-       Output: echo 'Date: 2026-02-11'
-       Vars used: DATE
-  Commands:
-  [0] raw:      echo 'Static: {{.STATIC_VAR}}'
-       resolved: echo 'Static: static-value'
-  [1] raw:      echo 'Hostname: {{.HOSTNAME}}'
-       resolved: echo 'Hostname: test-host'
-  [2] raw:      echo 'Date: {{.DATE}}'
-       resolved: echo 'Date: 2026-02-11'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Static: {{.STATIC_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Static: static-value'
+  └─
+  ┌─ Vars used:
+  │ STATIC_VAR
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Hostname: {{.HOSTNAME}}'
+  └─
+  ┌─ Output:
+  │ echo 'Hostname: test-host'
+  └─
+  ┌─ Vars used:
+  │ HOSTNAME
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Date: {{.DATE}}'
+  └─
+  ┌─ Output:
+  │ echo 'Date: 2026-02-11'
+  └─
+  ┌─ Vars used:
+  │ DATE
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Static: {{.STATIC_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Static: static-value'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Hostname: {{.HOSTNAME}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Hostname: test-host'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Date: {{.DATE}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Date: 2026-02-11'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

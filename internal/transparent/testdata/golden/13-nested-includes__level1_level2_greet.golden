@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -31,22 +33,56 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Level2: {{.LEVEL2_VAR}}'
-       Output: echo 'Level2: from-level2'
-       Vars used: LEVEL2_VAR
-  [2] (cmds[1]) Input:  echo 'L1 to L2: {{.L1_TO_L2}}'
-       Output: echo 'L1 to L2: from-level1-include'
-       Vars used: L1_TO_L2
-  [3] (cmds[2]) Input:  echo 'Parent: {{.PARENT_VAR}}'
-       Output: echo 'Parent: from-root-include'
-       Vars used: PARENT_VAR
-  Commands:
-  [0] raw:      echo 'Level2: {{.LEVEL2_VAR}}'
-       resolved: echo 'Level2: from-level2'
-  [1] raw:      echo 'L1 to L2: {{.L1_TO_L2}}'
-       resolved: echo 'L1 to L2: from-level1-include'
-  [2] raw:      echo 'Parent: {{.PARENT_VAR}}'
-       resolved: echo 'Parent: from-root-include'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Level2: {{.LEVEL2_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Level2: from-level2'
+  └─
+  ┌─ Vars used:
+  │ LEVEL2_VAR
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'L1 to L2: {{.L1_TO_L2}}'
+  └─
+  ┌─ Output:
+  │ echo 'L1 to L2: from-level1-include'
+  └─
+  ┌─ Vars used:
+  │ L1_TO_L2
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Parent: {{.PARENT_VAR}}'
+  └─
+  ┌─ Output:
+  │ echo 'Parent: from-root-include'
+  └─
+  ┌─ Vars used:
+  │ PARENT_VAR
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Level2: {{.LEVEL2_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Level2: from-level2'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'L1 to L2: {{.L1_TO_L2}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'L1 to L2: from-level1-include'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Parent: {{.PARENT_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Parent: from-root-include'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -28,17 +30,39 @@
   ───────────────────────────────────────────
   MATCH  call-vars       []string    ·     []
          ptr: <PTR>
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
-       Output: echo 'Mode: debug for my-app'
-       Vars used: ITEM, PROJECT
-  [2] (cmds[0]) Input:  echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
-       Output: echo 'Mode: release for my-app'
-       Vars used: ITEM, PROJECT
-  Commands:
-  [0] (ITEM=debug) raw:      echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
-       resolved: echo 'Mode: debug for my-app'
-  [1] (ITEM=release) raw:      echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
-       resolved: echo 'Mode: release for my-app'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  └─
+  ┌─ Output:
+  │ echo 'Mode: debug for my-app'
+  └─
+  ┌─ Vars used:
+  │ ITEM, PROJECT
+  └─
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  └─
+  ┌─ Output:
+  │ echo 'Mode: release for my-app'
+  └─
+  ┌─ Vars used:
+  │ ITEM, PROJECT
+  └─
+  Commands — cmds[0] (ITEM=debug):
+  ┌─ Raw:
+  │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Mode: debug for my-app'
+  └─
+  Commands — cmds[1] (ITEM=release):
+  ┌─ Raw:
+  │ echo 'Mode: {{.ITEM}} for {{.PROJECT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Mode: release for my-app'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝

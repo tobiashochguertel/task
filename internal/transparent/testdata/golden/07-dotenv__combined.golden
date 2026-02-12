@@ -1,5 +1,7 @@
 
-══════ Transparent Mode Report ══════
+╔════════════════════════════════════════════════════════╗
+║  TRANSPARENT MODE — Variable & Template Diagnostics  ║
+╚════════════════════════════════════════════════════════╝
 
 ── Global Variables
   Variables:
@@ -40,12 +42,22 @@
   MATCH       call-vars       []string    ·     []
               ptr: <PTR>
   CONNECTION  task-vars       string      ·     localhost:5432/mydb
-  Template Evaluations:
-  [1] (cmds[0]) Input:  echo 'Connection: {{.CONNECTION}}'
-       Output: echo 'Connection: localhost:5432/mydb'
-       Vars used: CONNECTION
-  Commands:
-  [0] raw:      echo 'Connection: {{.CONNECTION}}'
-       resolved: echo 'Connection: localhost:5432/mydb'
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Connection: {{.CONNECTION}}'
+  └─
+  ┌─ Output:
+  │ echo 'Connection: localhost:5432/mydb'
+  └─
+  ┌─ Vars used:
+  │ CONNECTION
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Connection: {{.CONNECTION}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Connection: localhost:5432/mydb'
+  └─
 
-══════ End Report ══════
+╚══ End of Transparent Mode Report ══╝
