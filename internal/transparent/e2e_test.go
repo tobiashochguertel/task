@@ -3,29 +3,48 @@ package transparent_test
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"testing"
 )
 
-// getTaskBinary finds the task binary for E2E tests.
-// It checks ./bin/task relative to the repo root first, then PATH.
+var (
+	buildOnce sync.Once
+	buildErr  error
+	builtBin  string
+)
+
+// getTaskBinary builds the task binary from source on the first call and
+// returns the path to the freshly compiled binary. Subsequent calls within
+// the same test run return the cached path. This prevents stale-binary
+// issues where a pre-built ./bin/task does not reflect the current source.
 func getTaskBinary(t *testing.T) string {
 	t.Helper()
 	_, file, _, _ := runtime.Caller(0)
 	repoRoot := filepath.Join(filepath.Dir(file), "..", "..")
 	binPath := filepath.Join(repoRoot, "bin", "task")
-	if _, err := os.Stat(binPath); err == nil {
-		return binPath
+
+	buildOnce.Do(func() {
+		cmd := exec.Command("go", "build", "-o", binPath, "./cmd/task")
+		cmd.Dir = repoRoot
+		cmd.Env = os.Environ()
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			buildErr = fmt.Errorf("go build failed: %v\n%s", err, out)
+			return
+		}
+		builtBin = binPath
+	})
+
+	if buildErr != nil {
+		t.Fatalf("getTaskBinary: %v", buildErr)
 	}
-	if path, err := exec.LookPath("task"); err == nil {
-		return path
-	}
-	t.Skip("task binary not found — run 'go build -o ./bin/task ./cmd/task' first")
-	return ""
+	return builtBin
 }
 
 func runTransparent(t *testing.T, dir string, taskName string) string {
