@@ -38,4 +38,6 @@ node_modules
 website/.netlify/
 docs/transparent-mode/sessions/*.md
 go.work
+go.work.sum
 task.code-workspace
+testdata/var-desc-e2e/build/version.txt
