@@ -50,7 +50,8 @@ func resolveColors() {
 
 // RenderOptions controls what the renderers display.
 type RenderOptions struct {
-	Verbose bool // When false, hide environment-origin global vars for cleaner output
+	Verbose         bool // When false, hide environment-origin global vars for cleaner output
+	ShowWhitespaces bool // When true, replace spaces with · and tabs with → in values
 }
 
 // RenderText writes a human-readable trace report to the given writer.
@@ -62,11 +63,22 @@ func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 		opts = &RenderOptions{}
 	}
 	resolveColors()
-	headerText := "TRANSPARENT MODE — Variable & Template Diagnostics"
+
+	// ShowWhitespaces: apply transformation to report values
+	if opts.ShowWhitespaces {
+		report = applyWhitespaceVisibility(report)
+	}
+
+	headerText := "TRANSPARENT MODE \u2014 Variable & Template Diagnostics"
 	borderLen := len(headerText) + 4
 	fmt.Fprintf(w, "\n%s%s╔%s╗%s\n", cBold, cCyan, strings.Repeat("═", borderLen), cReset)
 	fmt.Fprintf(w, "%s%s║  %s  ║%s\n", cBold, cCyan, headerText, cReset)
-	fmt.Fprintf(w, "%s%s╚%s╝%s\n\n", cBold, cCyan, strings.Repeat("═", borderLen), cReset)
+	fmt.Fprintf(w, "%s%s\u255a%s\u255d%s\n", cBold, cCyan, strings.Repeat("\u2550", borderLen), cReset)
+
+	if opts.ShowWhitespaces {
+		fmt.Fprintf(w, "%sLegend: \u00b7 = space, \u2192 = tab%s\n", cDim, cReset)
+	}
+	fmt.Fprintln(w)
 
 	// Render global variables section (if any)
 	globals := filterGlobals(report.GlobalVars, opts.Verbose)
@@ -393,4 +405,72 @@ func truncate(s string, max int) string {
 		return s
 	}
 	return s[:max-3] + "..."
+}
+
+// makeWhitespaceVisible replaces spaces with · and tabs with → to make
+// whitespace visible in the output.
+func makeWhitespaceVisible(s string) string {
+	s = strings.ReplaceAll(s, " ", "\u00b7")
+	s = strings.ReplaceAll(s, "\t", "\u2192")
+	return s
+}
+
+// applyWhitespaceVisibility returns a copy of the report with whitespace
+// made visible in all value fields.
+func applyWhitespaceVisibility(report *TraceReport) *TraceReport {
+	copy := *report
+
+	copy.GlobalVars = applyWSToVars(report.GlobalVars)
+
+	copy.Tasks = make([]*TaskTrace, len(report.Tasks))
+	for i, t := range report.Tasks {
+		tc := *t
+		tc.Vars = applyWSToVars(t.Vars)
+		tc.Templates = applyWSToTemplates(t.Templates)
+		tc.Cmds = applyWSToCmds(t.Cmds)
+		copy.Tasks[i] = &tc
+	}
+	return &copy
+}
+
+func applyWSToVars(vars []VarTrace) []VarTrace {
+	out := make([]VarTrace, len(vars))
+	for i, v := range vars {
+		vc := v
+		if s, ok := v.Value.(string); ok {
+			vc.Value = makeWhitespaceVisible(s)
+		}
+		if v.ShCmd != "" {
+			vc.ShCmd = makeWhitespaceVisible(v.ShCmd)
+		}
+		if v.ShadowsVar != nil {
+			sc := *v.ShadowsVar
+			if s, ok := sc.Value.(string); ok {
+				sc.Value = makeWhitespaceVisible(s)
+			}
+			vc.ShadowsVar = &sc
+		}
+		out[i] = vc
+	}
+	return out
+}
+
+func applyWSToTemplates(templates []TemplateTrace) []TemplateTrace {
+	out := make([]TemplateTrace, len(templates))
+	for i, t := range templates {
+		tc := t
+		tc.Output = makeWhitespaceVisible(t.Output)
+		out[i] = tc
+	}
+	return out
+}
+
+func applyWSToCmds(cmds []CmdTrace) []CmdTrace {
+	out := make([]CmdTrace, len(cmds))
+	for i, c := range cmds {
+		cc := c
+		cc.ResolvedCmd = makeWhitespaceVisible(c.ResolvedCmd)
+		out[i] = cc
+	}
+	return out
 }

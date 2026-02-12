@@ -89,6 +89,7 @@ var (
 	CertKey             string
 	Interactive         bool
 	Transparent         bool
+	ShowWhitespaces     bool
 )
 
 func init() {
@@ -141,6 +142,7 @@ func init() {
 	pflag.BoolVarP(&AssumeYes, "yes", "y", false, "Assume \"yes\" as answer to all prompts.")
 	pflag.BoolVar(&Interactive, "interactive", getConfig(config, func() *bool { return config.Interactive }, false), "Prompt for missing required variables.")
 	pflag.BoolVarP(&Transparent, "transparent", "T", false, "Show template and variable diagnostic overlay (no execution).")
+	pflag.BoolVar(&ShowWhitespaces, "show-whitespaces", false, "Make whitespace visible in transparent mode output (· for spaces, → for tabs).")
 	pflag.BoolVarP(&Parallel, "parallel", "p", false, "Executes tasks provided on command line in parallel.")
 	pflag.BoolVarP(&Dry, "dry", "n", false, "Compiles and prints tasks in the order that they would be run, without executing them.")
 	pflag.BoolVar(&Summary, "summary", false, "Show summary about a task.")
@@ -318,6 +320,7 @@ func (o *flagsOption) ApplyToExecutor(e *task.Executor) {
 		task.WithFailfast(Failfast),
 		task.WithTransparent(Transparent),
 		task.WithTransparentJSON(Transparent && ListJson),
+		task.WithShowWhitespaces(ShowWhitespaces),
 	)
 }
 

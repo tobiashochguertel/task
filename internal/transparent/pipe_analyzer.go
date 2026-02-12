@@ -194,6 +194,90 @@ func GeneratePipeTips(steps []PipeStep) []string {
 	return tips
 }
 
+// funcSignatures maps common Go template function names to their signatures
+// and example usage for display when errors are detected.
+var funcSignatures = map[string]struct {
+	Signature string
+	Example   string
+}{
+	"printf":      {"printf(format string, args ...any) string", `{{printf "%s: %s" .KEY .VALUE}}`},
+	"print":       {"print(args ...any) string", `{{print .A " " .B}}`},
+	"println":     {"println(args ...any) string", `{{println .A .B}}`},
+	"trim":        {"trim(s string) string", `{{.VAR | trim}}`},
+	"trimAll":     {"trimAll(cutset string, s string) string", `{{trimAll "." .VAR}}`},
+	"trimPrefix":  {"trimPrefix(prefix string, s string) string", `{{trimPrefix "v" .VERSION}}`},
+	"trimSuffix":  {"trimSuffix(suffix string, s string) string", `{{trimSuffix ".exe" .FILE}}`},
+	"upper":       {"upper(s string) string", `{{.VAR | upper}}`},
+	"lower":       {"lower(s string) string", `{{.VAR | lower}}`},
+	"title":       {"title(s string) string", `{{.VAR | title}}`},
+	"replace":     {"replace(old string, new string, s string) string", `{{replace "-" "_" .VAR}}`},
+	"contains":    {"contains(substr string, s string) bool", `{{if contains "test" .VAR}}...{{end}}`},
+	"hasPrefix":   {"hasPrefix(prefix string, s string) bool", `{{if hasPrefix "v" .VERSION}}...{{end}}`},
+	"hasSuffix":   {"hasSuffix(suffix string, s string) bool", `{{if hasSuffix ".go" .FILE}}...{{end}}`},
+	"split":       {"split(sep string, s string) []string", `{{split "," .LIST}}`},
+	"join":        {"join(sep string, list []string) string", `{{join "," .LIST}}`},
+	"quote":       {"quote(s string) string", `{{.VAR | quote}}`},
+	"squote":      {"squote(s string) string", `{{.VAR | squote}}`},
+	"add":         {"add(a, b int) int", `{{add .X 1}}`},
+	"sub":         {"sub(a, b int) int", `{{sub .X 1}}`},
+	"mul":         {"mul(a, b int) int", `{{mul .X 2}}`},
+	"div":         {"div(a, b int) int", `{{div .X 2}}`},
+	"mod":         {"mod(a, b int) int", `{{mod .X 2}}`},
+	"default":     {"default(defaultVal any, val any) any", `{{default "fallback" .VAR}}`},
+	"ternary":     {"ternary(trueVal any, falseVal any, cond bool) any", `{{ternary "yes" "no" .FLAG}}`},
+	"toJson":      {"toJson(v any) string", `{{.MAP | toJson}}`},
+	"fromJson":    {"fromJson(s string) any", `{{fromJson .JSON_STR}}`},
+	"toPrettyJson": {"toPrettyJson(v any) string", `{{.MAP | toPrettyJson}}`},
+	"spew":        {"spew(v any) string", `{{.VAR | spew}}`},
+	"catLines":    {"catLines(path string) string", `{{catLines .FILE}}`},
+	"splitLines":  {"splitLines(s string) []string", `{{splitLines .CONTENT}}`},
+	"len":         {"len(v any) int", `{{len .LIST}}`},
+	"index":       {"index(collection any, key ...any) any", `{{index .MAP "key"}}`},
+	"slice":       {"slice(collection any, indices ...int) any", `{{slice .LIST 0 2}}`},
+}
+
+// GenerateErrorHints returns hints with function signatures when template
+// output contains error patterns like %!s(MISSING).
+func GenerateErrorHints(output string, steps []PipeStep) []string {
+	var hints []string
+
+	// Check for MISSING format verb errors
+	errorPatterns := []string{
+		"%!s(MISSING)", "%!d(MISSING)", "%!v(MISSING)", "%!f(MISSING)",
+		"%!q(MISSING)", "%!t(MISSING)",
+	}
+
+	hasFormatError := false
+	for _, p := range errorPatterns {
+		if strings.Contains(output, p) {
+			hasFormatError = true
+			break
+		}
+	}
+
+	if hasFormatError {
+		// Look for printf-like function in the steps
+		for _, step := range steps {
+			if sig, ok := funcSignatures[step.FuncName]; ok {
+				hints = append(hints, fmt.Sprintf(
+					"Hint: %s signature: %s\n    Example: %s",
+					step.FuncName, sig.Signature, sig.Example))
+				break
+			}
+		}
+		if len(hints) == 0 {
+			// Generic hint for printf errors
+			if sig, ok := funcSignatures["printf"]; ok {
+				hints = append(hints, fmt.Sprintf(
+					"Hint: This looks like a printf format error. printf signature: %s\n    Example: %s",
+					sig.Signature, sig.Example))
+			}
+		}
+	}
+
+	return hints
+}
+
 // numericFuncs lists template functions that require numeric arguments.
 var numericFuncs = map[string]bool{
 	"add": true, "sub": true, "mul": true, "div": true, "mod": true,

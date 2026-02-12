@@ -57,6 +57,7 @@ type (
 		Failfast            bool
 		Transparent         bool
 		TransparentJSON     bool
+		ShowWhitespaces     bool
 
 		// I/O
 		Stdin  io.Reader
@@ -646,4 +647,18 @@ type transparentJSONOption struct {
 
 func (o *transparentJSONOption) ApplyToExecutor(e *Executor) {
 	e.TransparentJSON = o.jsonOutput
+}
+
+// WithShowWhitespaces tells the [Executor] to make whitespace visible in
+// transparent mode output (· for spaces, → for tabs).
+func WithShowWhitespaces(show bool) ExecutorOption {
+	return &showWhitespacesOption{show}
+}
+
+type showWhitespacesOption struct {
+	show bool
+}
+
+func (o *showWhitespacesOption) ApplyToExecutor(e *Executor) {
+	e.ShowWhitespaces = o.show
 }
