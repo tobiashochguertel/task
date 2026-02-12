@@ -1,3 +1,6 @@
+// Package transparent provides variable and template tracing diagnostics
+// for Task's transparent mode, enabling step-by-step visibility into
+// variable resolution, template evaluation, and pipe chain analysis.
 package transparent
 
 import (
