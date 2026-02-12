@@ -136,65 +136,125 @@ func renderTask(w io.Writer, task TaskTrace) {
 }
 
 func renderVars(w io.Writer, vars []VarTrace) {
-	fmt.Fprintf(w, "  %s%sVariables:%s\n", cBold, cYellow, cReset)
+	fmt.Fprintf(w, "  %s%sVariables in scope:%s\n", cBold, cYellow, cReset)
 
-	// Compute column widths
-	maxName := 4 // "Name"
-	for _, v := range vars {
-		if len(v.Name) > maxName {
-			maxName = len(v.Name)
-		}
+	// Compute column widths dynamically
+	colName := 4   // min "Name"
+	colValue := 5  // min "Value"
+	colOrigin := 6 // min "Origin"
+	colType := 4   // min "Type"
+	colShadow := 8 // min "Shadows?"
+
+	type rowData struct {
+		name, value, origin, typeStr, shadow string
+		extraLines                           []string // additional lines below the row (ptr, ref alias)
 	}
 
-	// Header
-	fmt.Fprintf(w, "  %s%-*s  %-14s  %-8s  %-6s  Value%s\n",
-		cDim, maxName, "Name", "Origin", "Type", "Ref?", cReset)
-	fmt.Fprintf(w, "  %s%s%s\n", cDim, strings.Repeat("─", maxName+14+8+6+10), cReset)
-
+	rows := make([]rowData, 0, len(vars))
 	for _, v := range vars {
-		originStr := originLabel(v.Origin)
-		typeStr := v.Type
-		if typeStr == "" {
-			typeStr = "-"
+		rd := rowData{}
+		rd.name = v.Name
+		rd.origin = originLabel(v.Origin)
+
+		rd.typeStr = v.Type
+		if rd.typeStr == "" {
+			rd.typeStr = "-"
 		}
 
-		refStr := "  ·"
-		if v.IsRef {
-			refStr = fmt.Sprintf("%s ref%s", cRed, cReset)
-		}
-
+		// Value
 		valStr := fmt.Sprintf("%v", v.Value)
 		if v.IsDynamic {
 			shInfo := ""
 			if v.ShCmd != "" {
-				shInfo = fmt.Sprintf(" %s(sh: %s)%s", cDim, v.ShCmd, cReset)
+				shInfo = fmt.Sprintf(" (sh: %s)", v.ShCmd)
 			}
-			valStr = fmt.Sprintf("%s(sh)%s %s%s", cBlue, cReset, valStr, shInfo)
-			// Feature 2: Warn when dynamic var is empty (likely not evaluated)
+			valStr = fmt.Sprintf("(sh) %s%s", valStr, shInfo)
 			if fmt.Sprintf("%v", v.Value) == "" {
-				valStr += fmt.Sprintf(" %s⚠ DYNAMIC — sh: not evaluated (use task run to resolve)%s", cYellow, cReset)
+				valStr += " ⚠ DYNAMIC — not evaluated"
 			}
 		}
+		if v.IsRef {
+			valStr = fmt.Sprintf("(ref) %s", valStr)
+		}
+		rd.value = valStr
 
-		shadowFlag := ""
+		// Shadow
 		if v.ShadowsVar != nil {
-			shadowFlag = fmt.Sprintf(" %s⚠ SHADOWS %s=%q [%s]%s",
-				cRed, v.ShadowsVar.Name, fmt.Sprintf("%v", v.ShadowsVar.Value),
-				originLabel(v.ShadowsVar.Origin), cReset)
+			rd.shadow = fmt.Sprintf("⚠ SHADOWS %s=%q [%s]",
+				v.ShadowsVar.Name, fmt.Sprintf("%v", v.ShadowsVar.Value),
+				originLabel(v.ShadowsVar.Origin))
 		}
 
-		fmt.Fprintf(w, "  %-*s  %-14s  %-8s  %-6s  %s%s\n",
-			maxName, v.Name, originStr, typeStr, refStr, valStr, shadowFlag)
-
+		// Extra lines
 		if v.ValueID != 0 {
-			fmt.Fprintf(w, "  %s%*s  ptr: 0x%x%s\n",
-				cDim, maxName, "", v.ValueID, cReset)
+			rd.extraLines = append(rd.extraLines, fmt.Sprintf("ptr: 0x%x", v.ValueID))
 		}
 		if v.RefName != "" {
-			fmt.Fprintf(w, "  %s%*s  → aliases: %s%s\n",
-				cDim, maxName, "", v.RefName, cReset)
+			rd.extraLines = append(rd.extraLines, fmt.Sprintf("→ aliases: %s", v.RefName))
+		}
+
+		// Update column widths
+		if len(rd.name) > colName {
+			colName = len(rd.name)
+		}
+		if len(rd.value) > colValue {
+			colValue = len(rd.value)
+		}
+		if len(rd.origin) > colOrigin {
+			colOrigin = len(rd.origin)
+		}
+		if len(rd.typeStr) > colType {
+			colType = len(rd.typeStr)
+		}
+		if len(rd.shadow) > colShadow {
+			colShadow = len(rd.shadow)
+		}
+
+		rows = append(rows, rd)
+	}
+
+	// Table rendering
+	hLine := func(left, mid, right, fill string) {
+		fmt.Fprintf(w, "  %s%s%s%s%s%s%s%s%s%s%s%s\n",
+			cDim,
+			left, strings.Repeat(fill, colName+2),
+			mid, strings.Repeat(fill, colOrigin+2),
+			mid, strings.Repeat(fill, colType+2),
+			mid, strings.Repeat(fill, colValue+2),
+			mid, strings.Repeat(fill, colShadow+2),
+			right+cReset)
+	}
+
+	row := func(name, origin, typeStr, value, shadow string) {
+		fmt.Fprintf(w, "  %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s %-*s %s│%s\n",
+			cDim, cReset, colName, name,
+			cDim, cReset, colOrigin, origin,
+			cDim, cReset, colType, typeStr,
+			cDim, cReset, colValue, value,
+			cDim, cReset, colShadow, shadow,
+			cDim, cReset)
+	}
+
+	hLine("┌", "┬", "┐", "─")
+	row("Name", "Origin", "Type", "Value", "Shadows?")
+	hLine("├", "┼", "┤", "─")
+
+	for _, rd := range rows {
+		shadowStr := rd.shadow
+		if shadowStr != "" {
+			shadowStr = fmt.Sprintf("%s%s%s", cYellow, rd.shadow, cReset)
+		}
+		valueStr := rd.value
+		if rd.value != "" && strings.HasPrefix(rd.value, "(sh)") {
+			valueStr = fmt.Sprintf("%s%s%s", cBlue, rd.value, cReset)
+		}
+		row(rd.name, rd.origin, rd.typeStr, valueStr, shadowStr)
+		for _, extra := range rd.extraLines {
+			row("", "", "", fmt.Sprintf("%s%s%s", cDim, extra, cReset), "")
 		}
 	}
+
+	hLine("└", "┴", "┘", "─")
 }
 
 // --- Box-drawing helpers ---

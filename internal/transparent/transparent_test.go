@@ -346,7 +346,7 @@ func TestRenderText(t *testing.T) {
 	checks := []string{
 		"TRANSPARENT MODE",
 		"Task: build",
-		"Variables:",
+		"Variables in scope:",
 		"NAME",
 		"taskfile-vars",
 		"World",

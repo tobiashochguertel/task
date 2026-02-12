@@ -52,7 +52,7 @@ func TestE2EBasicVariables(t *testing.T) {
 	// Verify report structure
 	assertContains(t, output, "TRANSPARENT MODE")
 	assertContains(t, output, "Task: default")
-	assertContains(t, output, "Variables:")
+	assertContains(t, output, "Variables in scope:")
 
 	// Verify variable values are shown
 	assertContains(t, output, "APP_NAME")
