@@ -417,9 +417,90 @@ var funcSignatures = map[string]struct {
 	"slice":        {"slice(collection any, indices ...int) any", `{{slice .LIST 0 2}}`},
 }
 
+// sigParam describes one parameter from a parsed function signature.
+type sigParam struct {
+	Name     string // e.g. "format", "args"
+	Type     string // e.g. "string", "...any"
+	Variadic bool   // true if the param is variadic (starts with ...)
+}
+
+// parseSigParams extracts parameter names and types from a signature string
+// like "printf(format string, args ...any) string".
+func parseSigParams(sig string) []sigParam {
+	start := strings.Index(sig, "(")
+	end := strings.LastIndex(sig, ")")
+	if start < 0 || end < 0 || end <= start+1 {
+		return nil
+	}
+	paramStr := sig[start+1 : end]
+	parts := strings.Split(paramStr, ",")
+	var params []sigParam
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		fields := strings.Fields(p)
+		if len(fields) >= 2 {
+			name := fields[0]
+			typ := strings.Join(fields[1:], " ")
+			variadic := strings.HasPrefix(typ, "...")
+			params = append(params, sigParam{Name: name, Type: typ, Variadic: variadic})
+		}
+	}
+	return params
+}
+
+// buildCallDetail builds a multi-line string showing the parameter-to-value
+// mapping for a function call that produced an error. It uses the function
+// signature from funcSignatures and the resolved argument values.
+func buildCallDetail(funcName string, argValues []string) string {
+	sig, ok := funcSignatures[funcName]
+	if !ok {
+		return ""
+	}
+	params := parseSigParams(sig.Signature)
+	if len(params) == 0 {
+		return ""
+	}
+
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("Hint: %s format error detected\n", funcName))
+	b.WriteString(fmt.Sprintf("    Signature: %s\n", sig.Signature))
+
+	// Build the call line: funcName(arg1, arg2, ...)
+	b.WriteString(fmt.Sprintf("    Call:      %s(%s)\n", funcName, strings.Join(argValues, ", ")))
+
+	// Map each argument value to the corresponding parameter name
+	b.WriteString("    Params:")
+	argIdx := 0
+	for _, param := range params {
+		if param.Variadic {
+			// Variadic parameter consumes all remaining args
+			if argIdx < len(argValues) {
+				for vi := 0; argIdx < len(argValues); vi++ {
+					b.WriteString(fmt.Sprintf("\n             %s[%d] = %s", param.Name, vi, argValues[argIdx]))
+					argIdx++
+				}
+			} else {
+				b.WriteString(fmt.Sprintf("\n             %s = (none provided)", param.Name))
+			}
+		} else {
+			if argIdx < len(argValues) {
+				b.WriteString(fmt.Sprintf("\n             %s = %s", param.Name, argValues[argIdx]))
+				argIdx++
+			} else {
+				b.WriteString(fmt.Sprintf("\n             %s = ⚠ MISSING", param.Name))
+			}
+		}
+	}
+	b.WriteString(fmt.Sprintf("\n    Example:  %s", sig.Example))
+
+	return b.String()
+}
+
 // GenerateErrorHints returns hints with function signatures when template
 // output contains error patterns like %!s(MISSING).
-func GenerateErrorHints(output string, steps []PipeStep) []string {
+// When evalActions are provided, the hints include the actual parameter-to-value
+// mapping showing exactly how the function was called.
+func GenerateErrorHints(output string, steps []PipeStep, evalActions []EvalAction) []string {
 	var hints []string
 
 	// Check for MISSING format verb errors
@@ -436,27 +517,125 @@ func GenerateErrorHints(output string, steps []PipeStep) []string {
 		}
 	}
 
-	if hasFormatError {
-		// Look for printf-like function in the steps
-		for _, step := range steps {
-			if sig, ok := funcSignatures[step.FuncName]; ok {
-				hints = append(hints, fmt.Sprintf(
-					"Hint: %s signature: %s\n    Example: %s",
-					step.FuncName, sig.Signature, sig.Example))
-				break
+	if !hasFormatError {
+		return hints
+	}
+
+	// Try to build a detailed call hint using EvalAction steps + PipeStep arg values
+	for _, ea := range evalActions {
+		for _, ds := range ea.Steps {
+			if ds.Operation != "Apply a Function" {
+				continue
 			}
-		}
-		if len(hints) == 0 {
-			// Generic hint for printf errors
-			if sig, ok := funcSignatures["printf"]; ok {
-				hints = append(hints, fmt.Sprintf(
-					"Hint: This looks like a printf format error. printf signature: %s\n    Example: %s",
-					sig.Signature, sig.Example))
+			if _, ok := funcSignatures[ds.Target]; !ok {
+				continue
+			}
+			// Check if this function step's output contains the error
+			if !containsFormatError(ds.Output) && !containsFormatError(ea.Result) {
+				continue
+			}
+			// Find matching PipeStep to get individual resolved argument values
+			var argValues []string
+			for _, ps := range steps {
+				if ps.FuncName == ds.Target {
+					argValues = ps.ArgsValues
+					break
+				}
+			}
+			if len(argValues) == 0 && ds.Input != "" {
+				// Fallback: use the Input field as a single representation
+				argValues = parseInputArgs(ds.Input, ds.Target)
+			}
+			detail := buildCallDetail(ds.Target, argValues)
+			if detail != "" {
+				hints = append(hints, detail)
+				return hints
 			}
 		}
 	}
 
+	// Fallback: use PipeStep data if EvalActions didn't produce a match
+	for _, step := range steps {
+		if sig, ok := funcSignatures[step.FuncName]; ok {
+			if len(step.ArgsValues) > 0 {
+				detail := buildCallDetail(step.FuncName, step.ArgsValues)
+				if detail != "" {
+					hints = append(hints, detail)
+					return hints
+				}
+			}
+			hints = append(hints, fmt.Sprintf(
+				"Hint: %s signature: %s\n    Example: %s",
+				step.FuncName, sig.Signature, sig.Example))
+			return hints
+		}
+	}
+
+	// Generic fallback for printf errors
+	if sig, ok := funcSignatures["printf"]; ok {
+		hints = append(hints, fmt.Sprintf(
+			"Hint: This looks like a printf format error. printf signature: %s\n    Example: %s",
+			sig.Signature, sig.Example))
+	}
+
 	return hints
+}
+
+// containsFormatError checks if a string contains Go format error patterns.
+func containsFormatError(s string) bool {
+	patterns := []string{
+		"%!s(MISSING)", "%!d(MISSING)", "%!v(MISSING)", "%!f(MISSING)",
+		"%!q(MISSING)", "%!t(MISSING)",
+	}
+	for _, p := range patterns {
+		if strings.Contains(s, p) {
+			return true
+		}
+	}
+	return false
+}
+
+// parseInputArgs splits an Input string like `printf "%s: %s" "hello" "world"`
+// into individual argument values (excluding the function name).
+func parseInputArgs(input, funcName string) []string {
+	// Strip the function name prefix
+	rest := strings.TrimPrefix(input, funcName)
+	rest = strings.TrimSpace(rest)
+	if rest == "" {
+		return nil
+	}
+
+	// Simple tokenizer: split by spaces but respect quoted strings
+	var args []string
+	var current strings.Builder
+	inQuote := false
+	quoteChar := byte(0)
+
+	for i := 0; i < len(rest); i++ {
+		ch := rest[i]
+		if inQuote {
+			current.WriteByte(ch)
+			if ch == quoteChar {
+				inQuote = false
+			}
+		} else if ch == '"' || ch == '\'' {
+			inQuote = true
+			quoteChar = ch
+			current.WriteByte(ch)
+		} else if ch == ' ' || ch == '\t' {
+			if current.Len() > 0 {
+				args = append(args, current.String())
+				current.Reset()
+			}
+		} else {
+			current.WriteByte(ch)
+		}
+	}
+	if current.Len() > 0 {
+		args = append(args, current.String())
+	}
+
+	return args
 }
 
 // numericFuncs lists template functions that require numeric arguments.
