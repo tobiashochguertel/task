@@ -13,16 +13,20 @@ New functionality required by the specification and Improvements.1.md that is no
 The specification (05-OUTPUT-FORMAT.md) and Improvements.1.md require a detailed step-by-step trace of template evaluation showing how each variable is resolved and each function is applied within a template expression. The current implementation only shows basic pipe steps (function name + args + output) but does NOT show the incremental resolution process.
 
 The user wants to see exactly how a template like:
+
 ```
 echo '{{printf "%s: %*s %s" "ENGINE" .SPACE (.ENGINE | trim)}}'
 ```
+
 is resolved step by step, showing:
+
 - Each variable resolution (`.ENGINE` → `"node\n"`)
 - Each function application (`trim` → `"node"`)
 - The intermediate state of the full expression after each step
 - Using `I` (input), `O` (output), `F` (final command) labels
 
 **Current Behavior**:
+
 ```
   Template Evaluations:
   [1] (cmds[0]) Input:  echo "{{spew (.ENGINE | trim)}}"
@@ -31,6 +35,7 @@ is resolved step by step, showing:
 ```
 
 **Expected Behavior** (from Improvements.1.md):
+
 ```
   Template Evaluation — cmds[0]:
   ┌─ Steps:
@@ -57,6 +62,7 @@ is resolved step by step, showing:
    - Track the evolving expression string after each substitution
 
 2. **Extend `model.go`** — Add a `TemplateStep` struct:
+
    ```go
    type TemplateStep struct {
        StepNum     int      // Sequential step number
@@ -67,6 +73,7 @@ is resolved step by step, showing:
        Expression  string   // Full expression state after this step
    }
    ```
+
    Add `DetailedSteps []TemplateStep` to `TemplateTrace`.
 
 3. **Update `renderer.go`** — Render the steps in the box-drawing format with I/O/F labels.
@@ -76,6 +83,7 @@ is resolved step by step, showing:
 5. **Update `templater.go`** — Pass additional context to enable step-by-step tracing.
 
 **Acceptance Criteria**:
+
 - [ ] Each template expression shows numbered steps
 - [ ] Variable resolutions show step type "Resolve a Variable (`.NAME`)"
 - [ ] Function applications show step type "Apply a Function (`funcname`)"
@@ -87,6 +95,7 @@ is resolved step by step, showing:
 - [ ] Works with multi-argument functions like `printf`
 
 **Testing**:
+
 - [ ] Unit tests for `AnalyzeSteps()` with simple variable resolution
 - [ ] Unit tests with pipe chains
 - [ ] Unit tests with nested parenthesized expressions
@@ -96,6 +105,7 @@ is resolved step by step, showing:
 **Dependencies**: I001 (box-drawing format)
 
 **Files to modify**:
+
 - `internal/transparent/pipe_analyzer.go` — new `AnalyzeSteps()` function
 - `internal/transparent/model.go` — new `TemplateStep` struct
 - `internal/transparent/renderer.go` — render steps
@@ -113,12 +123,14 @@ is resolved step by step, showing:
 Improvements.1.md requests a CLI option to make whitespace visible in the output. This is critical for debugging template expressions where leading/trailing spaces or tabs cause unexpected behavior. The option should replace spaces with `·` and tabs with `→` in variable values and template output.
 
 **Example with `--show-whitespaces`**:
+
 ```
 ENGINE  taskfile-vars  string  ·  ·node
 CLI     taskfile-vars  string  ·  ·node···--experimental-strip-types··src/cli.ts
 ```
 
 Without it (current default):
+
 ```
 ENGINE  taskfile-vars  string  ·   node
 CLI     taskfile-vars  string  ·   node   --experimental-strip-types  src/cli.ts
@@ -138,6 +150,7 @@ CLI     taskfile-vars  string  ·   node   --experimental-strip-types  src/cli.t
    - Add `ShowWhitespaces bool` field
 
 4. **Create whitespace replacement function**:
+
    ```go
    func makeWhitespaceVisible(s string) string {
        s = strings.ReplaceAll(s, " ", "·")
@@ -152,11 +165,13 @@ CLI     taskfile-vars  string  ·   node   --experimental-strip-types  src/cli.t
    - Command raw/resolved strings
 
 6. **Add legend** — When whitespace mode is active, display a legend at the top:
+
    ```
    Legend: · = space, → = tab
    ```
 
 **Acceptance Criteria**:
+
 - [ ] `--show-whitespaces` flag recognized by CLI
 - [ ] Spaces replaced with `·` in variable values when flag is active
 - [ ] Tabs replaced with `→` when flag is active
@@ -166,6 +181,7 @@ CLI     taskfile-vars  string  ·   node   --experimental-strip-types  src/cli.t
 - [ ] JSON output includes a `whitespace_visible: true` field when active
 
 **Testing**:
+
 - [ ] Unit test for `makeWhitespaceVisible()` function
 - [ ] Integration test with `--show-whitespaces` flag
 - [ ] Verify legend is displayed
@@ -174,6 +190,7 @@ CLI     taskfile-vars  string  ·   node   --experimental-strip-types  src/cli.t
 **Dependencies**: None
 
 **Files to modify**:
+
 - `internal/flags/flags.go` — new flag
 - `executor.go` — new field + option
 - `internal/transparent/renderer.go` — whitespace replacement + legend

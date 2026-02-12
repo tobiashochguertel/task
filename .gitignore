@@ -37,3 +37,5 @@ tags
 node_modules
 website/.netlify/
 docs/transparent-mode/sessions/*.md
+go.work
+task.code-workspace
