@@ -1068,7 +1068,7 @@ func TestRenderVarsLipglossMapValueShowsDetailBox(t *testing.T) {
 		{Name: "INFO", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
 	}
 	var buf bytes.Buffer
-	renderVarsLipgloss(&buf, vars)
+	renderVarsLipgloss(&buf, vars, &RenderOptions{})
 	output := buf.String()
 	if !strings.Contains(output, "see below") {
 		t.Error("multiline value should show 'see below' in table")
@@ -1107,10 +1107,260 @@ func TestRenderVarsLipglossShadow(t *testing.T) {
 		},
 	}
 	var buf bytes.Buffer
-	renderVarsLipgloss(&buf, vars)
+	renderVarsLipgloss(&buf, vars, &RenderOptions{})
 	output := buf.String()
 	if !strings.Contains(output, "SHADOWS") {
 		t.Error("lipgloss renderer should show shadow indicator")
+	}
+}
+
+// --- Tests for syntax highlighting ---
+
+func TestChromaHighlightReturnsANSIForJSON(t *testing.T) {
+	t.Parallel()
+	input := `{"key": "value"}`
+	result := chromaHighlight(input)
+	if result == "" {
+		t.Fatal("chromaHighlight should return non-empty result for valid JSON")
+	}
+	// Should contain ANSI escape codes
+	if !strings.Contains(result, "\x1b[") {
+		t.Error("highlighted output should contain ANSI escape codes")
+	}
+	// Should still contain the original content (minus ANSI)
+	stripped := ansiRegex.ReplaceAllString(result, "")
+	if !strings.Contains(stripped, "key") || !strings.Contains(stripped, "value") {
+		t.Error("highlighted output should preserve original content")
+	}
+}
+
+func TestChromaHighlightEndsWithReset(t *testing.T) {
+	t.Parallel()
+	result := chromaHighlight(`{"a": 1}`)
+	if !strings.HasSuffix(result, ansiReset) {
+		t.Error("highlighted output should end with ANSI reset to prevent color bleeding")
+	}
+}
+
+func TestChromaHighlightMultilineJSON(t *testing.T) {
+	t.Parallel()
+	input := "{\n  \"key\": \"value\",\n  \"num\": 42\n}"
+	result := chromaHighlight(input)
+	if result == "" {
+		t.Fatal("chromaHighlight should handle multiline JSON")
+	}
+	stripped := ansiRegex.ReplaceAllString(result, "")
+	if !strings.Contains(stripped, "\"key\"") {
+		t.Error("multiline JSON should preserve keys")
+	}
+	if !strings.Contains(stripped, "42") {
+		t.Error("multiline JSON should preserve numbers")
+	}
+}
+
+func TestSyntaxHighlightSkipsNonJSON(t *testing.T) {
+	t.Parallel()
+	input := "just a plain string"
+	result := syntaxHighlight(input, false)
+	if result != input {
+		t.Errorf("non-JSON content should be returned unchanged, got %q", result)
+	}
+}
+
+func TestSyntaxHighlightSkipsEmptyContent(t *testing.T) {
+	t.Parallel()
+	result := syntaxHighlight("", false)
+	if result != "" {
+		t.Errorf("empty content should be returned unchanged, got %q", result)
+	}
+}
+
+func TestSyntaxHighlightHandlesJSONObject(t *testing.T) {
+	t.Parallel()
+	input := "{\n  \"name\": \"test\"\n}"
+	result := syntaxHighlight(input, false)
+	// When color is enabled (default in tests), result should have ANSI codes
+	if !strings.Contains(result, "\x1b[") {
+		t.Skip("color is disabled in this environment")
+	}
+	stripped := ansiRegex.ReplaceAllString(result, "")
+	if !strings.Contains(stripped, "\"name\"") {
+		t.Error("highlighted JSON should preserve content")
+	}
+}
+
+func TestSyntaxHighlightHandlesJSONArray(t *testing.T) {
+	t.Parallel()
+	input := "[\"a\", \"b\", \"c\"]"
+	result := syntaxHighlight(input, false)
+	if !strings.Contains(result, "\x1b[") {
+		t.Skip("color is disabled in this environment")
+	}
+	stripped := ansiRegex.ReplaceAllString(result, "")
+	if !strings.Contains(stripped, "\"a\"") {
+		t.Error("highlighted JSON array should preserve content")
+	}
+}
+
+func TestUndoWhitespaceVisible(t *testing.T) {
+	t.Parallel()
+	// Simulate makeWhitespaceVisible output
+	input := "{\u21b5\n\u00b7\u00b7\"key\":\u00b7\"value\"\u21b5\n}"
+	result := undoWhitespaceVisible(input)
+	expected := "{\n  \"key\": \"value\"\n}"
+	if result != expected {
+		t.Errorf("undoWhitespaceVisible:\n  got:  %q\n  want: %q", result, expected)
+	}
+}
+
+func TestUndoWhitespaceVisibleTabs(t *testing.T) {
+	t.Parallel()
+	input := "\u2192indented"
+	result := undoWhitespaceVisible(input)
+	if result != "\tindented" {
+		t.Errorf("should convert → to tab, got %q", result)
+	}
+}
+
+func TestUndoWhitespaceVisibleCRLF(t *testing.T) {
+	t.Parallel()
+	input := "line\u2190\u21b5\n"
+	result := undoWhitespaceVisible(input)
+	if result != "line\r\n" {
+		t.Errorf("should restore CRLF, got %q", result)
+	}
+}
+
+func TestUndoWhitespaceVisibleStripsESCMarker(t *testing.T) {
+	t.Parallel()
+	input := "before[ESC]after"
+	result := undoWhitespaceVisible(input)
+	if result != "beforeafter" {
+		t.Errorf("should strip [ESC] markers, got %q", result)
+	}
+}
+
+func TestReapplyWhitespaceVisible(t *testing.T) {
+	t.Parallel()
+	input := "{\n  \"key\": \"value\"\n}"
+	result := reapplyWhitespaceVisible(input)
+	if !strings.Contains(result, "\u00b7") {
+		t.Error("should replace spaces with ·")
+	}
+	if !strings.Contains(result, "\u21b5") {
+		t.Error("should add ↵ before newlines")
+	}
+	if strings.Contains(result, " ") {
+		t.Error("should not have any literal spaces remaining")
+	}
+}
+
+func TestReapplyWhitespaceVisiblePreservesANSI(t *testing.T) {
+	t.Parallel()
+	// ANSI codes don't contain spaces or tabs, so they should survive
+	input := "\x1b[38;5;197m\"key\"\x1b[0m: \x1b[38;5;186m\"val\"\x1b[0m"
+	result := reapplyWhitespaceVisible(input)
+	// ANSI codes should be preserved (they don't contain space/tab)
+	if !strings.Contains(result, "\x1b[38;5;197m") {
+		t.Error("ANSI codes should be preserved after reapplyWhitespaceVisible")
+	}
+	// Spaces should be replaced
+	if strings.Contains(result, " ") {
+		t.Error("spaces should be replaced with · even around ANSI codes")
+	}
+}
+
+func TestSyntaxHighlightRoundtripWithWhitespaces(t *testing.T) {
+	t.Parallel()
+	// Original JSON
+	original := "{\n  \"key\": \"value\"\n}"
+	// Apply whitespace visibility (simulating the pipeline)
+	wsVisible := makeWhitespaceVisible(original)
+
+	result := syntaxHighlight(wsVisible, true)
+	if !strings.Contains(result, "\x1b[") {
+		t.Skip("color is disabled in this environment")
+	}
+	// After highlighting with showWhitespaces=true, whitespace markers should be present
+	if !strings.Contains(result, "\u00b7") {
+		t.Error("whitespace markers should be re-applied after highlighting")
+	}
+	// Content should be preserved
+	stripped := ansiRegex.ReplaceAllString(result, "")
+	if !strings.Contains(stripped, "\"key\"") {
+		t.Error("JSON content should be preserved through highlight roundtrip")
+	}
+}
+
+func TestSyntaxHighlightNoColorEnv(t *testing.T) {
+	t.Setenv("NO_COLOR", "1")
+	input := `{"key": "value"}`
+	result := syntaxHighlight(input, false)
+	if result != input {
+		t.Error("with NO_COLOR=1, syntaxHighlight should return content unchanged")
+	}
+}
+
+func TestRenderVarsCustomDetailBoxHighlighted(t *testing.T) {
+	t.Parallel()
+	mapValue := map[string]any{"name": "test"}
+	vars := []VarTrace{
+		{Name: "INFO", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{})
+	output := buf.String()
+	if !strings.Contains(output, "Value of INFO") {
+		t.Error("should render detail box for multiline value")
+	}
+	// When color is active, the detail box should contain ANSI from chroma
+	if strings.Contains(output, "\x1b[38;5;") {
+		// Chroma codes are present — verify JSON content is preserved
+		stripped := ansiRegex.ReplaceAllString(output, "")
+		if !strings.Contains(stripped, "\"name\"") {
+			t.Error("highlighted detail box should preserve JSON content")
+		}
+	}
+}
+
+func TestRenderVarsLipglossDetailBoxHighlighted(t *testing.T) {
+	t.Parallel()
+	mapValue := map[string]any{"name": "test"}
+	vars := []VarTrace{
+		{Name: "INFO", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
+	}
+	var buf bytes.Buffer
+	renderVarsLipgloss(&buf, vars, &RenderOptions{})
+	output := buf.String()
+	if !strings.Contains(output, "Value of INFO") {
+		t.Error("should render detail box for multiline value")
+	}
+	if strings.Contains(output, "\x1b[38;5;") {
+		stripped := ansiRegex.ReplaceAllString(output, "")
+		if !strings.Contains(stripped, "\"name\"") {
+			t.Error("highlighted detail box should preserve JSON content")
+		}
+	}
+}
+
+func TestRenderVarsDetailBoxWithShowWhitespaces(t *testing.T) {
+	t.Parallel()
+	mapValue := map[string]any{"key": "hello"}
+	vars := []VarTrace{
+		{Name: "DATA", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
+	}
+	// Apply whitespace visibility first (matching RenderText flow)
+	wsVars := applyWSToVars(vars)
+	var buf bytes.Buffer
+	renderVars(&buf, wsVars, &RenderOptions{ShowWhitespaces: true})
+	output := buf.String()
+	if !strings.Contains(output, "Value of DATA") {
+		t.Error("should render detail box")
+	}
+	// Content should have whitespace markers
+	stripped := ansiRegex.ReplaceAllString(output, "")
+	if !strings.Contains(stripped, "\u00b7") {
+		t.Error("detail box should have whitespace markers when ShowWhitespaces is true")
 	}
 }
 

@@ -25,7 +25,7 @@ var (
 // table package with advanced coloring and styling. Multiline values (like
 // pretty-printed JSON maps) get a compact summary in the table with the full
 // content rendered in a detail box below.
-func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
+func renderVarsLipgloss(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 	fmt.Fprintf(w, "  Variables in scope:\n")
 
 	// Track per-row metadata for styling decisions
@@ -168,6 +168,7 @@ func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 	// Render full values for multiline variables below the table
 	for _, d := range details {
 		fmt.Fprintln(w)
-		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), d.value)
+		showWS := opts != nil && opts.ShowWhitespaces
+		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), syntaxHighlight(d.value, showWS))
 	}
 }

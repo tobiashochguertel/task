@@ -187,7 +187,7 @@ func splitMultiline(s string) (first string, extra []string) {
 
 func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 	if opts != nil && opts.TableRenderer == "lipgloss" {
-		renderVarsLipgloss(w, vars)
+		renderVarsLipgloss(w, vars, opts)
 		return
 	}
 	fmt.Fprintf(w, "  %s%sVariables in scope:%s\n", cBold, cYellow, cReset)
@@ -354,7 +354,8 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 	// Render full values for multiline variables below the table
 	for _, d := range details {
 		fmt.Fprintln(w)
-		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), d.value)
+		showWS := opts != nil && opts.ShowWhitespaces
+		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), syntaxHighlight(d.value, showWS))
 	}
 }
 
