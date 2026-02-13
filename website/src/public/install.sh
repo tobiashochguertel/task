@@ -124,9 +124,6 @@ is_command() {
 echoerr() {
   echo "$@" 1>&2
 }
-log_prefix() {
-  echo "$0"
-}
 _logp=6
 log_set_priority() {
   _logp="$1"
@@ -188,7 +185,7 @@ uname_arch() {
     armv6*) arch="arm" ;;
     armv7*) arch="arm" ;;
   esac
-  echo ${arch}
+  echo "${arch}"
 }
 uname_os_check() {
   os=$(uname_os)
@@ -338,7 +335,6 @@ End of functions from https://github.com/client9/shlib
 ------------------------------------------------------------------------
 EOF
 
-PROJECT_NAME="task"
 OWNER=go-task
 REPO="task"
 BINARY=task
