@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
 version: 2
 
 builds:
@@ -10,23 +10,23 @@ builds:
       - linux
       - freebsd
     goarch:
-      - '386'
+      - "386"
       - amd64
       - arm
       - arm64
       - riscv64
     goarm:
-      - '6'
+      - "6"
     ignore:
       - goos: darwin
-        goarch: '386'
+        goarch: "386"
       - goos: darwin
         goarch: riscv64
       - goos: windows
         goarch: riscv64
     env:
       - CGO_ENABLED=0
-    mod_timestamp: '{{ .CommitTimestamp }}'
+    mod_timestamp: "{{ .CommitTimestamp }}"
     flags:
       - -trimpath
     ldflags:
@@ -37,7 +37,7 @@ gomod:
   proxy: true
 
 archives:
-  - name_template: '{{.Binary}}_{{.Os}}_{{.Arch}}'
+  - name_template: "{{.Binary}}_{{.Os}}_{{.Arch}}"
     files:
       - README.md
       - LICENSE
@@ -51,10 +51,10 @@ git:
     - "{{if not .IsNightly}}nightly{{end}}"
 
 snapshot:
-  version_template: '{{.Version}}'
+  version_template: "{{.Version}}"
 
 checksum:
-  name_template: 'task_checksums.txt'
+  name_template: "task_checksums.txt"
 
 nfpms:
   - vendor: Task
@@ -69,7 +69,7 @@ nfpms:
       - deb
       - rpm
       - apk
-    file_name_template: '{{.ProjectName}}_{{.Version}}_{{.Os}}_{{.Arch}}'
+    file_name_template: "{{.ProjectName}}_{{.Version}}_{{.Os}}_{{.Arch}}"
     contents:
       - src: completion/bash/task.bash
         dst: /etc/bash_completion.d/task
@@ -110,7 +110,7 @@ winget:
     commit_author:
       name: task-bot
       email: 106601941+task-bot@users.noreply.github.com
-    commit_msg_template: 'chore: release {{.PackageIdentifier}} {{.Tag}}'
+    commit_msg_template: "chore: release {{.PackageIdentifier}} {{.Tag}}"
     release_notes_url: https://github.com/go-task/task/releases/tag/{{.Tag}}
     tags:
       - build
@@ -127,7 +127,7 @@ winget:
     repository:
       owner: go-task
       name: winget-pkgs
-      branch: 'task-{{.Version}}'
+      branch: "task-{{.Version}}"
       pull_request:
         enabled: true
         draft: false
@@ -138,7 +138,6 @@ winget:
           branch: master
         body: |
           /cc @andreynering @pd93 @vmaerten
-
 
 npms:
   - name: "@go-task/cli"

@@ -43,3 +43,4 @@ task.code-workspace
 testdata/var-desc-e2e/build/version.txt
 docs/transparent-mode/reference
 docs/transparent-mode/issues/logs/*.log
+windsurf-settings/
