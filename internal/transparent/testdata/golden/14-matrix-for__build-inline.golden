@@ -24,7 +24,7 @@
   │                  │               │                │ ptr: <PTR>                                                                                          │          │
   │ PROJECT          │ taskfile-vars │ string         │ my-app                                                                                                      │          │
   └──────────────────┴───────────────┴────────────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: build-inline
   Variables in scope:

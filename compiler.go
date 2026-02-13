@@ -24,6 +24,7 @@ type Compiler struct {
 	Entrypoint     string
 	UserWorkingDir string
 
+	Taskfile     *ast.Taskfile
 	TaskfileEnv  *ast.Vars
 	TaskfileVars *ast.Vars
 
@@ -57,6 +58,28 @@ func (c *Compiler) getVariables(t *ast.Task, call *Call, evaluateShVars bool) (*
 		c.Tracer.RecordVar(transparent.VarTrace{
 			Name:   k,
 			Value:  v,
+			Origin: transparent.OriginSpecial,
+		})
+	}
+
+	// Inject TASK_INFO: a map of the current task's properties (rangeable in templates)
+	if t != nil {
+		taskInfo := taskToMap(t)
+		result.Set("TASK_INFO", ast.Var{Value: taskInfo})
+		c.Tracer.RecordVar(transparent.VarTrace{
+			Name:   "TASK_INFO",
+			Value:  taskInfo,
+			Origin: transparent.OriginSpecial,
+		})
+	}
+
+	// Inject TASKFILE_INFO: a map of the complete Taskfile structure (rangeable in templates)
+	if c.Taskfile != nil {
+		taskfileInfo := taskfileToMap(c.Taskfile)
+		result.Set("TASKFILE_INFO", ast.Var{Value: taskfileInfo})
+		c.Tracer.RecordVar(transparent.VarTrace{
+			Name:   "TASKFILE_INFO",
+			Value:  taskfileInfo,
 			Origin: transparent.OriginSpecial,
 		})
 	}

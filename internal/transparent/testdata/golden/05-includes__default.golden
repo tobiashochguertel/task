@@ -22,7 +22,7 @@
   │ PARENT_VAR       │ taskfile-vars │ string │ from-parent                                                                                               │          │
   │ SHARED           │ taskfile-vars │ string │ included-shared                                                                                           │          │
   └──────────────────┴───────────────┴────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: default
   Variables in scope:

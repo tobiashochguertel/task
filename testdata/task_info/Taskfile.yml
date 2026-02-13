@@ -1,0 +1,59 @@
+version: "3"
+
+vars:
+  GREETING: hello
+
+tasks:
+  default:
+    desc: "Test TASK_INFO and TASKFILE_INFO variables"
+    aliases: [info]
+    vars:
+      MY_VAR: world
+    cmds:
+      - 'echo "Task name: {{.TASK_INFO.Name}}"'
+      - 'echo "Task desc: {{.TASK_INFO.Desc}}"'
+
+  list-tasks:
+    desc: "List all task names using TASKFILE_INFO"
+    cmds:
+      - |
+        echo "Taskfile version: {{.TASKFILE_INFO.Version}}"
+        echo "Tasks:"
+        {{- range .TASKFILE_INFO.TaskNames}}
+        echo "  - {{.}}"
+        {{- end}}
+
+  list-aliases:
+    desc: "List aliases of default task using TASK_INFO"
+    aliases: [la, aliases]
+    cmds:
+      - |
+        echo "Aliases:"
+        {{- range .TASK_INFO.Aliases}}
+        echo "  - {{.}}"
+        {{- end}}
+
+  show-cmds:
+    desc: "Show commands of this task"
+    cmds:
+      - |
+        echo "Commands:"
+        {{- range .TASK_INFO.Cmds}}
+        echo "  cmd={{.Cmd}} task={{.Task}}"
+        {{- end}}
+
+  with-deps:
+    desc: "Task with dependencies"
+    deps: [default]
+    cmds:
+      - |
+        echo "Deps:"
+        {{- range .TASK_INFO.Deps}}
+        echo "  - {{.Task}}"
+        {{- end}}
+
+  subtask-caller:
+    desc: "Task that calls subtasks"
+    cmds:
+      - task: default
+      - echo "after subtask"

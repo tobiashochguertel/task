@@ -35,7 +35,7 @@
   │ APP_NAME         │ taskfile-vars │ string │ my-dotenv-app                                                                                           │                                                                                                                                               │
   │ APP_NAME         │ taskfile-vars │ string │ my-dotenv-app                                                                                           │ ⚠ SHADOWS APP_NAME="my-dotenv-app" [taskfile-vars]                                                                                            │
   └──────────────────┴───────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
-  (7 environment variables hidden — use -v to show)
+  (10 environment variables hidden — use -v to show)
 
 ── Task: default
   Variables in scope:

@@ -2913,3 +2913,64 @@ func TestVariableDescriptionsE2E(t *testing.T) {
 		assert.Contains(t, output, "Cleaning ./build")
 	})
 }
+
+func TestTaskInfoVariable(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/task_info"
+	var buff bytes.Buffer
+	e := task.NewExecutor(
+		task.WithDir(dir),
+		task.WithStdout(&buff),
+		task.WithStderr(&buff),
+		task.WithSilent(true),
+	)
+	require.NoError(t, e.Setup())
+
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "default"}))
+	output := buff.String()
+	assert.Contains(t, output, "Task name: default")
+	assert.Contains(t, output, "Task desc: Test TASK_INFO and TASKFILE_INFO variables")
+}
+
+func TestTaskInfoAliases(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/task_info"
+	var buff bytes.Buffer
+	e := task.NewExecutor(
+		task.WithDir(dir),
+		task.WithStdout(&buff),
+		task.WithStderr(&buff),
+		task.WithSilent(true),
+	)
+	require.NoError(t, e.Setup())
+
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "list-aliases"}))
+	output := buff.String()
+	assert.Contains(t, output, "Aliases:")
+	assert.Contains(t, output, "la")
+	assert.Contains(t, output, "aliases")
+}
+
+func TestTaskfileInfoVariable(t *testing.T) {
+	t.Parallel()
+
+	const dir = "testdata/task_info"
+	var buff bytes.Buffer
+	e := task.NewExecutor(
+		task.WithDir(dir),
+		task.WithStdout(&buff),
+		task.WithStderr(&buff),
+		task.WithSilent(true),
+	)
+	require.NoError(t, e.Setup())
+
+	require.NoError(t, e.Run(t.Context(), &task.Call{Task: "list-tasks"}))
+	output := buff.String()
+	assert.Contains(t, output, "Taskfile version: 3")
+	assert.Contains(t, output, "Tasks:")
+	assert.Contains(t, output, "default")
+	assert.Contains(t, output, "list-tasks")
+	assert.Contains(t, output, "list-aliases")
+}

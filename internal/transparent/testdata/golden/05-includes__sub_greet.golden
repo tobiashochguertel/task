@@ -26,7 +26,7 @@
   │ PARENT_VAR       │ included-tf   │ string │ from-parent                                                                                                        │ ⚠ SHADOWS PARENT_VAR="from-parent" [taskfile-vars]       │
   │ SHARED           │ included-tf   │ string │ included-shared                                                                                                    │ ⚠ SHADOWS SHARED="included-shared" [taskfile-vars]       │
   └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: sub:greet
   Variables in scope:

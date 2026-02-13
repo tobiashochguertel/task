@@ -22,7 +22,7 @@
   │ NAME             │ taskfile-vars │ string │   world                                                                                                         │          │
   │ TITLE            │ taskfile-vars │ string │ hello world                                                                                                     │          │
   └──────────────────┴───────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: combined-pipes
   Variables in scope:

@@ -27,7 +27,7 @@
   │ LEVEL2_VAR       │ included-tf   │ string │ from-level2                                                                                                                    │ ⚠ SHADOWS LEVEL2_VAR="from-level2" [taskfile-vars]   │
   │ ROOT_VAR         │ included-tf   │ string │ from-root                                                                                                                      │ ⚠ SHADOWS ROOT_VAR="from-root" [taskfile-vars]       │
   └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: level1:level2:greet
   Variables in scope:

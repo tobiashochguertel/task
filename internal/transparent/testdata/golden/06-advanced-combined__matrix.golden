@@ -22,7 +22,7 @@
   │ PROJECT          │ taskfile-vars │ string │ myproject                                                                                                          │          │
   │ VERSION          │ taskfile-vars │ string │ 2.0.0                                                                                                              │          │
   └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: matrix
   Variables in scope:

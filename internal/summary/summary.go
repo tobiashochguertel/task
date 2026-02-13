@@ -278,9 +278,9 @@ func isEnvVar(key string, envVars map[string]bool) bool {
 	if strings.HasPrefix(key, "TASK_") ||
 		strings.HasPrefix(key, "CLI_") ||
 		strings.HasPrefix(key, "ROOT_") ||
+		strings.HasPrefix(key, "TASKFILE_") ||
 		key == "TASK" ||
 		key == "TASKFILE" ||
-		key == "TASKFILE_DIR" ||
 		key == "USER_WORKING_DIR" ||
 		key == "ALIAS" ||
 		key == "MATCH" {

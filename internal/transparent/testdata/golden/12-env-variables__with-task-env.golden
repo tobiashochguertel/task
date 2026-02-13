@@ -23,7 +23,7 @@
   │ APP_ENV          │ taskfile-vars │ string │ production                                                                                                     │ ⚠ SHADOWS APP_ENV="staging" [taskfile-env]   │
   │ APP_NAME         │ taskfile-vars │ string │ my-app                                                                                                         │                                              │
   └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: with-task-env
   Variables in scope:

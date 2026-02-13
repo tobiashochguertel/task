@@ -122,7 +122,8 @@ func filterGlobals(vars []VarTrace, verbose bool) []VarTrace {
 func isInternalVar(name string) bool {
 	switch name {
 	case "CLI_ARGS", "CLI_ARGS_LIST", "CLI_FORCE", "CLI_SILENT",
-		"CLI_VERBOSE", "CLI_OFFLINE", "CLI_ASSUME_YES":
+		"CLI_VERBOSE", "CLI_OFFLINE", "CLI_ASSUME_YES",
+		"TASK_INFO", "TASKFILE_INFO":
 		return true
 	}
 	return false

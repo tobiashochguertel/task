@@ -20,7 +20,7 @@
   │ USER_WORKING_DIR │ special       │ string │ <PATH>                                          │          │
   │ DEFINED          │ taskfile-vars │ string │ hello                                                                                                           │          │
   └──────────────────┴───────────────┴────────┴─────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: test-undefined
   Variables in scope:

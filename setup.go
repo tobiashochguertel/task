@@ -225,6 +225,7 @@ func (e *Executor) setupCompiler() error {
 		Dir:            e.Dir,
 		Entrypoint:     e.Entrypoint,
 		UserWorkingDir: e.UserWorkingDir,
+		Taskfile:       e.Taskfile,
 		TaskfileEnv:    e.Taskfile.Env,
 		TaskfileVars:   e.Taskfile.Vars,
 		Logger:         e.Logger,

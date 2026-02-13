@@ -21,7 +21,7 @@
   │ APP_NAME         │ taskfile-vars │ string │ my-app                                                                                                         │          │
   │ VERSION          │ taskfile-vars │ string │ 1.0.0                                                                                                          │          │
   └──────────────────┴───────────────┴────────┴────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────┘
-  (7 environment variables hidden — use -v to show)
+  (9 environment variables hidden — use -v to show)
 
 ── Task: check-binary
   Variables in scope:
