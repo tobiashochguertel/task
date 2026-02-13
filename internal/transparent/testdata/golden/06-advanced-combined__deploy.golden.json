@@ -150,6 +150,121 @@
           "value": "production"
         }
       ]
+    },
+    {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Building {{.ARTIFACT}}'",
+          "resolved": "echo 'Building myproject-2.0.0'"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'Tag: {{.TAG}}'",
+          "resolved": "echo 'Tag: myproject/2-0-0'"
+        },
+        {
+          "index": 2,
+          "raw": "echo 'Date: {{.BUILD_DATE}}'",
+          "resolved": "echo 'Date: 2026-02-11'"
+        }
+      ],
+      "name": "build",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Building myproject-2.0.0'",
+              "source": "echo 'Building {{.ARTIFACT}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "myproject-2.0.0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".ARTIFACT"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Building {{.ARTIFACT}}'",
+          "output": "echo 'Building myproject-2.0.0'",
+          "vars_used": [
+            "ARTIFACT"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Tag: myproject/2-0-0'",
+              "source": "echo 'Tag: {{.TAG}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "myproject/2-0-0",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".TAG"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Tag: {{.TAG}}'",
+          "output": "echo 'Tag: myproject/2-0-0'",
+          "vars_used": [
+            "TAG"
+          ]
+        },
+        {
+          "context": "cmds[2]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Date: 2026-02-11'",
+              "source": "echo 'Date: {{.BUILD_DATE}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "2026-02-11",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".BUILD_DATE"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Date: {{.BUILD_DATE}}'",
+          "output": "echo 'Date: 2026-02-11'",
+          "vars_used": [
+            "BUILD_DATE"
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        },
+        {
+          "name": "ARTIFACT",
+          "origin": "task:vars",
+          "type": "string",
+          "value": "myproject-2.0.0"
+        },
+        {
+          "name": "TAG",
+          "origin": "task:vars",
+          "type": "string",
+          "value": "myproject/2-0-0"
+        }
+      ]
     }
   ],
   "version": "1.0"

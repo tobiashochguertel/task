@@ -71,4 +71,99 @@
   └─
   Dependencies: build
 
+── Task: build
+  Variables in scope:
+  ┌──────────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name     │ Origin    │ Type     │ Value            │ Shadows? │
+  ├──────────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH    │ call-vars │ []string │ []               │          │
+  │          │           │          │ ptr: <PTR> │          │
+  │ ARTIFACT │ task-vars │ string   │ myproject-2.0.0  │          │
+  │ TAG      │ task-vars │ string   │ myproject/2-0-0  │          │
+  └──────────┴───────────┴──────────┴──────────────────┴──────────┘
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Building {{.ARTIFACT}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Building {{.ARTIFACT}}'
+  │ 
+  │ Step 1: Resolve a Variable — .ARTIFACT
+  │   I     myproject-2.0.0
+  │ 
+  │   R     echo 'Building myproject-2.0.0'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Building myproject-2.0.0'
+  └─
+  ┌─ Vars used:
+  │ ARTIFACT
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Tag: {{.TAG}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Tag: {{.TAG}}'
+  │ 
+  │ Step 1: Resolve a Variable — .TAG
+  │   I     myproject/2-0-0
+  │ 
+  │   R     echo 'Tag: myproject/2-0-0'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Tag: myproject/2-0-0'
+  └─
+  ┌─ Vars used:
+  │ TAG
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Date: {{.BUILD_DATE}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Date: {{.BUILD_DATE}}'
+  │ 
+  │ Step 1: Resolve a Variable — .BUILD_DATE
+  │   I     2026-02-11
+  │ 
+  │   R     echo 'Date: 2026-02-11'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Date: 2026-02-11'
+  └─
+  ┌─ Vars used:
+  │ BUILD_DATE
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Building {{.ARTIFACT}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Building myproject-2.0.0'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Tag: {{.TAG}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Tag: myproject/2-0-0'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Date: {{.BUILD_DATE}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Date: 2026-02-11'
+  └─
+
 ╚══ End of Transparent Mode Report ══╝

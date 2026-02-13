@@ -608,6 +608,187 @@ func TestAnalyzeFormatErrorNonPrintf(t *testing.T) {
 	}
 }
 
+// ── generateContextExample Tests ──
+
+func TestGenerateContextExamplePrintf(t *testing.T) {
+	t.Parallel()
+	// printf with format "%s: %*s" should produce a context-specific example
+	example := generateContextExample("printf", []string{`"%s: %*s"`, `"ENGINE"`, `20`})
+	if example == "" {
+		t.Fatal("expected non-empty context example for printf")
+	}
+	// Should contain the actual format string
+	if !strings.Contains(example, `"%s: %*s"`) {
+		t.Errorf("context example should contain actual format string, got: %q", example)
+	}
+	// Should be wrapped in {{printf ...}}
+	if !strings.HasPrefix(example, "{{printf ") || !strings.HasSuffix(example, "}}") {
+		t.Errorf("context example should be wrapped in {{printf ...}}, got: %q", example)
+	}
+	// %*s needs 2 slots + %s needs 1 = 3 total args; only 2 provided, so ARG3 placeholder
+	if !strings.Contains(example, ".ARG3") {
+		t.Errorf("context example should have .ARG3 placeholder for missing arg, got: %q", example)
+	}
+}
+
+func TestGenerateContextExampleNonPrintf(t *testing.T) {
+	t.Parallel()
+	// Non-printf functions should return empty (use generic fallback)
+	example := generateContextExample("trim", []string{`"hello"`})
+	if example != "" {
+		t.Errorf("non-printf should return empty, got: %q", example)
+	}
+}
+
+func TestGenerateContextExampleNoArgs(t *testing.T) {
+	t.Parallel()
+	example := generateContextExample("printf", nil)
+	if example != "" {
+		t.Errorf("empty args should return empty, got: %q", example)
+	}
+}
+
+func TestCollectDiagnosticsContextExample(t *testing.T) {
+	t.Parallel()
+	// Verify that CollectDiagnostics produces a context-specific example
+	evalActions := []EvalAction{
+		{
+			ActionIndex: 0,
+			Steps: []TemplateStep{
+				{
+					StepNum: 1, Operation: "Apply a Function", Target: "printf",
+					Input:  `printf "%s: %*s" "ENGINE" 20`,
+					Output: `ENGINE: %!s(MISSING)`,
+				},
+			},
+		},
+	}
+	diags := CollectDiagnostics(evalActions, nil)
+	if len(diags) != 1 {
+		t.Fatalf("expected 1 diagnostic, got %d", len(diags))
+	}
+	// Example should be context-specific (not the generic one)
+	if diags[0].Example == `{{printf "%s: %s" .KEY .VALUE}}` {
+		t.Error("example should be context-specific, not the generic fallback")
+	}
+	if !strings.Contains(diags[0].Example, `"%s: %*s"`) {
+		t.Errorf("example should contain the actual format string, got: %q", diags[0].Example)
+	}
+}
+
+// ── SubtaskCall Tests ──
+
+func TestRecordSubtaskCall(t *testing.T) {
+	t.Parallel()
+	tracer := NewTracer()
+	tracer.SetCurrentTask("prepublish")
+	tracer.RecordSubtaskCall("prepublish", 0, "clean")
+	tracer.RecordSubtaskCall("prepublish", 1, "install")
+	tracer.RecordSubtaskCall("prepublish", 2, "compile")
+
+	report := tracer.Report()
+	if len(report.Tasks) != 1 {
+		t.Fatalf("expected 1 task, got %d", len(report.Tasks))
+	}
+	task := report.Tasks[0]
+	if len(task.SubtaskCalls) != 3 {
+		t.Fatalf("expected 3 subtask calls, got %d", len(task.SubtaskCalls))
+	}
+	if task.SubtaskCalls[0].TaskName != "clean" {
+		t.Errorf("subtask 0 = %q, want clean", task.SubtaskCalls[0].TaskName)
+	}
+	if task.SubtaskCalls[1].CmdIndex != 1 {
+		t.Errorf("subtask 1 cmd index = %d, want 1", task.SubtaskCalls[1].CmdIndex)
+	}
+	if task.SubtaskCalls[2].TaskName != "compile" {
+		t.Errorf("subtask 2 = %q, want compile", task.SubtaskCalls[2].TaskName)
+	}
+}
+
+func TestRecordSubtaskCallNilTracer(t *testing.T) {
+	t.Parallel()
+	var tracer *Tracer
+	// Should not panic
+	tracer.RecordSubtaskCall("parent", 0, "child")
+}
+
+func TestRenderTextSubtaskCalls(t *testing.T) {
+	t.Parallel()
+	report := &TraceReport{
+		Tasks: []*TaskTrace{
+			{
+				TaskName: "prepublish",
+				SubtaskCalls: []SubtaskCall{
+					{CmdIndex: 0, TaskName: "clean"},
+					{CmdIndex: 1, TaskName: "install"},
+					{CmdIndex: 2, TaskName: "compile"},
+					{CmdIndex: 3, TaskName: "schema:export"},
+				},
+			},
+		},
+	}
+	var buf bytes.Buffer
+	RenderText(&buf, report, nil)
+	output := buf.String()
+	checks := []string{
+		"Subtask calls:",
+		"cmds[0]",
+		"clean",
+		"cmds[1]",
+		"install",
+		"cmds[2]",
+		"compile",
+		"cmds[3]",
+		"schema:export",
+	}
+	for _, check := range checks {
+		if !strings.Contains(output, check) {
+			t.Errorf("output should contain %q, got:\n%s", check, output)
+		}
+	}
+}
+
+func TestRenderJSONSubtaskCalls(t *testing.T) {
+	t.Parallel()
+	report := &TraceReport{
+		Tasks: []*TaskTrace{
+			{
+				TaskName: "prepublish",
+				SubtaskCalls: []SubtaskCall{
+					{CmdIndex: 0, TaskName: "clean"},
+					{CmdIndex: 1, TaskName: "install"},
+				},
+			},
+		},
+	}
+	var buf bytes.Buffer
+	err := RenderJSON(&buf, report, nil)
+	if err != nil {
+		t.Fatalf("RenderJSON failed: %v", err)
+	}
+	var result map[string]any
+	if err := json.Unmarshal(buf.Bytes(), &result); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+	tasks := result["tasks"].([]any)
+	task := tasks[0].(map[string]any)
+	calls, ok := task["subtask_calls"].([]any)
+	if !ok || len(calls) != 2 {
+		t.Fatalf("expected 2 subtask_calls in JSON, got %v", task["subtask_calls"])
+	}
+	call0 := calls[0].(map[string]any)
+	if call0["task_name"] != "clean" {
+		t.Errorf("call 0 task_name = %v, want clean", call0["task_name"])
+	}
+	if call0["cmd_index"] != float64(0) {
+		t.Errorf("call 0 cmd_index = %v, want 0", call0["cmd_index"])
+	}
+	call1 := calls[1].(map[string]any)
+	if call1["task_name"] != "install" {
+		t.Errorf("call 1 task_name = %v, want install", call1["task_name"])
+	}
+}
+
 // ── buildParamMappings Tests ──
 
 func TestBuildParamMappingsSimple(t *testing.T) {

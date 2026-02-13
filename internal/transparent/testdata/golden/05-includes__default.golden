@@ -32,5 +32,100 @@
   │ MATCH │ call-vars │ []string │ []               │          │
   │       │           │          │ ptr: <PTR> │          │
   └───────┴───────────┴──────────┴──────────────────┴──────────┘
+  Subtask calls:
+    cmds[0] → sub:greet
+
+── Task: sub:greet
+  Variables in scope:
+  ┌───────┬───────────┬──────────┬──────────────────┬──────────┐
+  │ Name  │ Origin    │ Type     │ Value            │ Shadows? │
+  ├───────┼───────────┼──────────┼──────────────────┼──────────┤
+  │ MATCH │ call-vars │ []string │ []               │          │
+  │       │           │          │ ptr: <PTR> │          │
+  └───────┴───────────┴──────────┴──────────────────┴──────────┘
+  Template Evaluation — cmds[0]:
+  ┌─ Input:
+  │ echo 'Included var: {{.INCLUDED_VAR}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Included var: {{.INCLUDED_VAR}}'
+  │ 
+  │ Step 1: Resolve a Variable — .INCLUDED_VAR
+  │   I     from-included
+  │ 
+  │   R     echo 'Included var: from-included'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Included var: from-included'
+  └─
+  ┌─ Vars used:
+  │ INCLUDED_VAR
+  └─
+  Template Evaluation — cmds[1]:
+  ┌─ Input:
+  │ echo 'Shared: {{.SHARED}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Shared: {{.SHARED}}'
+  │ 
+  │ Step 1: Resolve a Variable — .SHARED
+  │   I     included-shared
+  │ 
+  │   R     echo 'Shared: included-shared'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Shared: included-shared'
+  └─
+  ┌─ Vars used:
+  │ SHARED
+  └─
+  Template Evaluation — cmds[2]:
+  ┌─ Input:
+  │ echo 'Parent var: {{.PARENT_VAR}}'
+  └─
+  ┌─ Evaluation Steps:
+  │ 
+  │ ── Action 1 of 1 — line 1
+  │   S     echo 'Parent var: {{.PARENT_VAR}}'
+  │ 
+  │ Step 1: Resolve a Variable — .PARENT_VAR
+  │   I     from-parent
+  │ 
+  │   R     echo 'Parent var: from-parent'
+  │ 
+  └─
+  ┌─ Output:
+  │ echo 'Parent var: from-parent'
+  └─
+  ┌─ Vars used:
+  │ PARENT_VAR
+  └─
+  Commands — cmds[0]:
+  ┌─ Raw:
+  │ echo 'Included var: {{.INCLUDED_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Included var: from-included'
+  └─
+  Commands — cmds[1]:
+  ┌─ Raw:
+  │ echo 'Shared: {{.SHARED}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Shared: included-shared'
+  └─
+  Commands — cmds[2]:
+  ┌─ Raw:
+  │ echo 'Parent var: {{.PARENT_VAR}}'
+  └─
+  ┌─ Resolved:
+  │ echo 'Parent var: from-parent'
+  └─
 
 ╚══ End of Transparent Mode Report ══╝

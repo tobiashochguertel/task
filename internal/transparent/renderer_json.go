@@ -19,7 +19,13 @@ type jsonTaskTrace struct {
 	Variables    []jsonVarTrace      `json:"variables"`
 	Templates    []jsonTemplateTrace `json:"templates,omitempty"`
 	Commands     []jsonCmdTrace      `json:"commands,omitempty"`
+	SubtaskCalls []jsonSubtaskCall   `json:"subtask_calls,omitempty"`
 	Dependencies []string            `json:"dependencies,omitempty"`
+}
+
+type jsonSubtaskCall struct {
+	CmdIndex int    `json:"cmd_index"`
+	TaskName string `json:"task_name"`
 }
 
 type jsonVarTrace struct {
@@ -196,6 +202,10 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 				ResolvedCmd:    cmd.ResolvedCmd,
 				IterationLabel: cmd.IterationLabel,
 			})
+		}
+
+		for _, sc := range task.SubtaskCalls {
+			jt.SubtaskCalls = append(jt.SubtaskCalls, jsonSubtaskCall(sc))
 		}
 
 		jr.Tasks = append(jr.Tasks, jt)

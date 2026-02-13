@@ -140,6 +140,9 @@ func renderTask(w io.Writer, task TaskTrace) {
 	if len(task.Cmds) > 0 {
 		renderCmds(w, task.Cmds)
 	}
+	if len(task.SubtaskCalls) > 0 {
+		renderSubtaskCalls(w, task.SubtaskCalls)
+	}
 	if len(task.Deps) > 0 {
 		renderDeps(w, task.Deps)
 	}
@@ -530,6 +533,15 @@ func renderCmds(w io.Writer, cmds []CmdTrace) {
 			renderBoxContent(w, "Raw", c.RawCmd)
 			renderBoxContent(w, "Resolved", highlightErrors(c.ResolvedCmd))
 		}
+	}
+}
+
+func renderSubtaskCalls(w io.Writer, calls []SubtaskCall) {
+	fmt.Fprintf(w, "  %s%sSubtask calls:%s\n", cBold, cYellow, cReset)
+	for _, sc := range calls {
+		fmt.Fprintf(w, "    %scmds[%d]%s → %s%s%s\n",
+			cDim, sc.CmdIndex, cReset,
+			cCyan, sc.TaskName, cReset)
 	}
 }
 

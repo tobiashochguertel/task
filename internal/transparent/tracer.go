@@ -127,6 +127,21 @@ func (t *Tracer) RecordCmd(taskName string, ct CmdTrace) {
 	task.Cmds = append(task.Cmds, ct)
 }
 
+// RecordSubtaskCall records a subtask invocation from a parent task's command.
+func (t *Tracer) RecordSubtaskCall(parentTask string, cmdIndex int, subtaskName string) {
+	if t == nil {
+		return
+	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+
+	task := t.getOrCreateTask(parentTask)
+	task.SubtaskCalls = append(task.SubtaskCalls, SubtaskCall{
+		CmdIndex: cmdIndex,
+		TaskName: subtaskName,
+	})
+}
+
 // RecordDep records a dependency for a task.
 func (t *Tracer) RecordDep(taskName string, depName string) {
 	if t == nil {

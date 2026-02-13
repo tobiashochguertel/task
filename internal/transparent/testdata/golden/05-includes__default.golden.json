@@ -82,6 +82,115 @@
   "tasks": [
     {
       "name": "default",
+      "subtask_calls": [
+        {
+          "cmd_index": 0,
+          "task_name": "sub:greet"
+        }
+      ],
+      "variables": [
+        {
+          "name": "MATCH",
+          "origin": "call:vars",
+          "type": "[]string",
+          "value": [],
+          "value_id": 0
+        }
+      ]
+    },
+    {
+      "commands": [
+        {
+          "index": 0,
+          "raw": "echo 'Included var: {{.INCLUDED_VAR}}'",
+          "resolved": "echo 'Included var: from-included'"
+        },
+        {
+          "index": 1,
+          "raw": "echo 'Shared: {{.SHARED}}'",
+          "resolved": "echo 'Shared: included-shared'"
+        },
+        {
+          "index": 2,
+          "raw": "echo 'Parent var: {{.PARENT_VAR}}'",
+          "resolved": "echo 'Parent var: from-parent'"
+        }
+      ],
+      "name": "sub:greet",
+      "templates": [
+        {
+          "context": "cmds[0]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Included var: from-included'",
+              "source": "echo 'Included var: {{.INCLUDED_VAR}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "from-included",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".INCLUDED_VAR"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Included var: {{.INCLUDED_VAR}}'",
+          "output": "echo 'Included var: from-included'",
+          "vars_used": [
+            "INCLUDED_VAR"
+          ]
+        },
+        {
+          "context": "cmds[1]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Shared: included-shared'",
+              "source": "echo 'Shared: {{.SHARED}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "included-shared",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".SHARED"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Shared: {{.SHARED}}'",
+          "output": "echo 'Shared: included-shared'",
+          "vars_used": [
+            "SHARED"
+          ]
+        },
+        {
+          "context": "cmds[2]",
+          "eval_actions": [
+            {
+              "action_index": 0,
+              "result": "echo 'Parent var: from-parent'",
+              "source": "echo 'Parent var: {{.PARENT_VAR}}'",
+              "source_line": 1,
+              "steps": [
+                {
+                  "input": "from-parent",
+                  "operation": "Resolve a Variable",
+                  "step": 1,
+                  "target": ".PARENT_VAR"
+                }
+              ]
+            }
+          ],
+          "input": "echo 'Parent var: {{.PARENT_VAR}}'",
+          "output": "echo 'Parent var: from-parent'",
+          "vars_used": [
+            "PARENT_VAR"
+          ]
+        }
+      ],
       "variables": [
         {
           "name": "MATCH",

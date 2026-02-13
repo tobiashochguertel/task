@@ -559,7 +559,7 @@ func CollectDiagnostics(evalActions []EvalAction, steps []PipeStep) []FuncDiagno
 			// Fill signature and example from funcSignatures
 			if sig, ok := funcSignatures[ds.Target]; ok {
 				diag.Signature = sig.Signature
-				diag.Example = sig.Example
+				diag.Example = sig.Example // generic fallback
 			}
 
 			// Parse argument values from the Input field (primary source).
@@ -569,6 +569,11 @@ func CollectDiagnostics(evalActions []EvalAction, steps []PipeStep) []FuncDiagno
 			var argValues []string
 			if ds.Input != "" {
 				argValues = parseInputArgs(ds.Input, ds.Target)
+			}
+
+			// Generate a context-specific example from actual args
+			if contextExample := generateContextExample(ds.Target, argValues); contextExample != "" {
+				diag.Example = contextExample
 			}
 
 			// Build the call string
@@ -584,6 +589,38 @@ func CollectDiagnostics(evalActions []EvalAction, steps []PipeStep) []FuncDiagno
 	}
 
 	return diags
+}
+
+// generateContextExample builds a context-specific example from the actual
+// expression. For printf-family functions, it reconstructs an example using
+// the actual format string and placeholder variable names. Falls back to the
+// generic funcSignatures example when the expression can't be analyzed.
+func generateContextExample(funcName string, argValues []string) string {
+	if funcName != "printf" || len(argValues) == 0 {
+		return ""
+	}
+
+	// Use the actual format string from the expression
+	formatStr := argValues[0]
+
+	// Build placeholder args: .ARG1, .ARG2, ...
+	var placeholders []string
+	placeholders = append(placeholders, formatStr)
+
+	_, slots := countFormatVerbs(formatStr)
+	for i := 1; i <= slots; i++ {
+		if i < len(argValues) {
+			// Use actual value if it looks like a variable reference
+			val := argValues[i]
+			if strings.HasPrefix(val, ".") {
+				placeholders = append(placeholders, val)
+				continue
+			}
+		}
+		placeholders = append(placeholders, fmt.Sprintf(".ARG%d", i))
+	}
+
+	return fmt.Sprintf("{{printf %s}}", strings.Join(placeholders, " "))
 }
 
 // fmtVerbPattern matches Go format verbs like %s, %d, %*s, %20s, %-10d, etc.
