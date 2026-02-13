@@ -120,16 +120,40 @@ type EvalAction struct {
 	Steps       []TemplateStep // Fine-grained steps within this action
 }
 
+// ParamMapping maps a function parameter to its actual value in a call.
+type ParamMapping struct {
+	Name     string // Parameter name from signature (e.g. "format")
+	Type     string // Parameter type from signature (e.g. "string", "...any")
+	Value    string // Actual value passed (e.g. `"%s: %*s %s"`)
+	Variadic bool   // True if this is a variadic parameter
+	Missing  bool   // True if the parameter was not provided
+}
+
+// FuncDiagnostic captures structured diagnostic information about a function call issue.
+type FuncDiagnostic struct {
+	DiagType   string         // "exec_error" or "output_anomaly"
+	FuncName   string         // Function that has the issue (e.g. "printf")
+	StepNum    int            // Which evaluation step this relates to
+	Expression string         // Relevant template expression (e.g. `printf "%s: %*s %s" "ENGINE" .SPACE (.ENGINE | trim)`)
+	Signature  string         // Function signature (e.g. `printf(format string, args ...any) string`)
+	Example    string         // Example usage (e.g. `{{printf "%s: %s" .KEY .VALUE}}`)
+	Call       string         // How the function was called (e.g. `printf("%s: %*s %s", "ENGINE", 20, "node")`)
+	Params     []ParamMapping // Parameter-to-value mapping
+	ErrorMsg   string         // Error message (exec error text or anomaly description)
+	Output     string         // The actual output produced by the function
+}
+
 // TemplateTrace captures one template evaluation.
 type TemplateTrace struct {
-	Input       string       // Raw template string
-	Output      string       // Resolved output
-	Context     string       // Where used: "task:build.cmds[0]"
-	Steps       []PipeStep   // Pipe chain breakdown
-	EvalActions []EvalAction // Action-grouped step-by-step evaluation
-	Tips        []string     // User-friendly hints about potential pitfalls
-	VarsUsed    []string     // Variable names referenced
-	Error       string       // Template error if any
+	Input       string           // Raw template string
+	Output      string           // Resolved output
+	Context     string           // Where used: "task:build.cmds[0]"
+	Steps       []PipeStep       // Pipe chain breakdown
+	EvalActions []EvalAction     // Action-grouped step-by-step evaluation
+	Diagnostics []FuncDiagnostic // Structured function call diagnostics
+	Tips        []string         // User-friendly hints about potential pitfalls
+	VarsUsed    []string         // Variable names referenced
+	Error       string           // Template error if any
 }
 
 // CmdTrace captures a single command before/after template substitution.

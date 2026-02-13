@@ -3,6 +3,7 @@ package transparent
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"strings"
 	"text/template/parse"
 
@@ -448,122 +449,223 @@ func parseSigParams(sig string) []sigParam {
 	return params
 }
 
-// buildCallDetail builds a multi-line string showing the parameter-to-value
-// mapping for a function call that produced an error. It uses the function
-// signature from funcSignatures and the resolved argument values.
-func buildCallDetail(funcName string, argValues []string) string {
+// buildParamMappings maps resolved argument values to function signature parameters.
+func buildParamMappings(funcName string, argValues []string) []ParamMapping {
 	sig, ok := funcSignatures[funcName]
 	if !ok {
-		return ""
+		return nil
 	}
 	params := parseSigParams(sig.Signature)
 	if len(params) == 0 {
-		return ""
+		return nil
 	}
 
-	var b strings.Builder
-	b.WriteString(fmt.Sprintf("Hint: %s format error detected\n", funcName))
-	b.WriteString(fmt.Sprintf("    Signature: %s\n", sig.Signature))
-
-	// Build the call line: funcName(arg1, arg2, ...)
-	b.WriteString(fmt.Sprintf("    Call:      %s(%s)\n", funcName, strings.Join(argValues, ", ")))
-
-	// Map each argument value to the corresponding parameter name
-	b.WriteString("    Params:")
+	var mappings []ParamMapping
 	argIdx := 0
 	for _, param := range params {
 		if param.Variadic {
-			// Variadic parameter consumes all remaining args
 			if argIdx < len(argValues) {
-				for vi := 0; argIdx < len(argValues); vi++ {
-					b.WriteString(fmt.Sprintf("\n             %s[%d] = %s", param.Name, vi, argValues[argIdx]))
+				for argIdx < len(argValues) {
+					mappings = append(mappings, ParamMapping{
+						Name:     param.Name,
+						Type:     param.Type,
+						Value:    argValues[argIdx],
+						Variadic: true,
+					})
 					argIdx++
 				}
 			} else {
-				b.WriteString(fmt.Sprintf("\n             %s = (none provided)", param.Name))
+				mappings = append(mappings, ParamMapping{
+					Name:     param.Name,
+					Type:     param.Type,
+					Variadic: true,
+					Missing:  true,
+				})
 			}
 		} else {
 			if argIdx < len(argValues) {
-				b.WriteString(fmt.Sprintf("\n             %s = %s", param.Name, argValues[argIdx]))
+				mappings = append(mappings, ParamMapping{
+					Name:  param.Name,
+					Type:  param.Type,
+					Value: argValues[argIdx],
+				})
 				argIdx++
 			} else {
-				b.WriteString(fmt.Sprintf("\n             %s = ⚠ MISSING", param.Name))
+				mappings = append(mappings, ParamMapping{
+					Name:    param.Name,
+					Type:    param.Type,
+					Missing: true,
+				})
 			}
 		}
 	}
-	b.WriteString(fmt.Sprintf("\n    Example:  %s", sig.Example))
-
-	return b.String()
+	return mappings
 }
 
-// GenerateErrorHints returns hints with function signatures when template
-// output contains error patterns like %!s(MISSING).
-// When evalActions are provided, the hints include the actual parameter-to-value
-// mapping showing exactly how the function was called.
-func GenerateErrorHints(output string, steps []PipeStep, evalActions []EvalAction) []string {
-	var hints []string
+// CollectDiagnostics analyzes EvalActions and PipeSteps to produce structured
+// FuncDiagnostic entries for two types of issues:
+//   - Type 1 (exec_error): function execution produced an error (Output starts with "<exec error:")
+//   - Type 2 (output_anomaly): function output contains anomaly patterns like %!s(MISSING)
+//
+// False positives are filtered: if the error pattern was already present in the
+// function's input (e.g. trim receiving printf's error output), the function is
+// not blamed — it merely passed through the error.
+func CollectDiagnostics(evalActions []EvalAction, steps []PipeStep) []FuncDiagnostic {
+	var diags []FuncDiagnostic
 
-	// Check for MISSING format verb errors
-	errorPatterns := []string{
-		"%!s(MISSING)", "%!d(MISSING)", "%!v(MISSING)", "%!f(MISSING)",
-		"%!q(MISSING)", "%!t(MISSING)",
-	}
-
-	hasFormatError := false
-	for _, p := range errorPatterns {
-		if strings.Contains(output, p) {
-			hasFormatError = true
-			break
-		}
-	}
-
-	if !hasFormatError {
-		return hints
-	}
-
-	// Try to build a detailed call hint using EvalAction steps + PipeStep arg values
 	for _, ea := range evalActions {
 		for _, ds := range ea.Steps {
 			if ds.Operation != "Apply a Function" {
 				continue
 			}
-			if _, ok := funcSignatures[ds.Target]; !ok {
-				continue
+
+			var diagType, errorMsg string
+
+			// Type 1: exec error
+			if strings.HasPrefix(ds.Output, "<exec error:") {
+				diagType = "exec_error"
+				errorMsg = strings.TrimPrefix(ds.Output, "<exec error: ")
+				errorMsg = strings.TrimSuffix(errorMsg, ">")
 			}
-			// Check if this function step's output contains the error
-			if !containsFormatError(ds.Output) && !containsFormatError(ea.Result) {
-				continue
-			}
-			// Find matching PipeStep to get individual resolved argument values
-			var argValues []string
-			for _, ps := range steps {
-				if ps.FuncName == ds.Target {
-					argValues = ps.ArgsValues
-					break
+
+			// Type 2: output anomaly (format verb errors)
+			// Skip false positives: if the error pattern was already in the
+			// function's input, this function just passed it through.
+			if diagType == "" && containsFormatError(ds.Output) {
+				if containsFormatError(ds.Input) {
+					// False positive: error was already in the input
+					continue
 				}
+				diagType = "output_anomaly"
+				errorMsg = analyzeFormatError(ds.Output, ds.Input, ds.Target)
 			}
-			if len(argValues) == 0 && ds.Input != "" {
-				// Fallback: use the Input field as a single representation
+
+			if diagType == "" {
+				continue
+			}
+
+			// Build the diagnostic
+			diag := FuncDiagnostic{
+				DiagType: diagType,
+				FuncName: ds.Target,
+				StepNum:  ds.StepNum,
+				Output:   ds.Output,
+				ErrorMsg: errorMsg,
+			}
+
+			// Extract the expression from the Input field
+			diag.Expression = ds.Input
+
+			// Fill signature and example from funcSignatures
+			if sig, ok := funcSignatures[ds.Target]; ok {
+				diag.Signature = sig.Signature
+				diag.Example = sig.Example
+			}
+
+			// Parse argument values from the Input field (primary source).
+			// This is more reliable than PipeStep matching because there may be
+			// multiple calls to the same function in a template, and PipeStep
+			// matching would always pick the first one.
+			var argValues []string
+			if ds.Input != "" {
 				argValues = parseInputArgs(ds.Input, ds.Target)
 			}
-			detail := buildCallDetail(ds.Target, argValues)
-			if detail != "" {
-				hints = append(hints, detail)
+
+			// Build the call string
+			if len(argValues) > 0 {
+				diag.Call = fmt.Sprintf("%s(%s)", ds.Target, strings.Join(argValues, ", "))
+			}
+
+			// Map parameters
+			diag.Params = buildParamMappings(ds.Target, argValues)
+
+			diags = append(diags, diag)
+		}
+	}
+
+	return diags
+}
+
+// fmtVerbPattern matches Go format verbs like %s, %d, %*s, %20s, %-10d, etc.
+var fmtVerbPattern = regexp.MustCompile(`%[+\-# 0]*(\*|\d+)?\.?(\*|\d+)?[svdxXoObBeEfFgGqtcUp]`)
+
+// countFormatVerbs returns the number of format verb slots a format string
+// expects, counting %* width/precision specifiers as extra argument slots.
+func countFormatVerbs(format string) (verbs int, slots int) {
+	// Strip surrounding quotes if present
+	format = strings.Trim(format, `"'`)
+	matches := fmtVerbPattern.FindAllString(format, -1)
+	verbs = len(matches)
+	slots = verbs
+	for _, m := range matches {
+		// Each %* consumes an extra int argument for the width
+		slots += strings.Count(m, "*")
+	}
+	return verbs, slots
+}
+
+// analyzeFormatError produces a specific error message for a format error by
+// analyzing the format string and the actual arguments provided.
+func analyzeFormatError(output, input, funcName string) string {
+	if funcName != "printf" && funcName != "print" && funcName != "println" {
+		return "Output contains format error pattern(s)"
+	}
+
+	args := parseInputArgs(input, funcName)
+	if len(args) == 0 {
+		return "Output contains format error pattern(s)"
+	}
+
+	formatStr := args[0]
+	providedArgs := len(args) - 1 // subtract the format string itself
+	_, slots := countFormatVerbs(formatStr)
+
+	var parts []string
+
+	if strings.Contains(output, "%!(BADWIDTH)") {
+		parts = append(parts, fmt.Sprintf(
+			"%%* width specifier requires an int argument, but received a non-integer value"))
+	}
+
+	if slots > providedArgs {
+		missing := slots - providedArgs
+		parts = append(parts, fmt.Sprintf(
+			"format string %s expects %d argument(s) but only %d provided (%d missing)",
+			formatStr, slots, providedArgs, missing))
+	}
+
+	if len(parts) == 0 {
+		return "Output contains format error pattern(s)"
+	}
+	return strings.Join(parts, "; ")
+}
+
+// GenerateErrorHints returns legacy string hints for backward compatibility.
+// It delegates to CollectDiagnostics and falls back to PipeStep-based hints
+// when no EvalActions are available.
+func GenerateErrorHints(output string, steps []PipeStep, evalActions []EvalAction) []string {
+	var hints []string
+
+	if !containsFormatError(output) {
+		return hints
+	}
+
+	// If we have EvalActions, use CollectDiagnostics (but only output_anomaly type here)
+	if len(evalActions) > 0 {
+		diags := CollectDiagnostics(evalActions, steps)
+		for _, d := range diags {
+			if d.DiagType == "output_anomaly" && d.Signature != "" {
+				hints = append(hints, fmt.Sprintf(
+					"Hint: %s — %s\n    Signature: %s\n    Example:   %s",
+					d.FuncName, d.ErrorMsg, d.Signature, d.Example))
 				return hints
 			}
 		}
 	}
 
-	// Fallback: use PipeStep data if EvalActions didn't produce a match
+	// Fallback: use PipeStep data
 	for _, step := range steps {
 		if sig, ok := funcSignatures[step.FuncName]; ok {
-			if len(step.ArgsValues) > 0 {
-				detail := buildCallDetail(step.FuncName, step.ArgsValues)
-				if detail != "" {
-					hints = append(hints, detail)
-					return hints
-				}
-			}
 			hints = append(hints, fmt.Sprintf(
 				"Hint: %s signature: %s\n    Example: %s",
 				step.FuncName, sig.Signature, sig.Example))
@@ -571,7 +673,7 @@ func GenerateErrorHints(output string, steps []PipeStep, evalActions []EvalActio
 		}
 	}
 
-	// Generic fallback for printf errors
+	// Generic fallback
 	if sig, ok := funcSignatures["printf"]; ok {
 		hints = append(hints, fmt.Sprintf(
 			"Hint: This looks like a printf format error. printf signature: %s\n    Example: %s",
@@ -585,7 +687,9 @@ func GenerateErrorHints(output string, steps []PipeStep, evalActions []EvalActio
 func containsFormatError(s string) bool {
 	patterns := []string{
 		"%!s(MISSING)", "%!d(MISSING)", "%!v(MISSING)", "%!f(MISSING)",
-		"%!q(MISSING)", "%!t(MISSING)",
+		"%!q(MISSING)", "%!t(MISSING)", "%!x(MISSING)", "%!b(MISSING)",
+		"%!e(MISSING)", "%!g(MISSING)", "%!c(MISSING)",
+		"%!(BADWIDTH)", "%!(BADPREC)", "%!(EXTRA ", "%!(NOVERB)",
 	}
 	for _, p := range patterns {
 		if strings.Contains(s, p) {

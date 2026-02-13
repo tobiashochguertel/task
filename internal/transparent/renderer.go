@@ -429,11 +429,91 @@ func renderTemplates(w io.Writer, templates []TemplateTrace) {
 			fmt.Fprintf(w, "  %s⚠ %s%s\n", cRed, t.Error, cReset)
 		}
 
-		// Notes / Tips
-		for _, tip := range t.Tips {
-			fmt.Fprintf(w, "  %sℹ Note: %s%s\n", cCyan, tip, cReset)
+		// Structured diagnostics
+		for _, d := range t.Diagnostics {
+			renderDiagnostic(w, d)
+		}
+
+		// Notes / Tips (legacy hints, shown only if no structured diagnostics)
+		if len(t.Diagnostics) == 0 {
+			for _, tip := range t.Tips {
+				fmt.Fprintf(w, "  %sℹ Note: %s%s\n", cCyan, tip, cReset)
+			}
 		}
 	}
+}
+
+// renderDiagnostic renders a single FuncDiagnostic with structured formatting.
+func renderDiagnostic(w io.Writer, d FuncDiagnostic) {
+	// Diagnostic header with type icon
+	icon := "⚠"
+	typeLabel := "Output Anomaly"
+	headerColor := cYellow
+	if d.DiagType == "exec_error" {
+		icon = "✖"
+		typeLabel = "Execution Error"
+		headerColor = cRed
+	}
+
+	fmt.Fprintf(w, "  %s%s %s — %s (Step %d)%s\n",
+		headerColor, icon, typeLabel, d.FuncName, d.StepNum, cReset)
+
+	// Expression context
+	if d.Expression != "" {
+		fmt.Fprintf(w, "      %sExpression%s  %s{{%s}}%s\n",
+			cDim, cReset, cCyan, d.Expression, cReset)
+	}
+
+	// Error message
+	if d.ErrorMsg != "" {
+		fmt.Fprintf(w, "      %sError%s       %s%s%s\n",
+			cDim, cReset, cRed, d.ErrorMsg, cReset)
+	}
+
+	// Output produced
+	if d.Output != "" {
+		fmt.Fprintf(w, "      %sOutput%s      %s%s%s\n",
+			cDim, cReset, cRed, d.Output, cReset)
+	}
+
+	// Signature & Example as compact reference
+	if d.Signature != "" {
+		fmt.Fprintf(w, "      %s┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈%s\n", cDim, cReset)
+		fmt.Fprintf(w, "      %sSignature%s   %s\n", cDim, cReset, d.Signature)
+		if d.Example != "" {
+			fmt.Fprintf(w, "      %sExample%s     %s%s%s\n", cDim, cReset, cCyan, d.Example, cReset)
+		}
+		fmt.Fprintf(w, "      %s┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈%s\n", cDim, cReset)
+	}
+
+	// Call and parameter mapping
+	if d.Call != "" {
+		fmt.Fprintf(w, "      %sCall%s        %s%s%s\n",
+			cDim, cReset, cBold, d.Call, cReset)
+	}
+
+	if len(d.Params) > 0 {
+		fmt.Fprintf(w, "      %sParams%s\n", cDim, cReset)
+		varIdx := 0
+		for _, p := range d.Params {
+			label := p.Name
+			if p.Variadic {
+				label = fmt.Sprintf("%s[%d]", p.Name, varIdx)
+				varIdx++
+			} else {
+				varIdx = 0
+			}
+			if p.Missing {
+				fmt.Fprintf(w, "        %s%-12s%s %s⚠ MISSING%s  %s(%s)%s\n",
+					cDim, label, cReset, cRed, cReset, cDim, p.Type, cReset)
+			} else {
+				fmt.Fprintf(w, "        %s%-12s%s %s  %s(%s)%s\n",
+					cDim, label, cReset, p.Value, cDim, p.Type, cReset)
+			}
+		}
+	}
+
+	fmt.Fprintln(w)
 }
 
 func renderCmds(w io.Writer, cmds []CmdTrace) {
@@ -488,9 +568,23 @@ func originLabel(o VarOrigin) string {
 // makeWhitespaceVisible replaces spaces with · and tabs with → to make
 // whitespace visible in the output.
 func makeWhitespaceVisible(s string) string {
+	// Strip ANSI escape sequences and replace with visible marker
+	s = stripANSI(s)
+	// Order matters: replace \r\n as a unit before individual \r and \n
+	s = strings.ReplaceAll(s, "\r\n", "\u2190\u21b5\n")
+	s = strings.ReplaceAll(s, "\n", "\u21b5\n")
+	s = strings.ReplaceAll(s, "\r", "\u2190")
 	s = strings.ReplaceAll(s, " ", "\u00b7")
 	s = strings.ReplaceAll(s, "\t", "\u2192")
 	return s
+}
+
+// ansiPattern matches ANSI escape sequences (CSI sequences and OSC sequences).
+var ansiPattern = regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]|\x1b\][^\x1b]*\x1b\\`)
+
+// stripANSI replaces ANSI escape sequences with a visible [ESC] marker.
+func stripANSI(s string) string {
+	return ansiPattern.ReplaceAllString(s, "[ESC]")
 }
 
 // applyWhitespaceVisibility returns a copy of the report with whitespace
@@ -556,6 +650,28 @@ func applyWSToTemplates(templates []TemplateTrace) []TemplateTrace {
 				actions[j] = ac
 			}
 			tc.EvalActions = actions
+		}
+		// Apply whitespace visibility to diagnostics
+		if len(tc.Diagnostics) > 0 {
+			diags := make([]FuncDiagnostic, len(tc.Diagnostics))
+			for j, d := range tc.Diagnostics {
+				dc := d
+				dc.Expression = makeWhitespaceVisible(d.Expression)
+				dc.Call = makeWhitespaceVisible(d.Call)
+				dc.Output = makeWhitespaceVisible(d.Output)
+				dc.ErrorMsg = makeWhitespaceVisible(d.ErrorMsg)
+				if len(d.Params) > 0 {
+					params := make([]ParamMapping, len(d.Params))
+					for k, p := range d.Params {
+						pc := p
+						pc.Value = makeWhitespaceVisible(p.Value)
+						params[k] = pc
+					}
+					dc.Params = params
+				}
+				diags[j] = dc
+			}
+			tc.Diagnostics = diags
 		}
 		out[i] = tc
 	}

@@ -113,6 +113,8 @@ func ReplaceWithExtra[T any](v T, cache *Cache, extra map[string]any) T {
 			// Detect type mismatches (e.g. add with string args)
 			typeWarnings := transparent.DetectTypeMismatches(v, data, template.FuncMap(templateFuncs))
 			trace.Tips = append(trace.Tips, typeWarnings...)
+			// Collect structured diagnostics (exec errors + output anomalies)
+			trace.Diagnostics = transparent.CollectDiagnostics(evalActions, pipeSteps)
 			// Generate function signature hints when errors are detected
 			errorHints := transparent.GenerateErrorHints(result, pipeSteps, evalActions)
 			trace.Tips = append(trace.Tips, errorHints...)

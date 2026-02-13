@@ -43,15 +43,37 @@ type jsonShadowInfo struct {
 }
 
 type jsonTemplateTrace struct {
-	Input       string           `json:"input"`
-	Output      string           `json:"output"`
-	Context     string           `json:"context,omitempty"`
-	VarsUsed    []string         `json:"vars_used,omitempty"`
-	Steps       []jsonPipeStep   `json:"pipe_steps,omitempty"`
-	EvalActions []jsonEvalAction `json:"eval_actions,omitempty"`
-	Tips        []string         `json:"tips,omitempty"`
-	Notes       []string         `json:"notes,omitempty"`
-	Error       string           `json:"error,omitempty"`
+	Input       string               `json:"input"`
+	Output      string               `json:"output"`
+	Context     string               `json:"context,omitempty"`
+	VarsUsed    []string             `json:"vars_used,omitempty"`
+	Steps       []jsonPipeStep       `json:"pipe_steps,omitempty"`
+	EvalActions []jsonEvalAction     `json:"eval_actions,omitempty"`
+	Diagnostics []jsonFuncDiagnostic `json:"diagnostics,omitempty"`
+	Tips        []string             `json:"tips,omitempty"`
+	Notes       []string             `json:"notes,omitempty"`
+	Error       string               `json:"error,omitempty"`
+}
+
+type jsonFuncDiagnostic struct {
+	DiagType   string             `json:"diag_type"`
+	FuncName   string             `json:"func_name"`
+	StepNum    int                `json:"step_num"`
+	Expression string             `json:"expression,omitempty"`
+	Signature  string             `json:"signature,omitempty"`
+	Example    string             `json:"example,omitempty"`
+	Call       string             `json:"call,omitempty"`
+	Params     []jsonParamMapping `json:"params,omitempty"`
+	ErrorMsg   string             `json:"error_msg"`
+	Output     string             `json:"output,omitempty"`
+}
+
+type jsonParamMapping struct {
+	Name     string `json:"name"`
+	Type     string `json:"type"`
+	Value    string `json:"value,omitempty"`
+	Variadic bool   `json:"variadic,omitempty"`
+	Missing  bool   `json:"missing,omitempty"`
 }
 
 type jsonEvalAction struct {
@@ -143,15 +165,26 @@ func RenderJSON(w io.Writer, report *TraceReport, opts *RenderOptions) error {
 					Result:      ea.Result,
 				}
 				for _, ds := range ea.Steps {
-					jea.Steps = append(jea.Steps, jsonTemplateStep{
-						StepNum:   ds.StepNum,
-						Operation: ds.Operation,
-						Target:    ds.Target,
-						Input:     ds.Input,
-						Output:    ds.Output,
-					})
+					jea.Steps = append(jea.Steps, jsonTemplateStep(ds))
 				}
 				jtt.EvalActions = append(jtt.EvalActions, jea)
+			}
+			for _, d := range tmpl.Diagnostics {
+				jd := jsonFuncDiagnostic{
+					DiagType:   d.DiagType,
+					FuncName:   d.FuncName,
+					StepNum:    d.StepNum,
+					Expression: d.Expression,
+					Signature:  d.Signature,
+					Example:    d.Example,
+					Call:       d.Call,
+					ErrorMsg:   d.ErrorMsg,
+					Output:     d.Output,
+				}
+				for _, p := range d.Params {
+					jd.Params = append(jd.Params, jsonParamMapping(p))
+				}
+				jtt.Diagnostics = append(jtt.Diagnostics, jd)
 			}
 			jt.Templates = append(jt.Templates, jtt)
 		}
