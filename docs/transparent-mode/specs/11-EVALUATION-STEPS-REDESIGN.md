@@ -26,16 +26,16 @@ This specification redesigns the **Evaluation Steps** output of the `--transpare
 
 ## 📊 Feature Matrix
 
-| Feature                           | Status | Component          | Notes                                              |
-| --------------------------------- | ------ | ------------------ | -------------------------------------------------- |
-| Action-grouped steps              | 🔲     | pipe_analyzer.go   | New `EvalAction` struct groups steps per `{{...}}`  |
-| Source line tracking              | 🔲     | pipe_analyzer.go   | Uses `parse.Pos` to find line numbers               |
-| Correct recursive eval order      | 🔲     | pipe_analyzer.go   | Depth-first: sub-pipelines before parent function   |
-| Source/Result lines per action    | 🔲     | renderer.go        | `S` and `R` labels in human-readable output         |
-| Short labels (I/O)                | ✅     | renderer.go        | Already implemented                                 |
-| Multiline alignment               | ✅     | renderer.go        | Already implemented                                 |
-| Whitespace visibility in steps    | ✅     | renderer.go        | Already implemented                                 |
-| JSON structure for eval_actions   | 🔲     | renderer_json.go   | Nested JSON mirrors new data model                  |
+| Feature                         | Status | Component        | Notes                                              |
+| ------------------------------- | ------ | ---------------- | -------------------------------------------------- |
+| Action-grouped steps            | 🔲     | pipe_analyzer.go | New `EvalAction` struct groups steps per `{{...}}` |
+| Source line tracking            | 🔲     | pipe_analyzer.go | Uses `parse.Pos` to find line numbers              |
+| Correct recursive eval order    | 🔲     | pipe_analyzer.go | Depth-first: sub-pipelines before parent function  |
+| Source/Result lines per action  | 🔲     | renderer.go      | `S` and `R` labels in human-readable output        |
+| Short labels (I/O)              | ✅     | renderer.go      | Already implemented                                |
+| Multiline alignment             | ✅     | renderer.go      | Already implemented                                |
+| Whitespace visibility in steps  | ✅     | renderer.go      | Already implemented                                |
+| JSON structure for eval_actions | 🔲     | renderer_json.go | Nested JSON mirrors new data model                 |
 
 **Legend**: ✅ Done | 🔲 TODO
 
@@ -55,6 +55,7 @@ graph LR
 ```
 
 **Problems:**
+
 1. Steps are flat — no grouping by which `{{...}}` action they belong to
 2. All variable resolutions happen before any function applications (wrong order for nested pipes)
 3. No source line tracking — `Expression` field shows entire template, not the relevant line
@@ -276,12 +277,14 @@ The `--transparent` output for Evaluation Steps:
 ```
 
 **Label meanings:**
+
 - `S` = **Source** — the template line before evaluation (shows the `{{...}}` expression)
 - `R` = **Result** — the template line after evaluation (shows the resolved value)
 - `I` = **Input** — input to the step
 - `O` = **Output** — output of the step
 
 **Formatting rules:**
+
 - Action headers use `── Action N of M — line L` format with dim color
 - `S` and `R` lines use bold color for emphasis
 - Step headers use the existing `Step N: Operation — Target` format
@@ -398,12 +401,14 @@ For `echo '{{.NAME | trim | upper}}'` (single action, single line):
 **Decision**: Group steps into `EvalAction` structs, one per ActionNode in the template AST.
 
 **Rationale**:
+
 - **Clarity**: Users immediately see which template expression is being evaluated
 - **Source context**: Each action shows the source line and result line
 - **Multi-line support**: Multi-line templates are broken down action by action
 - **Correct ordering**: Steps within an action follow the real evaluation order
 
 **Consequences**:
+
 - ✅ Much clearer output for multi-line templates
 - ✅ Users can correlate steps with specific `{{...}}` expressions
 - ⚠️ Breaking change to `TemplateTrace` struct (replaces `DetailedSteps` with `EvalActions`)
@@ -416,6 +421,7 @@ For `echo '{{.NAME | trim | upper}}'` (single action, single line):
 **Decision**: Replace it with `Source` and `Result` fields at the `EvalAction` level.
 
 **Rationale**:
+
 - The full template evolving step-by-step is verbose and hard to read
 - What users really need is: "this line went in, this line came out"
 - Action-level Source/Result is clearer than per-step Expression
@@ -427,6 +433,7 @@ For `echo '{{.NAME | trim | upper}}'` (single action, single line):
 **Decision**: Walk the AST recursively, processing sub-pipelines depth-first before the parent function.
 
 **Rationale**:
+
 - Matches Go template engine's actual evaluation order
 - Correctly handles `{{func (expr | pipe)}}` — the sub-pipeline is fully evaluated before `func`
 - Handles arbitrarily nested expressions
@@ -438,6 +445,7 @@ For `echo '{{.NAME | trim | upper}}'` (single action, single line):
 **Decision**: Use `ActionNode.Position()` (byte offset) to compute the 1-based line number by counting newlines.
 
 **Rationale**:
+
 - `parse.Pos` is the standard way Go's template parser tracks position
 - Simple and reliable: `strings.Count(input[:pos], "\n") + 1`
 - No need for external line-mapping data structures

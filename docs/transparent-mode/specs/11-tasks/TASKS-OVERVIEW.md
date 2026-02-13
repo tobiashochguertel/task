@@ -3,6 +3,7 @@
 **Specification**: `docs/transparent-mode/specs/11-EVALUATION-STEPS-REDESIGN.md`
 
 **See detailed task descriptions in:**
+
 - [Features](./TASKS-FEATURES.md) - Implementation tasks
 
 ## Quick Status Overview
@@ -18,10 +19,10 @@
 **Priority**: High
 **Description**: Replace the flat `DetailedSteps` model with action-grouped `EvalActions` and rewrite the analyzer to produce correct, source-line-aware evaluation steps.
 
-| Order | Task ID | Title                                          | Status  |
-| ----- | ------- | ---------------------------------------------- | ------- |
-| 1     | T001    | Add EvalAction data model                      | 🔲 TODO |
-| 2     | T002    | Implement AnalyzeEvalActions in pipe_analyzer  | 🔲 TODO |
+| Order | Task ID | Title                                         | Status  |
+| ----- | ------- | --------------------------------------------- | ------- |
+| 1     | T001    | Add EvalAction data model                     | 🔲 TODO |
+| 2     | T002    | Implement AnalyzeEvalActions in pipe_analyzer | 🔲 TODO |
 
 ### Set 2: Rendering
 

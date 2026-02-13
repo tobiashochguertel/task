@@ -15,6 +15,7 @@ Add the `EvalAction` struct to `internal/transparent/model.go` and update `Templ
 **Implementation**:
 
 1. Add `EvalAction` struct to `model.go`:
+
    ```go
    type EvalAction struct {
        ActionIndex int            `json:"action_index"`
@@ -26,6 +27,7 @@ Add the `EvalAction` struct to `internal/transparent/model.go` and update `Templ
    ```
 
 2. Remove `Expression` field from `TemplateStep`:
+
    ```go
    type TemplateStep struct {
        StepNum   int    `json:"step"`
@@ -37,6 +39,7 @@ Add the `EvalAction` struct to `internal/transparent/model.go` and update `Templ
    ```
 
 3. Replace `DetailedSteps []TemplateStep` with `EvalActions []EvalAction` in `TemplateTrace`:
+
    ```go
    type TemplateTrace struct {
        // ...existing fields...
@@ -46,6 +49,7 @@ Add the `EvalAction` struct to `internal/transparent/model.go` and update `Templ
    ```
 
 **Acceptance Criteria**:
+
 - [ ] `EvalAction` struct exists in `model.go`
 - [ ] `TemplateStep` no longer has `Expression` field
 - [ ] `TemplateTrace` uses `EvalActions` instead of `DetailedSteps`
@@ -95,6 +99,7 @@ Replace `AnalyzeDetailedSteps` with `AnalyzeEvalActions` in `internal/transparen
 5. Remove `AnalyzeDetailedSteps` function.
 
 **Acceptance Criteria**:
+
 - [ ] `AnalyzeEvalActions` returns correct `[]EvalAction` for single-line templates
 - [ ] Correct action grouping for multi-line templates (each `{{...}}` = one action)
 - [ ] Correct source line numbers
@@ -104,6 +109,7 @@ Replace `AnalyzeDetailedSteps` with `AnalyzeEvalActions` in `internal/transparen
 - [ ] `AnalyzeDetailedSteps` is removed
 
 **Testing**:
+
 - [ ] Test single-action template: `{{.NAME | trim}}`
 - [ ] Test multi-action template: `{{.A}} and {{.B}}`
 - [ ] Test nested sub-pipeline: `{{spew (.ENGINE | trim)}}`
@@ -138,6 +144,7 @@ Update the `renderTemplates` function in `internal/transparent/renderer.go` to r
 4. Keep the fallback to `t.Steps` (PipeStep) for backward compatibility.
 
 **Output format per action**:
+
 ```
   │
   │ ── Action 1 of 2 — line 3
@@ -157,6 +164,7 @@ Update the `renderTemplates` function in `internal/transparent/renderer.go` to r
 ```
 
 **Acceptance Criteria**:
+
 - [ ] Action headers display with correct N/M/line format
 - [ ] S and R lines display with correct labels and alignment
 - [ ] Steps within each action are properly indented
@@ -183,6 +191,7 @@ Update `internal/transparent/renderer_json.go` to emit the new `eval_actions` JS
 3. Ensure `action_index`, `source_line`, `source`, `result` fields appear in output.
 
 **Acceptance Criteria**:
+
 - [ ] JSON output contains `eval_actions` instead of `detailed_steps`
 - [ ] Each eval_action has `action_index`, `source_line`, `source`, `result`, `steps`
 - [ ] Steps within eval_actions have `step`, `operation`, `target`, `input`, `output`
@@ -203,6 +212,7 @@ Update `applyWSToTemplates` in `renderer.go` to apply `makeWhitespaceVisible` to
 **Implementation**:
 
 Replace the `DetailedSteps` whitespace application with:
+
 ```go
 if len(tc.EvalActions) > 0 {
     actions := make([]EvalAction, len(tc.EvalActions))
@@ -225,6 +235,7 @@ if len(tc.EvalActions) > 0 {
 ```
 
 **Acceptance Criteria**:
+
 - [ ] With `--show-whitespaces`, Source/Result/Input/Output show `·` for spaces and `→` for tabs
 - [ ] Without `--show-whitespaces`, no transformation applied
 
@@ -243,13 +254,17 @@ Wire `AnalyzeEvalActions` into `templater.go` (replacing `AnalyzeDetailedSteps`)
 **Implementation**:
 
 1. In `internal/templater/templater.go`, replace:
+
    ```go
    detailedSteps := transparent.AnalyzeDetailedSteps(v, data, template.FuncMap(templateFuncs))
    ```
+
    with:
+
    ```go
    evalActions := transparent.AnalyzeEvalActions(v, data, template.FuncMap(templateFuncs))
    ```
+
    and update `TemplateTrace` construction to use `EvalActions: evalActions`.
 
 2. Update `internal/transparent/transparent_test.go`:
@@ -257,6 +272,7 @@ Wire `AnalyzeEvalActions` into `templater.go` (replacing `AnalyzeDetailedSteps`)
    - Update any tests that reference `DetailedSteps` or `Expression`
 
 3. Build binary and regenerate golden files:
+
    ```bash
    go build -o ./bin/task ./cmd/task/
    UPDATE_GOLDEN=1 go test ./internal/transparent/ -run TestGoldenText -count=1
@@ -266,6 +282,7 @@ Wire `AnalyzeEvalActions` into `templater.go` (replacing `AnalyzeDetailedSteps`)
 4. Run full test suite to verify.
 
 **Acceptance Criteria**:
+
 - [ ] `go build` succeeds
 - [ ] `go test ./internal/transparent/` passes
 - [ ] Golden files regenerated with new format
