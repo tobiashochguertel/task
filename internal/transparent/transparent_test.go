@@ -875,3 +875,279 @@ func TestDetectTypeMismatchesNonNumericFunc(t *testing.T) {
 		t.Errorf("expected no warnings for non-numeric func, got: %v", warnings)
 	}
 }
+
+// --- Tests for truncateValue (custom table multiline/huge value handling) ---
+
+func TestTruncateValueShortString(t *testing.T) {
+	t.Parallel()
+	first, extra := truncateValue("hello", 60)
+	if first != "hello" {
+		t.Errorf("first = %q, want %q", first, "hello")
+	}
+	if len(extra) != 0 {
+		t.Errorf("extra = %v, want empty", extra)
+	}
+}
+
+func TestTruncateValueLongString(t *testing.T) {
+	t.Parallel()
+	long := strings.Repeat("x", 100)
+	first, extra := truncateValue(long, 60)
+	if len([]rune(first)) != 60 {
+		t.Errorf("first rune length = %d, want 60", len([]rune(first)))
+	}
+	if !strings.HasSuffix(first, "…") {
+		t.Errorf("first should end with …, got %q", first)
+	}
+	if len(extra) != 0 {
+		t.Errorf("extra = %v, want empty", extra)
+	}
+}
+
+func TestTruncateValueMultiline(t *testing.T) {
+	t.Parallel()
+	input := "line1\nline2\nline3"
+	first, extra := truncateValue(input, 60)
+	if first != "line1" {
+		t.Errorf("first = %q, want %q", first, "line1")
+	}
+	if len(extra) != 2 {
+		t.Fatalf("extra length = %d, want 2", len(extra))
+	}
+	if extra[0] != "line2" || extra[1] != "line3" {
+		t.Errorf("extra = %v, want [line2 line3]", extra)
+	}
+}
+
+func TestTruncateValueMultilineWithEmptyLines(t *testing.T) {
+	t.Parallel()
+	input := "line1\n\n  \nline4"
+	first, extra := truncateValue(input, 60)
+	if first != "line1" {
+		t.Errorf("first = %q, want %q", first, "line1")
+	}
+	// Empty/whitespace-only lines are skipped
+	if len(extra) != 1 || extra[0] != "line4" {
+		t.Errorf("extra = %v, want [line4]", extra)
+	}
+}
+
+func TestTruncateValueMultilineLongLines(t *testing.T) {
+	t.Parallel()
+	long := strings.Repeat("a", 100)
+	input := "short\n" + long
+	first, extra := truncateValue(input, 20)
+	if first != "short" {
+		t.Errorf("first = %q, want %q", first, "short")
+	}
+	if len(extra) != 1 {
+		t.Fatalf("extra length = %d, want 1", len(extra))
+	}
+	if len([]rune(extra[0])) != 20 || !strings.HasSuffix(extra[0], "…") {
+		t.Errorf("extra[0] = %q, want truncated to 20 runes ending with …", extra[0])
+	}
+}
+
+// --- Tests for renderVars dispatching to lipgloss ---
+
+func TestRenderVarsCustomRenderer(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{Name: "FOO", Origin: OriginTaskfileVars, Value: "bar", Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{TableRenderer: "custom"})
+	output := buf.String()
+	// Custom renderer uses box-drawing characters
+	if !strings.Contains(output, "┌") {
+		t.Error("custom renderer should use box-drawing characters")
+	}
+	if !strings.Contains(output, "FOO") {
+		t.Error("custom renderer should contain variable name")
+	}
+}
+
+func TestRenderVarsLipglossRenderer(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{Name: "FOO", Origin: OriginTaskfileVars, Value: "bar", Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{TableRenderer: "lipgloss"})
+	output := buf.String()
+	// Lipgloss renderer uses rounded borders
+	if !strings.Contains(output, "FOO") {
+		t.Error("lipgloss renderer should contain variable name")
+	}
+	if !strings.Contains(output, "bar") {
+		t.Error("lipgloss renderer should contain variable value")
+	}
+	if !strings.Contains(output, "Variables in scope") {
+		t.Error("lipgloss renderer should contain header")
+	}
+}
+
+func TestRenderVarsDefaultRendererIsCustom(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{Name: "X", Origin: OriginSpecial, Value: "y", Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, nil)
+	output := buf.String()
+	if !strings.Contains(output, "┌") {
+		t.Error("nil opts should default to custom renderer with box-drawing chars")
+	}
+}
+
+// --- Tests for renderVarsLipgloss with huge values ---
+
+func TestRenderVarsLipglossHugeValue(t *testing.T) {
+	t.Parallel()
+	hugeValue := strings.Repeat("x", 200)
+	vars := []VarTrace{
+		{Name: "BIG", Origin: OriginSpecial, Value: hugeValue, Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVarsLipgloss(&buf, vars)
+	output := buf.String()
+	if !strings.Contains(output, "BIG") {
+		t.Error("lipgloss renderer should contain variable name")
+	}
+	// The value should be truncated — no line should exceed 500 bytes
+	// (box-drawing chars are 3 bytes each, so byte length is ~3x visible width)
+	for _, line := range strings.Split(output, "\n") {
+		if len(line) > 500 {
+			t.Errorf("lipgloss output line too long (%d bytes)", len(line))
+		}
+	}
+}
+
+func TestRenderVarsLipglossMultilineValue(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{Name: "MULTI", Origin: OriginTaskfileVars, Value: "line1\nline2\nline3", Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVarsLipgloss(&buf, vars)
+	output := buf.String()
+	if !strings.Contains(output, "MULTI") {
+		t.Error("lipgloss renderer should contain variable name")
+	}
+}
+
+func TestRenderVarsLipglossShadow(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{
+			Name: "X", Origin: OriginTaskVars, Value: "new", Type: "string",
+			ShadowsVar: &VarTrace{Name: "X", Origin: OriginTaskfileVars, Value: "old"},
+		},
+	}
+	var buf bytes.Buffer
+	renderVarsLipgloss(&buf, vars)
+	output := buf.String()
+	if !strings.Contains(output, "SHADOWS") {
+		t.Error("lipgloss renderer should show shadow indicator")
+	}
+}
+
+func TestRenderVarsLipglossExtraLines(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{
+			Name: "REF", Origin: OriginTaskVars, Value: "val", Type: "string",
+			ValueID: 0x1234, RefName: "SRC",
+		},
+	}
+	var buf bytes.Buffer
+	renderVarsLipgloss(&buf, vars)
+	output := buf.String()
+	if !strings.Contains(output, "ptr:") {
+		t.Error("lipgloss renderer should show ptr info")
+	}
+	if !strings.Contains(output, "aliases") {
+		t.Error("lipgloss renderer should show ref alias info")
+	}
+}
+
+// --- Tests for truncateLipglossValue ---
+
+func TestTruncateLipglossValueShort(t *testing.T) {
+	t.Parallel()
+	result := truncateLipglossValue("hello", 80)
+	if result != "hello" {
+		t.Errorf("got %q, want %q", result, "hello")
+	}
+}
+
+func TestTruncateLipglossValueLong(t *testing.T) {
+	t.Parallel()
+	long := strings.Repeat("x", 100)
+	result := truncateLipglossValue(long, 80)
+	if len([]rune(result)) != 80 {
+		t.Errorf("result rune length = %d, want 80", len([]rune(result)))
+	}
+	if !strings.HasSuffix(result, "…") {
+		t.Error("should end with …")
+	}
+}
+
+func TestTruncateLipglossValueMultiline(t *testing.T) {
+	t.Parallel()
+	long := strings.Repeat("a", 100)
+	input := "short\n" + long
+	result := truncateLipglossValue(input, 80)
+	lines := strings.Split(result, "\n")
+	if len(lines) != 2 {
+		t.Fatalf("expected 2 lines, got %d", len(lines))
+	}
+	if lines[0] != "short" {
+		t.Errorf("line 0 = %q, want short", lines[0])
+	}
+	if len([]rune(lines[1])) != 80 {
+		t.Errorf("line 1 rune length = %d, want 80", len([]rune(lines[1])))
+	}
+}
+
+// --- Tests for custom table rendering with huge map values ---
+
+func TestRenderVarsCustomHugeValue(t *testing.T) {
+	t.Parallel()
+	hugeValue := strings.Repeat("x", 500)
+	vars := []VarTrace{
+		{Name: "HUGE", Origin: OriginSpecial, Value: hugeValue, Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{})
+	output := buf.String()
+	if !strings.Contains(output, "HUGE") {
+		t.Error("custom renderer should contain variable name")
+	}
+	// No line should exceed 500 bytes (box-drawing chars are 3 bytes each)
+	for _, line := range strings.Split(output, "\n") {
+		if len(line) > 500 {
+			t.Errorf("custom output line too long (%d bytes)", len(line))
+		}
+	}
+}
+
+func TestRenderVarsCustomMapValue(t *testing.T) {
+	t.Parallel()
+	mapValue := map[string]any{"key1": "val1", "key2": "val2", "nested": map[string]any{"a": "b"}}
+	vars := []VarTrace{
+		{Name: "MAP_VAR", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{})
+	output := buf.String()
+	if !strings.Contains(output, "MAP_VAR") {
+		t.Error("should contain variable name")
+	}
+	// Table should still be rendered without extreme width (500 bytes allows UTF-8 box-drawing)
+	for _, line := range strings.Split(output, "\n") {
+		if len(line) > 500 {
+			t.Errorf("output line too long (%d bytes)", len(line))
+		}
+	}
+}

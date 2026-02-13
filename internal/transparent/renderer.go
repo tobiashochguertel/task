@@ -49,8 +49,9 @@ func resolveColors() {
 
 // RenderOptions controls what the renderers display.
 type RenderOptions struct {
-	Verbose         bool // When false, hide environment-origin global vars for cleaner output
-	ShowWhitespaces bool // When true, replace spaces with · and tabs with → in values
+	Verbose         bool   // When false, hide environment-origin global vars for cleaner output
+	ShowWhitespaces bool   // When true, replace spaces with · and tabs with → in values
+	TableRenderer   string // "custom" (default) or "lipgloss" for alternative table rendering
 }
 
 // RenderText writes a human-readable trace report to the given writer.
@@ -83,7 +84,7 @@ func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 	globals := filterGlobals(report.GlobalVars, opts.Verbose)
 	if len(globals) > 0 {
 		fmt.Fprintf(w, "%s%s── Global Variables%s\n", cBold, cGreen, cReset)
-		renderVars(w, globals)
+		renderVars(w, globals, opts)
 		if !opts.Verbose && len(globals) < len(report.GlobalVars) {
 			hidden := len(report.GlobalVars) - len(globals)
 			fmt.Fprintf(w, "  %s(%d environment variables hidden — use -v to show)%s\n", cDim, hidden, cReset)
@@ -92,7 +93,7 @@ func RenderText(w io.Writer, report *TraceReport, opts *RenderOptions) {
 	}
 
 	for _, task := range report.Tasks {
-		renderTask(w, *task)
+		renderTask(w, *task, opts)
 	}
 
 	fmt.Fprintf(w, "%s%s╚══ End of Transparent Mode Report ══╝%s\n", cBold, cCyan, cReset)
@@ -129,11 +130,11 @@ func isInternalVar(name string) bool {
 	return false
 }
 
-func renderTask(w io.Writer, task TaskTrace) {
+func renderTask(w io.Writer, task TaskTrace, opts *RenderOptions) {
 	fmt.Fprintf(w, "%s%s── Task: %s%s\n", cBold, cGreen, task.TaskName, cReset)
 
 	if len(task.Vars) > 0 {
-		renderVars(w, task.Vars)
+		renderVars(w, task.Vars, opts)
 	}
 	if len(task.Templates) > 0 {
 		renderTemplates(w, task.Templates)
@@ -150,7 +151,37 @@ func renderTask(w io.Writer, task TaskTrace) {
 	fmt.Fprintln(w)
 }
 
-func renderVars(w io.Writer, vars []VarTrace) {
+// maxValueWidth is the maximum display width for the Value column in the
+// custom table renderer. Values exceeding this are truncated with "…".
+const maxValueWidth = 60
+
+// truncateValue prepares a value string for table display. It replaces
+// embedded newlines with continuation rows and truncates any single line
+// that exceeds maxWidth, appending "…" to signal truncation.
+func truncateValue(s string, maxWidth int) (first string, extra []string) {
+	lines := strings.Split(s, "\n")
+	runes := func(s string) int { return len([]rune(s)) }
+	truncLine := func(line string) string {
+		if runes(line) > maxWidth {
+			r := []rune(line)
+			return string(r[:maxWidth-1]) + "\u2026"
+		}
+		return line
+	}
+	first = truncLine(lines[0])
+	for _, line := range lines[1:] {
+		if trimmed := strings.TrimSpace(line); trimmed != "" {
+			extra = append(extra, truncLine(line))
+		}
+	}
+	return first, extra
+}
+
+func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
+	if opts != nil && opts.TableRenderer == "lipgloss" {
+		renderVarsLipgloss(w, vars)
+		return
+	}
 	fmt.Fprintf(w, "  %s%sVariables in scope:%s\n", cBold, cYellow, cReset)
 
 	// Compute column widths dynamically
@@ -191,7 +222,11 @@ func renderVars(w io.Writer, vars []VarTrace) {
 		if v.IsRef {
 			valStr = fmt.Sprintf("(ref) %s", valStr)
 		}
-		rd.value = valStr
+
+		// Truncate and handle multiline values
+		firstLine, valueExtraLines := truncateValue(valStr, maxValueWidth)
+		rd.value = firstLine
+		rd.extraLines = append(rd.extraLines, valueExtraLines...)
 
 		// Shadow
 		if v.ShadowsVar != nil {
@@ -200,7 +235,7 @@ func renderVars(w io.Writer, vars []VarTrace) {
 				originLabel(v.ShadowsVar.Origin))
 		}
 
-		// Extra lines
+		// Extra lines (ptr, ref alias)
 		if v.ValueID != 0 {
 			rd.extraLines = append(rd.extraLines, fmt.Sprintf("ptr: 0x%x", v.ValueID))
 		}
@@ -208,18 +243,21 @@ func renderVars(w io.Writer, vars []VarTrace) {
 			rd.extraLines = append(rd.extraLines, fmt.Sprintf("→ aliases: %s", v.RefName))
 		}
 
-		// Update column widths
+		// Update column widths (capped at maxValueWidth)
 		if len(rd.name) > colName {
 			colName = len(rd.name)
 		}
 		if len(rd.value) > colValue {
 			colValue = len(rd.value)
 		}
-		// Include extra lines (ptr, ref alias) in value column width
+		// Include extra lines (ptr, ref alias, continuation) in value column width
 		for _, extra := range rd.extraLines {
 			if len(extra) > colValue {
 				colValue = len(extra)
 			}
+		}
+		if colValue > maxValueWidth {
+			colValue = maxValueWidth
 		}
 		if len(rd.origin) > colOrigin {
 			colOrigin = len(rd.origin)

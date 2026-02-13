@@ -90,6 +90,7 @@ var (
 	Interactive         bool
 	Transparent         bool
 	ShowWhitespaces     bool
+	TableRenderer       string
 )
 
 func init() {
@@ -143,6 +144,7 @@ func init() {
 	pflag.BoolVar(&Interactive, "interactive", getConfig(config, func() *bool { return config.Interactive }, false), "Prompt for missing required variables.")
 	pflag.BoolVarP(&Transparent, "transparent", "T", false, "Show template and variable diagnostic overlay (no execution).")
 	pflag.BoolVar(&ShowWhitespaces, "show-whitespaces", false, "Make whitespace visible in transparent mode output (· for spaces, → for tabs).")
+	pflag.StringVar(&TableRenderer, "transparent-renderer-table", "custom", "Table renderer for transparent mode: 'custom' (default) or 'lipgloss'.")
 	pflag.BoolVarP(&Parallel, "parallel", "p", false, "Executes tasks provided on command line in parallel.")
 	pflag.BoolVarP(&Dry, "dry", "n", false, "Compiles and prints tasks in the order that they would be run, without executing them.")
 	pflag.BoolVar(&Summary, "summary", false, "Show summary about a task.")
@@ -321,6 +323,7 @@ func (o *flagsOption) ApplyToExecutor(e *task.Executor) {
 		task.WithTransparent(Transparent),
 		task.WithTransparentJSON(Transparent && ListJson),
 		task.WithShowWhitespaces(ShowWhitespaces),
+		task.WithTableRenderer(TableRenderer),
 	)
 }
 

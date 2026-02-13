@@ -34,6 +34,7 @@ func (e *Executor) RunTransparent(ctx context.Context, calls ...*Call) error {
 	opts := &transparent.RenderOptions{
 		Verbose:         e.Verbose,
 		ShowWhitespaces: e.ShowWhitespaces,
+		TableRenderer:   e.TableRenderer,
 	}
 	if e.TransparentJSON {
 		return transparent.RenderJSON(os.Stderr, report, opts)

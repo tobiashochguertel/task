@@ -58,6 +58,7 @@ type (
 		Transparent         bool
 		TransparentJSON     bool
 		ShowWhitespaces     bool
+		TableRenderer       string
 
 		// I/O
 		Stdin  io.Reader
@@ -661,4 +662,18 @@ type showWhitespacesOption struct {
 
 func (o *showWhitespacesOption) ApplyToExecutor(e *Executor) {
 	e.ShowWhitespaces = o.show
+}
+
+// WithTableRenderer tells the [Executor] which table renderer to use in
+// transparent mode output. Valid values are "custom" (default) and "lipgloss".
+func WithTableRenderer(renderer string) ExecutorOption {
+	return &tableRendererOption{renderer}
+}
+
+type tableRendererOption struct {
+	renderer string
+}
+
+func (o *tableRendererOption) ApplyToExecutor(e *Executor) {
+	e.TableRenderer = o.renderer
 }
