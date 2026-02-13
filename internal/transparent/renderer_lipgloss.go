@@ -9,16 +9,39 @@ import (
 	"github.com/charmbracelet/lipgloss/table"
 )
 
-// lipglossMaxValueWidth is the maximum width for the Value column when
-// rendering with lipgloss. Lipgloss handles wrapping internally, but we
-// still truncate extremely long single-line values to keep output readable.
-const lipglossMaxValueWidth = 80
+// lipgloss color palette
+var (
+	lgPurple    = lipgloss.Color("99")
+	lgGray      = lipgloss.Color("245")
+	lgLightGray = lipgloss.Color("241")
+	lgYellow    = lipgloss.Color("220")
+	lgBlue      = lipgloss.Color("75")
+	lgGreen     = lipgloss.Color("78")
+	lgCyan      = lipgloss.Color("80")
+	lgDimGray   = lipgloss.Color("240")
+)
 
 // renderVarsLipgloss renders the variable table using the charmbracelet/lipgloss
-// table package, which handles column sizing, borders, and multiline content
-// natively.
+// table package with advanced coloring and styling. Multiline values (like
+// pretty-printed JSON maps) get a compact summary in the table with the full
+// content rendered in a detail box below.
 func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 	fmt.Fprintf(w, "  Variables in scope:\n")
+
+	// Track per-row metadata for styling decisions
+	type rowMeta struct {
+		isDynamic   bool
+		hasShadow   bool
+		isMultiline bool
+	}
+	metas := make([]rowMeta, 0, len(vars))
+
+	// Collect multiline details to render below the table
+	type multilineDetail struct {
+		name  string
+		value string
+	}
+	var details []multilineDetail
 
 	rows := make([][]string, 0, len(vars))
 	for _, v := range vars {
@@ -30,15 +53,18 @@ func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 			typeStr = "-"
 		}
 
-		// Value
-		valStr := fmt.Sprintf("%v", v.Value)
+		// Value — use formatVarValue for pretty-printed complex types
+		valStr := formatVarValue(v.Value)
+		meta := rowMeta{}
 		if v.IsDynamic {
+			meta.isDynamic = true
 			shInfo := ""
 			if v.ShCmd != "" {
 				shInfo = fmt.Sprintf(" (sh: %s)", v.ShCmd)
 			}
-			valStr = fmt.Sprintf("(sh) %s%s", valStr, shInfo)
-			if fmt.Sprintf("%v", v.Value) == "" {
+			rawStr := formatVarValue(v.Value)
+			valStr = fmt.Sprintf("(sh) %s%s", rawStr, shInfo)
+			if rawStr == "" {
 				valStr += " ⚠ DYNAMIC — not evaluated"
 			}
 		}
@@ -46,10 +72,7 @@ func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 			valStr = fmt.Sprintf("(ref) %s", valStr)
 		}
 
-		// Truncate extremely long values (lipgloss wraps, but we still cap)
-		valStr = truncateLipglossValue(valStr, lipglossMaxValueWidth)
-
-		// Extra info lines appended to value
+		// Extra info appended to value
 		var extras []string
 		if v.ValueID != 0 {
 			extras = append(extras, fmt.Sprintf("ptr: 0x%x", v.ValueID))
@@ -61,32 +84,77 @@ func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 			valStr += "\n" + strings.Join(extras, "\n")
 		}
 
+		// For multiline values, show compact summary in table, full below
+		displayVal := valStr
+		if strings.Contains(valStr, "\n") {
+			meta.isMultiline = true
+			lineCount := strings.Count(valStr, "\n") + 1
+			firstLine, _ := splitMultiline(valStr)
+			if len([]rune(firstLine)) > 60 {
+				firstLine = string([]rune(firstLine)[:57]) + "..."
+			}
+			displayVal = fmt.Sprintf("%s (%d lines — see below)", firstLine, lineCount)
+			details = append(details, multilineDetail{name: name, value: valStr})
+		}
+
 		// Shadow
 		shadow := ""
 		if v.ShadowsVar != nil {
+			meta.hasShadow = true
 			shadow = fmt.Sprintf("⚠ SHADOWS %s=%q [%s]",
 				v.ShadowsVar.Name, fmt.Sprintf("%v", v.ShadowsVar.Value),
 				originLabel(v.ShadowsVar.Origin))
 		}
 
-		rows = append(rows, []string{name, origin, typeStr, valStr, shadow})
+		rows = append(rows, []string{name, origin, typeStr, displayVal, shadow})
+		metas = append(metas, meta)
 	}
 
+	// Styles
 	headerStyle := lipgloss.NewStyle().
 		Bold(true).
-		Padding(0, 1)
-
-	cellStyle := lipgloss.NewStyle().
+		Foreground(lgPurple).
 		Padding(0, 1)
 
 	t := table.New().
 		Border(lipgloss.RoundedBorder()).
-		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("240"))).
+		BorderStyle(lipgloss.NewStyle().Foreground(lgDimGray)).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == table.HeaderRow {
 				return headerStyle
 			}
-			return cellStyle
+
+			base := lipgloss.NewStyle().Padding(0, 1)
+
+			// Alternating row foreground color
+			if row%2 == 0 {
+				base = base.Foreground(lgGray)
+			} else {
+				base = base.Foreground(lgLightGray)
+			}
+
+			// Per-column styling
+			idx := row
+			if idx >= 0 && idx < len(metas) {
+				switch col {
+				case 0: // Name — bold cyan
+					base = base.Foreground(lgCyan).Bold(true)
+				case 1: // Origin — green
+					base = base.Foreground(lgGreen)
+				case 3: // Value — blue for dynamic, dim for multiline ref
+					if metas[idx].isDynamic {
+						base = base.Foreground(lgBlue)
+					} else if metas[idx].isMultiline {
+						base = base.Foreground(lgDimGray)
+					}
+				case 4: // Shadows — yellow warning
+					if metas[idx].hasShadow {
+						base = base.Foreground(lgYellow).Bold(true)
+					}
+				}
+			}
+
+			return base
 		}).
 		Headers("Name", "Origin", "Type", "Value", "Shadows?").
 		Rows(rows...)
@@ -96,20 +164,10 @@ func renderVarsLipgloss(w io.Writer, vars []VarTrace) {
 	for _, line := range strings.Split(rendered, "\n") {
 		fmt.Fprintf(w, "  %s\n", line)
 	}
-}
 
-// truncateLipglossValue truncates a value string for lipgloss display.
-// Unlike the custom renderer, lipgloss handles multiline wrapping, so we
-// only need to cap the total length of each line.
-func truncateLipglossValue(s string, maxWidth int) string {
-	lines := strings.Split(s, "\n")
-	var result []string
-	for _, line := range lines {
-		r := []rune(line)
-		if len(r) > maxWidth {
-			line = string(r[:maxWidth-1]) + "…"
-		}
-		result = append(result, line)
+	// Render full values for multiline variables below the table
+	for _, d := range details {
+		fmt.Fprintln(w)
+		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), d.value)
 	}
-	return strings.Join(result, "\n")
 }

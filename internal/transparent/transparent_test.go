@@ -876,11 +876,11 @@ func TestDetectTypeMismatchesNonNumericFunc(t *testing.T) {
 	}
 }
 
-// --- Tests for truncateValue (custom table multiline/huge value handling) ---
+// --- Tests for splitMultiline ---
 
-func TestTruncateValueShortString(t *testing.T) {
+func TestSplitMultilineSingleLine(t *testing.T) {
 	t.Parallel()
-	first, extra := truncateValue("hello", 60)
+	first, extra := splitMultiline("hello")
 	if first != "hello" {
 		t.Errorf("first = %q, want %q", first, "hello")
 	}
@@ -889,25 +889,10 @@ func TestTruncateValueShortString(t *testing.T) {
 	}
 }
 
-func TestTruncateValueLongString(t *testing.T) {
-	t.Parallel()
-	long := strings.Repeat("x", 100)
-	first, extra := truncateValue(long, 60)
-	if len([]rune(first)) != 60 {
-		t.Errorf("first rune length = %d, want 60", len([]rune(first)))
-	}
-	if !strings.HasSuffix(first, "…") {
-		t.Errorf("first should end with …, got %q", first)
-	}
-	if len(extra) != 0 {
-		t.Errorf("extra = %v, want empty", extra)
-	}
-}
-
-func TestTruncateValueMultiline(t *testing.T) {
+func TestSplitMultilineMultipleLines(t *testing.T) {
 	t.Parallel()
 	input := "line1\nline2\nline3"
-	first, extra := truncateValue(input, 60)
+	first, extra := splitMultiline(input)
 	if first != "line1" {
 		t.Errorf("first = %q, want %q", first, "line1")
 	}
@@ -919,36 +904,87 @@ func TestTruncateValueMultiline(t *testing.T) {
 	}
 }
 
-func TestTruncateValueMultilineWithEmptyLines(t *testing.T) {
+func TestSplitMultilineSkipsEmptyLines(t *testing.T) {
 	t.Parallel()
 	input := "line1\n\n  \nline4"
-	first, extra := truncateValue(input, 60)
+	first, extra := splitMultiline(input)
 	if first != "line1" {
 		t.Errorf("first = %q, want %q", first, "line1")
 	}
-	// Empty/whitespace-only lines are skipped
 	if len(extra) != 1 || extra[0] != "line4" {
 		t.Errorf("extra = %v, want [line4]", extra)
 	}
 }
 
-func TestTruncateValueMultilineLongLines(t *testing.T) {
+func TestSplitMultilinePreservesLongLines(t *testing.T) {
 	t.Parallel()
-	long := strings.Repeat("a", 100)
+	long := strings.Repeat("a", 200)
 	input := "short\n" + long
-	first, extra := truncateValue(input, 20)
+	first, extra := splitMultiline(input)
 	if first != "short" {
 		t.Errorf("first = %q, want %q", first, "short")
 	}
 	if len(extra) != 1 {
 		t.Fatalf("extra length = %d, want 1", len(extra))
 	}
-	if len([]rune(extra[0])) != 20 || !strings.HasSuffix(extra[0], "…") {
-		t.Errorf("extra[0] = %q, want truncated to 20 runes ending with …", extra[0])
+	// No truncation — full 200-char line preserved
+	if extra[0] != long {
+		t.Error("long line should be preserved without truncation")
 	}
 }
 
-// --- Tests for renderVars dispatching to lipgloss ---
+// --- Tests for formatVarValue ---
+
+func TestFormatVarValueString(t *testing.T) {
+	t.Parallel()
+	result := formatVarValue("hello world")
+	if result != "hello world" {
+		t.Errorf("got %q, want %q", result, "hello world")
+	}
+}
+
+func TestFormatVarValueNil(t *testing.T) {
+	t.Parallel()
+	result := formatVarValue(nil)
+	if result != "<nil>" {
+		t.Errorf("got %q, want %q", result, "<nil>")
+	}
+}
+
+func TestFormatVarValueMap(t *testing.T) {
+	t.Parallel()
+	m := map[string]any{"key": "val"}
+	result := formatVarValue(m)
+	// Should be pretty-printed JSON
+	if !strings.Contains(result, "\"key\"") {
+		t.Error("should contain JSON key")
+	}
+	if !strings.Contains(result, "\"val\"") {
+		t.Error("should contain JSON value")
+	}
+	if !strings.Contains(result, "\n") {
+		t.Error("should be multiline (indented JSON)")
+	}
+}
+
+func TestFormatVarValueSlice(t *testing.T) {
+	t.Parallel()
+	s := []string{"a", "b", "c"}
+	result := formatVarValue(s)
+	if !strings.Contains(result, "\"a\"") {
+		t.Error("should contain slice elements")
+	}
+}
+
+func TestFormatVarValueBool(t *testing.T) {
+	t.Parallel()
+	result := formatVarValue(true)
+	if result != "true" {
+		t.Errorf("got %q, want %q", result, "true")
+	}
+}
+
+// --- Tests for renderVars dispatching ---
 
 func TestRenderVarsCustomRenderer(t *testing.T) {
 	t.Parallel()
@@ -958,12 +994,14 @@ func TestRenderVarsCustomRenderer(t *testing.T) {
 	var buf bytes.Buffer
 	renderVars(&buf, vars, &RenderOptions{TableRenderer: "custom"})
 	output := buf.String()
-	// Custom renderer uses box-drawing characters
 	if !strings.Contains(output, "┌") {
 		t.Error("custom renderer should use box-drawing characters")
 	}
 	if !strings.Contains(output, "FOO") {
 		t.Error("custom renderer should contain variable name")
+	}
+	if !strings.Contains(output, "bar") {
+		t.Error("custom renderer should contain variable value inline")
 	}
 }
 
@@ -975,7 +1013,6 @@ func TestRenderVarsLipglossRenderer(t *testing.T) {
 	var buf bytes.Buffer
 	renderVars(&buf, vars, &RenderOptions{TableRenderer: "lipgloss"})
 	output := buf.String()
-	// Lipgloss renderer uses rounded borders
 	if !strings.Contains(output, "FOO") {
 		t.Error("lipgloss renderer should contain variable name")
 	}
@@ -1000,39 +1037,64 @@ func TestRenderVarsDefaultRendererIsCustom(t *testing.T) {
 	}
 }
 
-// --- Tests for renderVarsLipgloss with huge values ---
+// --- Tests for multiline value detail boxes ---
 
-func TestRenderVarsLipglossHugeValue(t *testing.T) {
+func TestRenderVarsCustomMapValueShowsDetailBox(t *testing.T) {
 	t.Parallel()
-	hugeValue := strings.Repeat("x", 200)
+	mapValue := map[string]any{"key1": "val1", "key2": "val2"}
 	vars := []VarTrace{
-		{Name: "BIG", Origin: OriginSpecial, Value: hugeValue, Type: "string"},
+		{Name: "MAP_VAR", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
 	}
 	var buf bytes.Buffer
-	renderVarsLipgloss(&buf, vars)
+	renderVars(&buf, vars, &RenderOptions{})
 	output := buf.String()
-	if !strings.Contains(output, "BIG") {
-		t.Error("lipgloss renderer should contain variable name")
+	// Table should show summary with "see below"
+	if !strings.Contains(output, "see below") {
+		t.Error("multiline value should show 'see below' in table")
 	}
-	// The value should be truncated — no line should exceed 500 bytes
-	// (box-drawing chars are 3 bytes each, so byte length is ~3x visible width)
-	for _, line := range strings.Split(output, "\n") {
-		if len(line) > 500 {
-			t.Errorf("lipgloss output line too long (%d bytes)", len(line))
-		}
+	// Detail box should show full value
+	if !strings.Contains(output, "Value of MAP_VAR") {
+		t.Error("should render detail box with variable name")
+	}
+	if !strings.Contains(output, "\"key1\"") {
+		t.Error("detail box should contain full JSON value")
 	}
 }
 
-func TestRenderVarsLipglossMultilineValue(t *testing.T) {
+func TestRenderVarsLipglossMapValueShowsDetailBox(t *testing.T) {
 	t.Parallel()
+	mapValue := map[string]any{"name": "test"}
 	vars := []VarTrace{
-		{Name: "MULTI", Origin: OriginTaskfileVars, Value: "line1\nline2\nline3", Type: "string"},
+		{Name: "INFO", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
 	}
 	var buf bytes.Buffer
 	renderVarsLipgloss(&buf, vars)
 	output := buf.String()
-	if !strings.Contains(output, "MULTI") {
-		t.Error("lipgloss renderer should contain variable name")
+	if !strings.Contains(output, "see below") {
+		t.Error("multiline value should show 'see below' in table")
+	}
+	if !strings.Contains(output, "Value of INFO") {
+		t.Error("should render detail box with variable name")
+	}
+	if !strings.Contains(output, "\"name\"") {
+		t.Error("detail box should contain full JSON value")
+	}
+}
+
+func TestRenderVarsCustomInlineSimpleValue(t *testing.T) {
+	t.Parallel()
+	vars := []VarTrace{
+		{Name: "SIMPLE", Origin: OriginTaskfileVars, Value: "just a string", Type: "string"},
+	}
+	var buf bytes.Buffer
+	renderVars(&buf, vars, &RenderOptions{})
+	output := buf.String()
+	// Simple string values should be shown inline, no detail box
+	if !strings.Contains(output, "just a string") {
+		t.Error("simple value should be shown inline")
+	}
+	if strings.Contains(output, "see below") {
+		t.Error("simple value should not have 'see below' indicator")
 	}
 }
 
@@ -1052,102 +1114,35 @@ func TestRenderVarsLipglossShadow(t *testing.T) {
 	}
 }
 
-func TestRenderVarsLipglossExtraLines(t *testing.T) {
+// --- Tests for whitespace visibility on complex values ---
+
+func TestApplyWSToVarsMapValue(t *testing.T) {
 	t.Parallel()
 	vars := []VarTrace{
-		{
-			Name: "REF", Origin: OriginTaskVars, Value: "val", Type: "string",
-			ValueID: 0x1234, RefName: "SRC",
-		},
+		{Name: "MAP", Value: map[string]any{"key": "hello world"}, Type: "map"},
 	}
-	var buf bytes.Buffer
-	renderVarsLipgloss(&buf, vars)
-	output := buf.String()
-	if !strings.Contains(output, "ptr:") {
-		t.Error("lipgloss renderer should show ptr info")
+	result := applyWSToVars(vars)
+	// The map should be converted to string with whitespace visible
+	s, ok := result[0].Value.(string)
+	if !ok {
+		t.Fatal("map value should be converted to string after applyWSToVars")
 	}
-	if !strings.Contains(output, "aliases") {
-		t.Error("lipgloss renderer should show ref alias info")
+	if !strings.Contains(s, "·") {
+		t.Error("whitespace should be made visible in map values")
 	}
 }
 
-// --- Tests for truncateLipglossValue ---
-
-func TestTruncateLipglossValueShort(t *testing.T) {
+func TestApplyWSToVarsStringValue(t *testing.T) {
 	t.Parallel()
-	result := truncateLipglossValue("hello", 80)
-	if result != "hello" {
-		t.Errorf("got %q, want %q", result, "hello")
-	}
-}
-
-func TestTruncateLipglossValueLong(t *testing.T) {
-	t.Parallel()
-	long := strings.Repeat("x", 100)
-	result := truncateLipglossValue(long, 80)
-	if len([]rune(result)) != 80 {
-		t.Errorf("result rune length = %d, want 80", len([]rune(result)))
-	}
-	if !strings.HasSuffix(result, "…") {
-		t.Error("should end with …")
-	}
-}
-
-func TestTruncateLipglossValueMultiline(t *testing.T) {
-	t.Parallel()
-	long := strings.Repeat("a", 100)
-	input := "short\n" + long
-	result := truncateLipglossValue(input, 80)
-	lines := strings.Split(result, "\n")
-	if len(lines) != 2 {
-		t.Fatalf("expected 2 lines, got %d", len(lines))
-	}
-	if lines[0] != "short" {
-		t.Errorf("line 0 = %q, want short", lines[0])
-	}
-	if len([]rune(lines[1])) != 80 {
-		t.Errorf("line 1 rune length = %d, want 80", len([]rune(lines[1])))
-	}
-}
-
-// --- Tests for custom table rendering with huge map values ---
-
-func TestRenderVarsCustomHugeValue(t *testing.T) {
-	t.Parallel()
-	hugeValue := strings.Repeat("x", 500)
 	vars := []VarTrace{
-		{Name: "HUGE", Origin: OriginSpecial, Value: hugeValue, Type: "string"},
+		{Name: "STR", Value: "hello world", Type: "string"},
 	}
-	var buf bytes.Buffer
-	renderVars(&buf, vars, &RenderOptions{})
-	output := buf.String()
-	if !strings.Contains(output, "HUGE") {
-		t.Error("custom renderer should contain variable name")
+	result := applyWSToVars(vars)
+	s, ok := result[0].Value.(string)
+	if !ok {
+		t.Fatal("string value should remain string")
 	}
-	// No line should exceed 500 bytes (box-drawing chars are 3 bytes each)
-	for _, line := range strings.Split(output, "\n") {
-		if len(line) > 500 {
-			t.Errorf("custom output line too long (%d bytes)", len(line))
-		}
-	}
-}
-
-func TestRenderVarsCustomMapValue(t *testing.T) {
-	t.Parallel()
-	mapValue := map[string]any{"key1": "val1", "key2": "val2", "nested": map[string]any{"a": "b"}}
-	vars := []VarTrace{
-		{Name: "MAP_VAR", Origin: OriginSpecial, Value: mapValue, Type: "map[string]any"},
-	}
-	var buf bytes.Buffer
-	renderVars(&buf, vars, &RenderOptions{})
-	output := buf.String()
-	if !strings.Contains(output, "MAP_VAR") {
-		t.Error("should contain variable name")
-	}
-	// Table should still be rendered without extreme width (500 bytes allows UTF-8 box-drawing)
-	for _, line := range strings.Split(output, "\n") {
-		if len(line) > 500 {
-			t.Errorf("output line too long (%d bytes)", len(line))
-		}
+	if !strings.Contains(s, "·") {
+		t.Error("whitespace should be made visible")
 	}
 }

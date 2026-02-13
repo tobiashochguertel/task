@@ -1,6 +1,7 @@
 package transparent
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -151,27 +152,34 @@ func renderTask(w io.Writer, task TaskTrace, opts *RenderOptions) {
 	fmt.Fprintln(w)
 }
 
-// maxValueWidth is the maximum display width for the Value column in the
-// custom table renderer. Values exceeding this are truncated with "…".
-const maxValueWidth = 60
-
-// truncateValue prepares a value string for table display. It replaces
-// embedded newlines with continuation rows and truncates any single line
-// that exceeds maxWidth, appending "…" to signal truncation.
-func truncateValue(s string, maxWidth int) (first string, extra []string) {
-	lines := strings.Split(s, "\n")
-	runes := func(s string) int { return len([]rune(s)) }
-	truncLine := func(line string) string {
-		if runes(line) > maxWidth {
-			r := []rune(line)
-			return string(r[:maxWidth-1]) + "\u2026"
+// formatVarValue converts a variable value to a human-readable string.
+// String values are returned as-is. Complex values (maps, slices) are
+// pretty-printed as indented JSON for readability in the table.
+func formatVarValue(v any) string {
+	switch val := v.(type) {
+	case string:
+		return val
+	case nil:
+		return "<nil>"
+	default:
+		// Try JSON pretty-print for maps, slices, and other complex types
+		b, err := json.MarshalIndent(val, "", "  ")
+		if err != nil {
+			return fmt.Sprintf("%v", val)
 		}
-		return line
+		return string(b)
 	}
-	first = truncLine(lines[0])
+}
+
+// splitMultiline splits a string on newlines and returns the first line
+// plus any non-empty continuation lines. No truncation is applied —
+// values are shown in full.
+func splitMultiline(s string) (first string, extra []string) {
+	lines := strings.Split(s, "\n")
+	first = lines[0]
 	for _, line := range lines[1:] {
-		if trimmed := strings.TrimSpace(line); trimmed != "" {
-			extra = append(extra, truncLine(line))
+		if strings.TrimSpace(line) != "" {
+			extra = append(extra, line)
 		}
 	}
 	return first, extra
@@ -193,7 +201,9 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 
 	type rowData struct {
 		name, value, origin, typeStr, shadow string
-		extraLines                           []string // additional lines below the row (ptr, ref alias)
+		fullValue                            string   // complete value (may be multiline)
+		isMultiline                          bool     // true when value has embedded newlines
+		metaLines                            []string // ptr, ref alias lines (shown inline)
 	}
 
 	rows := make([]rowData, 0, len(vars))
@@ -207,15 +217,16 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 			rd.typeStr = "-"
 		}
 
-		// Value
-		valStr := fmt.Sprintf("%v", v.Value)
+		// Value — use formatVarValue for pretty-printed complex types
+		valStr := formatVarValue(v.Value)
 		if v.IsDynamic {
 			shInfo := ""
 			if v.ShCmd != "" {
 				shInfo = fmt.Sprintf(" (sh: %s)", v.ShCmd)
 			}
-			valStr = fmt.Sprintf("(sh) %s%s", valStr, shInfo)
-			if fmt.Sprintf("%v", v.Value) == "" {
+			rawStr := formatVarValue(v.Value)
+			valStr = fmt.Sprintf("(sh) %s%s", rawStr, shInfo)
+			if rawStr == "" {
 				valStr += " ⚠ DYNAMIC — not evaluated"
 			}
 		}
@@ -223,10 +234,20 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 			valStr = fmt.Sprintf("(ref) %s", valStr)
 		}
 
-		// Truncate and handle multiline values
-		firstLine, valueExtraLines := truncateValue(valStr, maxValueWidth)
-		rd.value = firstLine
-		rd.extraLines = append(rd.extraLines, valueExtraLines...)
+		// Detect multiline values — show summary in table, full value below
+		rd.fullValue = valStr
+		if strings.Contains(valStr, "\n") {
+			rd.isMultiline = true
+			lineCount := strings.Count(valStr, "\n") + 1
+			firstLine, _ := splitMultiline(valStr)
+			// Show first line + indicator in table
+			if len(firstLine) > 60 {
+				firstLine = string([]rune(firstLine)[:57]) + "..."
+			}
+			rd.value = fmt.Sprintf("%s (%d lines — see below)", firstLine, lineCount)
+		} else {
+			rd.value = valStr
+		}
 
 		// Shadow
 		if v.ShadowsVar != nil {
@@ -235,29 +256,25 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 				originLabel(v.ShadowsVar.Origin))
 		}
 
-		// Extra lines (ptr, ref alias)
+		// Meta lines (ptr, ref alias) — always shown inline
 		if v.ValueID != 0 {
-			rd.extraLines = append(rd.extraLines, fmt.Sprintf("ptr: 0x%x", v.ValueID))
+			rd.metaLines = append(rd.metaLines, fmt.Sprintf("ptr: 0x%x", v.ValueID))
 		}
 		if v.RefName != "" {
-			rd.extraLines = append(rd.extraLines, fmt.Sprintf("→ aliases: %s", v.RefName))
+			rd.metaLines = append(rd.metaLines, fmt.Sprintf("→ aliases: %s", v.RefName))
 		}
 
-		// Update column widths (capped at maxValueWidth)
+		// Update column widths — only from table-inline content
 		if len(rd.name) > colName {
 			colName = len(rd.name)
 		}
 		if len(rd.value) > colValue {
 			colValue = len(rd.value)
 		}
-		// Include extra lines (ptr, ref alias, continuation) in value column width
-		for _, extra := range rd.extraLines {
-			if len(extra) > colValue {
-				colValue = len(extra)
+		for _, meta := range rd.metaLines {
+			if len(meta) > colValue {
+				colValue = len(meta)
 			}
-		}
-		if colValue > maxValueWidth {
-			colValue = maxValueWidth
 		}
 		if len(rd.origin) > colOrigin {
 			colOrigin = len(rd.origin)
@@ -304,6 +321,13 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 	row("Name", "Origin", "Type", "Value", "Shadows?")
 	hLine("├", "┼", "┤", "─")
 
+	// Collect multiline details to render after the table
+	type multilineDetail struct {
+		name  string
+		value string
+	}
+	var details []multilineDetail
+
 	for _, rd := range rows {
 		shadowStr := rd.shadow
 		if shadowStr != "" {
@@ -313,13 +337,25 @@ func renderVars(w io.Writer, vars []VarTrace, opts *RenderOptions) {
 		if rd.value != "" && strings.HasPrefix(rd.value, "(sh)") {
 			valueStr = fmt.Sprintf("%s%s%s", cBlue, rd.value, cReset)
 		}
+		if rd.isMultiline {
+			valueStr = fmt.Sprintf("%s%s%s", cDim, rd.value, cReset)
+		}
 		row(rd.name, rd.origin, rd.typeStr, valueStr, shadowStr)
-		for _, extra := range rd.extraLines {
-			row("", "", "", fmt.Sprintf("%s%s%s", cDim, extra, cReset), "")
+		for _, meta := range rd.metaLines {
+			row("", "", "", fmt.Sprintf("%s%s%s", cDim, meta, cReset), "")
+		}
+		if rd.isMultiline {
+			details = append(details, multilineDetail{name: rd.name, value: rd.fullValue})
 		}
 	}
 
 	hLine("└", "┴", "┘", "─")
+
+	// Render full values for multiline variables below the table
+	for _, d := range details {
+		fmt.Fprintln(w)
+		renderBoxContent(w, fmt.Sprintf("Value of %s", d.name), d.value)
+	}
 }
 
 // --- Box-drawing helpers ---
@@ -662,6 +698,11 @@ func applyWSToVars(vars []VarTrace) []VarTrace {
 		vc := v
 		if s, ok := v.Value.(string); ok {
 			vc.Value = makeWhitespaceVisible(s)
+		} else if v.Value != nil {
+			// For non-string values (maps, slices, etc.) pretty-print via
+			// formatVarValue first, then apply whitespace visibility so that
+			// --show-whitespaces works for TASK_INFO, TASKFILE_INFO, etc.
+			vc.Value = makeWhitespaceVisible(formatVarValue(v.Value))
 		}
 		if v.ShCmd != "" {
 			vc.ShCmd = makeWhitespaceVisible(v.ShCmd)
@@ -670,6 +711,8 @@ func applyWSToVars(vars []VarTrace) []VarTrace {
 			sc := *v.ShadowsVar
 			if s, ok := sc.Value.(string); ok {
 				sc.Value = makeWhitespaceVisible(s)
+			} else if sc.Value != nil {
+				sc.Value = makeWhitespaceVisible(fmt.Sprintf("%v", sc.Value))
 			}
 			vc.ShadowsVar = &sc
 		}
