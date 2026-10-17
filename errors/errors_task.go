@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"mvdan.cc/sh/v3/interp"
 )
@@ -43,19 +44,44 @@ func (err *TaskRunError) Error() string {
 }
 
 func (err *TaskRunError) Code() int {
+	var te TaskError
+	if As(err.Err, &te) {
+		return te.Code()
+	}
 	return CodeTaskRunError
 }
 
 func (err *TaskRunError) TaskExitCode() int {
-	var exit interp.ExitStatus
-	if errors.As(err.Err, &exit) {
+	if exit, ok := errors.AsType[interp.ExitStatus](err.Err); ok {
 		return int(exit)
+	}
+	if _, ok := errors.AsType[*TaskTimeoutError](err.Err); ok {
+		return TimeoutExitCode
 	}
 	return err.Code()
 }
 
 func (err *TaskRunError) Unwrap() error {
 	return err.Err
+}
+
+// TimeoutExitCode is what a killed command reports in place of the exit status
+// it never got, following the convention of timeout(1).
+const TimeoutExitCode = 124
+
+// TaskTimeoutError is returned when a command exceeds the timeout it declared.
+// It must not unwrap to context.DeadlineExceeded, which --watch swallows.
+type TaskTimeoutError struct {
+	TaskName string
+	Timeout  time.Duration
+}
+
+func (err *TaskTimeoutError) Error() string {
+	return fmt.Sprintf(`task: [%s] command timeout exceeded (%s)`, err.TaskName, err.Timeout)
+}
+
+func (err *TaskTimeoutError) Code() int {
+	return CodeTaskTimedOut
 }
 
 // TaskInternalError when the user attempts to invoke a task that is internal.
@@ -195,9 +221,9 @@ type TaskNotAllowedVarsError struct {
 func (err *TaskNotAllowedVarsError) Error() string {
 	var builder strings.Builder
 
-	builder.WriteString(fmt.Sprintf("task: Task %q cancelled because it is missing required variables:\n", err.TaskName))
+	builder.WriteString(fmt.Sprintf("task: Task %q cancelled because it is missing required variables:\n", err.TaskName)) //nolint:staticcheck
 	for _, s := range err.NotAllowedVars {
-		builder.WriteString(fmt.Sprintf("  - %s has an invalid value : '%s' (allowed values : %v)\n", s.Name, s.Value, s.Enum))
+		builder.WriteString(fmt.Sprintf("  - %s has an invalid value : '%s' (allowed values : %v)\n", s.Name, s.Value, s.Enum)) //nolint:staticcheck
 	}
 
 	return builder.String()

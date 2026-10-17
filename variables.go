@@ -15,9 +15,21 @@ import (
 	"github.com/go-task/task/v3/internal/execext"
 	"github.com/go-task/task/v3/internal/filepathext"
 	"github.com/go-task/task/v3/internal/fingerprint"
+	"github.com/go-task/task/v3/internal/refs"
+	"github.com/go-task/task/v3/internal/slicesext"
 	"github.com/go-task/task/v3/internal/templater"
 	"github.com/go-task/task/v3/taskfile/ast"
 )
+
+// shouldTaskUseGitignore resolves whether gitignore filtering applies to a
+// task: the task-level value takes precedence, falling back to the Taskfile's
+// global use_gitignore when the task does not set it.
+func (e *Executor) shouldTaskUseGitignore(t *ast.Task) bool {
+	if t.UseGitignore != nil {
+		return *t.UseGitignore
+	}
+	return e.Taskfile.UseGitignore != nil && *e.Taskfile.UseGitignore
+}
 
 // CompiledTask returns a copy of a task, but replacing variables in almost all
 // properties using the Go template package.
@@ -43,6 +55,8 @@ func (e *Executor) CompiledTaskForTaskList(call *Call) (*ast.Task, error) {
 
 	cache := &templater.Cache{Vars: vars}
 
+	gitignore := e.shouldTaskUseGitignore(origTask)
+
 	return &ast.Task{
 		Task:                 origTask.Task,
 		Label:                templater.Replace(origTask.Label, cache),
@@ -59,6 +73,7 @@ func (e *Executor) CompiledTaskForTaskList(call *Call) (*ast.Task, error) {
 		Env:                  nil,
 		Dotenv:               origTask.Dotenv,
 		Silent:               deepcopy.Scalar(origTask.Silent),
+		UseGitignore:         &gitignore,
 		Interactive:          origTask.Interactive,
 		Internal:             origTask.Internal,
 		Method:               origTask.Method,
@@ -99,6 +114,19 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	}
 
 	cache := &templater.Cache{Vars: vars}
+
+	// Resolve enum refs only when dynamic variables have been evaluated,
+	// since enum refs may depend on shell-derived variables (e.g. fromJson)
+	requires := origTask.Requires
+	if evaluateShVars {
+		requires = origTask.Requires.DeepCopy()
+		if err := refs.ResolveEnums(requires, cache); err != nil {
+			return nil, err
+		}
+	}
+
+	gitignore := e.shouldTaskUseGitignore(origTask)
+
 	new := ast.Task{
 		Task:                 origTask.Task,
 		Label:                templater.Replace(origTask.Label, cache),
@@ -115,6 +143,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 		Env:                  nil,
 		Dotenv:               templater.Replace(origTask.Dotenv, cache),
 		Silent:               deepcopy.Scalar(origTask.Silent),
+		UseGitignore:         &gitignore,
 		Interactive:          origTask.Interactive,
 		Internal:             origTask.Internal,
 		Method:               templater.Replace(origTask.Method, cache),
@@ -126,7 +155,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 		Platforms:            origTask.Platforms,
 		If:                   templater.Replace(origTask.If, cache),
 		Location:             origTask.Location,
-		Requires:             origTask.Requires,
+		Requires:             requires,
 		Watch:                origTask.Watch,
 		Failfast:             origTask.Failfast,
 		Namespace:            origTask.Namespace,
@@ -181,24 +210,25 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 		}
 	}
 
-	if len(origTask.Sources) > 0 && origTask.Method != "none" {
-		var checker fingerprint.SourcesCheckable
+	if len(origTask.Sources) > 0 {
+		fingerprinter := e.fingerprinter()
+		kind := fingerprinter.Kind(&new)
+		if kind != "none" && origTask.ReferencesFingerprintVar(kind) {
+			// An invalid method must not fail compilation: --force skips
+			// fingerprinting altogether, and the up-to-date check reports it
+			// on every other path.
+			value, err := fingerprinter.SourceValue(&new)
+			if err != nil && !errors.Is(err, fingerprint.ErrInvalidMethod) {
+				return nil, err
+			}
+			if err == nil {
+				vars.Set(strings.ToUpper(kind), ast.Var{Live: value})
 
-		if origTask.Method == "timestamp" {
-			checker = fingerprint.NewTimestampChecker(e.TempDir.Fingerprint, e.Dry)
-		} else {
-			checker = fingerprint.NewChecksumChecker(e.TempDir.Fingerprint, e.Dry)
+				// Adding new variables, requires us to refresh the templaters
+				// cache of the the values manually
+				cache.ResetCache()
+			}
 		}
-
-		value, err := checker.Value(&new)
-		if err != nil {
-			return nil, err
-		}
-		vars.Set(strings.ToUpper(checker.Kind()), ast.Var{Live: value})
-
-		// Adding new variables, requires us to refresh the templaters
-		// cache of the the values manually
-		cache.ResetCache()
 	}
 
 	if len(origTask.Cmds) > 0 {
@@ -208,7 +238,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 				continue
 			}
 			if cmd.For != nil {
-				list, keys, err := itemsFromFor(cmd.For, new.Dir, new.Sources, new.Generates, vars, origTask.Location, cache)
+				list, keys, err := itemsFromFor(cmd.For, new.Dir, new.Sources, new.Generates, gitignore, vars, origTask.Location, cache)
 				if err != nil {
 					return nil, err
 				}
@@ -228,6 +258,8 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 						extra["KEY"] = keys[i]
 					}
 					newCmd := cmd.DeepCopy()
+					// Resolve template with secrets masked + loop vars for logging
+					newCmd.LogCmd = templater.MaskSecretsWithExtra(cmd.Cmd, cache.Vars, extra)
 					newCmd.Cmd = templater.ReplaceWithExtra(cmd.Cmd, cache, extra)
 					newCmd.Task = templater.ReplaceWithExtra(cmd.Task, cache, extra)
 					newCmd.If = templater.ReplaceWithExtra(cmd.If, cache, extra)
@@ -243,6 +275,8 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 				continue
 			}
 			newCmd := cmd.DeepCopy()
+			// Resolve template with secrets masked for logging
+			newCmd.LogCmd = templater.MaskSecrets(cmd.Cmd, cache.Vars)
 			newCmd.Cmd = templater.Replace(cmd.Cmd, cache)
 			newCmd.Task = templater.Replace(cmd.Task, cache)
 			newCmd.If = templater.Replace(cmd.If, cache)
@@ -257,7 +291,7 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 				continue
 			}
 			if dep.For != nil {
-				list, keys, err := itemsFromFor(dep.For, new.Dir, new.Sources, new.Generates, vars, origTask.Location, cache)
+				list, keys, err := itemsFromFor(dep.For, new.Dir, new.Sources, new.Generates, gitignore, vars, origTask.Location, cache)
 				if err != nil {
 					return nil, err
 				}
@@ -315,19 +349,12 @@ func (e *Executor) compiledTask(call *Call, evaluateShVars bool) (*ast.Task, err
 	return &new, nil
 }
 
-func asAnySlice[T any](slice []T) []any {
-	ret := make([]any, len(slice))
-	for i, v := range slice {
-		ret[i] = v
-	}
-	return ret
-}
-
 func itemsFromFor(
 	f *ast.For,
 	dir string,
 	sources []*ast.Glob,
 	generates []*ast.Glob,
+	gitignore bool,
 	vars *ast.Vars,
 	location *ast.Location,
 	cache *templater.Cache,
@@ -336,13 +363,14 @@ func itemsFromFor(
 	var values []any  // The list of values to loop over
 	// Get the list from a matrix
 	if f.Matrix.Len() != 0 {
-		if err := resolveMatrixRefs(f.Matrix, cache); err != nil {
+		resolvedMatrix, err := resolveMatrixRefs(f.Matrix, cache)
+		if err != nil {
 			return nil, nil, errors.TaskfileInvalidError{
 				URI: location.Taskfile,
 				Err: err,
 			}
 		}
-		return asAnySlice(product(f.Matrix)), nil, nil
+		return slicesext.AsAny(product(resolvedMatrix)), nil, nil
 	}
 	// Get the list from the explicit for list
 	if len(f.List) > 0 {
@@ -350,7 +378,7 @@ func itemsFromFor(
 	}
 	// Get the list from the task sources
 	if f.From == "sources" {
-		glist, err := fingerprint.Globs(dir, sources)
+		glist, err := fingerprint.Globs(dir, sources, gitignore)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -360,11 +388,11 @@ func itemsFromFor(
 				return nil, nil, err
 			}
 		}
-		values = asAnySlice(glist)
+		values = slicesext.AsAny(glist)
 	}
 	// Get the list from the task generates
 	if f.From == "generates" {
-		glist, err := fingerprint.Globs(dir, generates)
+		glist, err := fingerprint.Globs(dir, generates, gitignore)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -374,7 +402,7 @@ func itemsFromFor(
 				return nil, nil, err
 			}
 		}
-		values = asAnySlice(glist)
+		values = slicesext.AsAny(glist)
 	}
 	// Get the list from a variable and split it up
 	if f.Var != "" {
@@ -387,14 +415,14 @@ func itemsFromFor(
 				switch value := v.Value.(type) {
 				case string:
 					if f.Split != "" {
-						values = asAnySlice(strings.Split(value, f.Split))
+						values = slicesext.AsAny(strings.Split(value, f.Split))
 					} else {
-						values = asAnySlice(strings.Fields(value))
+						values = slicesext.AsAny(strings.Fields(value))
 					}
 				case []string:
-					values = asAnySlice(value)
+					values = slicesext.AsAny(value)
 				case []int:
-					values = asAnySlice(value)
+					values = slicesext.AsAny(value)
 				case []any:
 					values = value
 				case map[string]any:
@@ -414,22 +442,42 @@ func itemsFromFor(
 	return values, keys, nil
 }
 
-func resolveMatrixRefs(matrix *ast.Matrix, cache *templater.Cache) error {
+// resolveMatrixRefs resolves any `ref:` rows in matrix and returns a new
+// Matrix with those rows populated. It must not mutate the matrix passed in:
+// that matrix is part of the shared, cached Task AST, and concurrent
+// invocations of the same task (e.g. via parallel deps) call this with the
+// same *ast.Matrix and would otherwise race on the row.Value assignment
+// below, intermittently leaking a value resolved for one caller into another
+// caller's expansion. See #2890.
+func resolveMatrixRefs(matrix *ast.Matrix, cache *templater.Cache) (*ast.Matrix, error) {
 	if matrix.Len() == 0 {
-		return nil
+		return matrix, nil
 	}
+	hasRef := false
 	for _, row := range matrix.All() {
 		if row.Ref != "" {
-			v := templater.ResolveRef(row.Ref, cache)
-			switch value := v.(type) {
-			case []any:
-				row.Value = value
-			default:
-				return fmt.Errorf("matrix reference %q must resolve to a list", row.Ref)
-			}
+			hasRef = true
+			break
 		}
 	}
-	return nil
+	if !hasRef {
+		return matrix, nil
+	}
+	resolved := matrix.DeepCopy()
+	for _, row := range resolved.All() {
+		if row.Ref != "" {
+			v := templater.ResolveRef(row.Ref, cache)
+			if cache.Err() != nil {
+				return nil, cache.Err()
+			}
+			value, ok := refs.AsList(v)
+			if !ok {
+				return nil, fmt.Errorf("matrix reference %q must resolve to a list", row.Ref)
+			}
+			row.Value = value
+		}
+	}
+	return resolved, nil
 }
 
 // product generates the cartesian product of the input map of slices.

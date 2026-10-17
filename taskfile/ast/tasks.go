@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/elliotchance/orderedmap/v3"
-	"go.yaml.in/yaml/v4"
+	"go.yaml.in/yaml/v3"
 
 	"github.com/go-task/task/v3/errors"
 	"github.com/go-task/task/v3/internal/filepathext"
@@ -130,8 +130,9 @@ func (t1 *Tasks) Merge(t2 *Tasks, include *Include, includedTaskfileVars *Vars) 
 		task.Internal = task.Internal || (include != nil && include.Internal)
 		taskName := name
 
-		// if the task is in the exclude list, don't add it to the merged taskfile
-		if slices.Contains(include.Excludes, name) {
+		// If the task or its namespace is in the exclude list, don't add it to
+		// the merged taskfile.
+		if include.isTaskExcluded(name) {
 			continue
 		}
 
