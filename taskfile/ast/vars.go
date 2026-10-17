@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/elliotchance/orderedmap/v3"
-	"go.yaml.in/yaml/v4"
+	"go.yaml.in/yaml/v3"
 
 	"github.com/go-task/task/v3/errors"
 	"github.com/go-task/task/v3/internal/deepcopy"
@@ -98,6 +98,9 @@ func (vars *Vars) Values() iter.Seq[Var] {
 // ToCacheMap converts Vars to an unordered map containing only the static
 // variables
 func (vars *Vars) ToCacheMap() (m map[string]any) {
+	if vars == nil || vars.om == nil {
+		return nil
+	}
 	defer vars.mutex.RUnlock()
 	vars.mutex.RLock()
 	m = make(map[string]any, vars.Len())

@@ -101,7 +101,7 @@ func (e *Executor) watchTasks(calls ...*Call) error {
 							return
 						}
 
-						if !event.Has(fsnotify.Remove) && !slices.Contains(files, event.Name) {
+						if !event.Has(fsnotify.Remove) && !slices.Contains(files, filepath.ToSlash(event.Name)) {
 							relPath, _ := filepath.Rel(baseDir, event.Name)
 							e.Logger.VerboseErrf(logger.Magenta, "task: skipped for file not in sources: %s\n", relPath)
 							return
@@ -205,7 +205,7 @@ func (e *Executor) collectSources(calls []*Call) ([]string, error) {
 	var sources []string
 
 	err := e.traverse(calls, func(task *ast.Task) error {
-		files, err := fingerprint.Globs(task.Dir, task.Sources)
+		files, err := fingerprint.Globs(task.Dir, task.Sources, task.ShouldUseGitignore())
 		if err != nil {
 			return err
 		}

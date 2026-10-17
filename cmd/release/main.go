@@ -15,8 +15,28 @@ import (
 
 const (
 	changelogSource = "CHANGELOG.md"
-	changelogTarget = "website/src/docs/changelog.md"
+	changelogTarget = "website/src/next/docs/changelog.md"
 	versionFile     = "internal/version/version.txt"
+)
+
+type promotion struct{ source, target string }
+
+// Promoted at release time: the website builds `next` from the sources on the
+// left and `latest` from the targets on the right, so that taskfile.dev only
+// ever documents the version being released. The other half of the mechanism
+// lives in website/.vitepress/config.ts, which picks a side at build time.
+var (
+	promotedDirs = []promotion{
+		{"website/src/next/docs", "website/src/latest/docs"},
+		{"website/src/next/blog", "website/src/latest/blog"},
+	}
+
+	promotedFiles = []promotion{
+		{"website/src/next/agents.md", "website/src/latest/agents.md"},
+		{"website/.vitepress/sidebar/next.ts", "website/.vitepress/sidebar/latest.ts"},
+		{"website/src/public/next-schema.json", "website/src/public/schema.json"},
+		{"website/src/public/next-schema-taskrc.json", "website/src/public/schema-taskrc.json"},
+	}
 )
 
 var changelogReleaseRegex = regexp.MustCompile(`## Unreleased`)
@@ -24,18 +44,27 @@ var changelogReleaseRegex = regexp.MustCompile(`## Unreleased`)
 // Flags
 var (
 	versionFlag bool
+	notesFlag   bool
 )
 
 func init() {
 	pflag.BoolVarP(&versionFlag, "version", "v", false, "resolved version number")
+	pflag.BoolVar(&notesFlag, "notes", false, "changelog section of the current version, for the GitHub release body")
 	pflag.Parse()
 }
 
 func main() {
-	if err := release(); err != nil {
+	if err := run(); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func run() error {
+	if notesFlag {
+		return notes(os.Stdout)
+	}
+	return release()
 }
 
 func release() error {
@@ -57,12 +86,49 @@ func release() error {
 		return nil
 	}
 
-	if err := changelog(version); err != nil {
+	return prepareRelease(version, time.Now().Format(time.DateOnly))
+}
+
+func prepareRelease(version *semver.Version, date string) error {
+	if err := dateNewBlogPosts("website/src/next/blog", "website/src/latest/blog", date); err != nil {
+		return err
+	}
+
+	if err := changelog(version, date); err != nil {
+		return err
+	}
+
+	// After the changelog so that the promoted docs carry it.
+	if err := promote(); err != nil {
 		return err
 	}
 
 	if err := setVersionFile(versionFile, version); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func promote() error {
+	for _, p := range promotedDirs {
+		// CopyFS refuses to overwrite, so the previous release has to go first.
+		if err := os.RemoveAll(p.target); err != nil {
+			return err
+		}
+		if err := os.CopyFS(p.target, os.DirFS(p.source)); err != nil {
+			return err
+		}
+	}
+
+	for _, p := range promotedFiles {
+		b, err := os.ReadFile(p.source)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(p.target, b, 0o644); err != nil { //nolint:gosec
+			return err
+		}
 	}
 
 	return nil
@@ -90,7 +156,7 @@ func bumpVersion(version *semver.Version, verb string) error {
 	return nil
 }
 
-func changelog(version *semver.Version) error {
+func changelog(version *semver.Version, date string) error {
 	// Open changelog target file
 	b, err := os.ReadFile(changelogTarget)
 	if err != nil {
@@ -111,13 +177,12 @@ func changelog(version *semver.Version) error {
 		return err
 	}
 	changelog := string(b)
-	date := time.Now().Format("2006-01-02")
 
 	// Replace "Unreleased" with the new version and date
 	changelog = changelogReleaseRegex.ReplaceAllString(changelog, fmt.Sprintf("## v%s - %s", version, date))
 
 	// Write the changelog to the source file
-	if err := os.WriteFile(changelogSource, []byte(changelog), 0o644); err != nil {
+	if err := os.WriteFile(changelogSource, []byte(changelog), 0o644); err != nil { //nolint:gosec
 		return err
 	}
 
@@ -129,7 +194,7 @@ func changelog(version *semver.Version) error {
 	changelogWithFrontmatter := fmt.Sprintf("---\n%s\n---\n\n%s", frontmatter, changelogWithVPre)
 
 	// Write the changelog to the target file
-	return os.WriteFile(changelogTarget, []byte(changelogWithFrontmatter), 0o644)
+	return os.WriteFile(changelogTarget, []byte(changelogWithFrontmatter), 0o644) //nolint:gosec
 }
 
 func setVersionFile(fileName string, version *semver.Version) error {

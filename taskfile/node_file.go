@@ -22,7 +22,13 @@ func NewFileNode(entrypoint, dir string, opts ...NodeOption) (*FileNode, error) 
 	resolvedEntrypoint, err := fsext.Search(entrypoint, dir, DefaultTaskfiles)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			return nil, errors.TaskfileNotFoundError{URI: entrypoint, Walk: false}
+			if entrypoint == "" {
+				return nil, errors.TaskfileNotFoundError{URI: entrypoint, Walk: true}
+			} else {
+				return nil, errors.TaskfileNotFoundError{URI: entrypoint, Walk: false}
+			}
+		} else if errors.Is(err, os.ErrPermission) {
+			return nil, errors.TaskfileNotFoundError{URI: entrypoint, Walk: true, OwnerChange: true}
 		}
 		return nil, err
 	}
@@ -54,7 +60,7 @@ func (node *FileNode) Read() ([]byte, error) {
 
 func (node *FileNode) ResolveEntrypoint(entrypoint string) (string, error) {
 	// If the file is remote, we don't need to resolve the path
-	if isRemoteEntrypoint(entrypoint) {
+	if IsRemoteEntrypoint(entrypoint) {
 		return entrypoint, nil
 	}
 

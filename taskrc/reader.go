@@ -3,7 +3,7 @@ package taskrc
 import (
 	"os"
 
-	"go.yaml.in/yaml/v4"
+	"go.yaml.in/yaml/v3"
 
 	"github.com/go-task/task/v3/taskrc/ast"
 )
@@ -44,7 +44,7 @@ func (r *Reader) Options(opts ...ReaderOption) {
 // this function will be called with debug messages. This can be useful if the
 // caller wants to log debug messages from the [Reader]. By default, no debug
 // function is set and the logs are not written.
-func WithDebugFunc(debugFunc DebugFunc) ReaderOption {
+func WithDebugFunc(debugFunc DebugFunc) *debugFuncOption {
 	return &debugFuncOption{debugFunc: debugFunc}
 }
 
@@ -65,7 +65,7 @@ func (r *Reader) Read(node *Node) (*ast.TaskRC, error) {
 	}
 
 	// Read the file
-	b, err := os.ReadFile(node.entrypoint)
+	b, err := os.ReadFile(node.entrypoint) //nolint:gosec
 	if err != nil {
 		return nil, err
 	}

@@ -11,10 +11,6 @@
           "type": "number",
           "enum": [0, 1]
         },
-        "REMOTE_TASKFILES": {
-          "type": "number",
-          "enum": [0, 1]
-        },
         "GENTLE_FORCE": {
           "type": "number",
           "enum": [0, 1]
@@ -53,6 +49,28 @@
           "items": {
             "type": "string"
           }
+        },
+        "headers": {
+          "type": "array",
+          "description": "HTTP headers to send when downloading remote Taskfiles, per host, including authentication and custom headers.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "host": {
+                "type": "string",
+                "description": "Host the headers apply to, including the port if the URL has one (e.g., 'gitlab.com', 'example.com:8080')."
+              },
+              "headers": {
+                "type": "object",
+                "description": "Headers to send. Values support templating functions, e.g. {{env \"GITLAB_TOKEN\"}}.",
+                "additionalProperties": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["host", "headers"],
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
@@ -60,6 +78,11 @@
     "verbose": {
       "type": "boolean",
       "description": "Enable verbose output"
+    },
+    "silent": {
+      "type": "boolean",
+      "description": "Disables echoing",
+      "default": false
     },
     "color": {
       "type": "boolean",
@@ -83,6 +106,10 @@
       "description": "Prompt for missing required variables instead of failing. Requires a TTY.",
       "type": "boolean",
       "default": false
+    },
+    "temp-dir": {
+      "type": "string",
+      "description": "Directory to store Task temporary files, such as checksums and temporary metadata. Relative paths are relative to the root Taskfile."
     }
   },
   "additionalProperties": false
